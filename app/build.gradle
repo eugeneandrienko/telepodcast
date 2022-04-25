@@ -21,15 +21,24 @@ repositories {
 dependencies {
     testImplementation 'junit:junit:4.13.2'
     implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'com.beust:jcommander:1.82'
 }
 
 application {
-    mainClass = 'telepodcast.App'
+    mainClass = 'telepodcast.TelePodcast'
 }
 
 jar {
     Map<String, Object> attributes = new HashMap<>()
-    attributes.put('Main-Class', 'com.eugene_andrienko.telepodcast.App')
+    attributes.put('Main-Class', 'com.eugene_andrienko.telepodcast.TelePodcast')
     manifest.attributes(attributes)
     archivesBaseName = 'telepodcast'
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
