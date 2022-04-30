@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
 
+/**
+ * Main class of application.
+ */
 @Parameters(separators = "=")
 public class TelePodcast
 {
@@ -35,44 +38,53 @@ public class TelePodcast
 
     private void run()
     {
-        showHelpMessage();
-        setupLogger();
+        if(help)
+        {
+            showHelpMessageAndExit();
+        }
+        setupLogger(debug);
+        logger = LoggerFactory.getLogger(TelePodcast.class);
         getGreeting();
     }
 
+    // TODO: delete
     private void getGreeting()
     {
         logger.debug("Debug mode enabled");
         logger.info("Hello World!");
     }
 
-    private void showHelpMessage()
+    private void showHelpMessageAndExit()
     {
-        if(help)
-        {
-            jCommander.usage();
-            System.exit(1);
-        }
+        jCommander.usage();
+        System.exit(1);
     }
 
-    private void setupLogger()
+    /**
+     * Setups {@code SimpleLogger} via system properties.
+     *
+     * @param isDebug Use debug print settings if true.
+     */
+    private void setupLogger(boolean isDebug)
     {
         Map<String, String> slPropsMap = new HashMap<>();
         slPropsMap.put(SimpleLogger.SHOW_DATE_TIME_KEY, "true");
         slPropsMap.put(SimpleLogger.DATE_TIME_FORMAT_KEY, "yyyy-MM-dd'T'HH:mm:ssZ");
         slPropsMap.put(SimpleLogger.LEVEL_IN_BRACKETS_KEY, "true");
-        if(debug)
+        if(isDebug)
         {
             slPropsMap.put(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "debug");
+            slPropsMap.put(SimpleLogger.SHOW_THREAD_NAME_KEY, "true");
+            slPropsMap.put(SimpleLogger.SHOW_LOG_NAME_KEY, "true");
         }
         else
         {
+            slPropsMap.put(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "info");
             slPropsMap.put(SimpleLogger.SHOW_THREAD_NAME_KEY, "false");
             slPropsMap.put(SimpleLogger.SHOW_LOG_NAME_KEY, "false");
         }
         Properties systemProperties = System.getProperties();
         systemProperties.putAll(slPropsMap);
         System.setProperties(systemProperties);
-        logger = LoggerFactory.getLogger(TelePodcast.class);
     }
 }
