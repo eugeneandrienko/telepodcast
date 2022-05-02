@@ -1,9 +1,19 @@
 plugins {
-    id 'application'
-    id 'de.jjohannes.extra-java-module-info' version '0.11'
+    id 'java-library'
 }
 
+group = 'com.eugene_andrienko'
 version = '1.0-SNAPSHOT'
+
+tasks.named('compileJava') {
+    options.javaModuleVersion = provider { project.version }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -16,33 +26,14 @@ dependencies {
     implementation('org.slf4j:slf4j-api:1.7.36')
     implementation('org.slf4j:slf4j-simple:1.7.36')
 
-    implementation('com.beust:jcommander:1.82')
-
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     testCompileOnly 'org.projectlombok:lombok:1.18.24'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
-
-    implementation project(':telegram')
-    implementation project(':youtubedl')
-}
-
-extraJavaModuleInfo {
-    automaticModule('jcommander-1.82.jar', 'com.beust.jcommander')
-}
-
-application {
-    mainModule = 'telepodcast.app'
-    mainClass = 'com.eugene_andrienko.telepodcast.TelePodcast'
 }
 
 jar {
-    Map<String, Object> attributes = new HashMap<>()
-    attributes.put('Main-Class', 'com.eugene_andrienko.telepodcast.TelePodcast')
-    manifest.attributes(attributes)
-    archivesBaseName = 'telepodcast'
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archivesBaseName = 'telegram'
 
     from {
         configurations.runtimeClasspath.collect {

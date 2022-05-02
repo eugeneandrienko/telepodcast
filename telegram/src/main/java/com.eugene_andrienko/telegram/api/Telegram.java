@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast;
+package com.eugene_andrienko.telegram.api;
 
 import java.io.File;
 

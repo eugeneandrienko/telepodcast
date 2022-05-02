@@ -4,5 +4,6 @@ app/build
 gradle
 gradlew
 gradlew.bat
+telegram/build
 youtubedl/build
 
