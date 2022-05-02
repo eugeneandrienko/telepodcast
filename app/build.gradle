@@ -13,10 +13,16 @@ dependencies {
     testImplementation(platform('org.junit:junit-bom:5.8.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 
-    implementation('org.slf4j:slf4j-api:1.7.36')
-    implementation('org.slf4j:slf4j-simple:1.7.36')
+    implementation('org.slf4j:slf4j-api:1.7.36') {
+        because('Need to using logger')
+    }
+    implementation('org.slf4j:slf4j-simple:1.7.36') {
+        because('To use Simple logger - logging to console')
+    }
 
-    implementation('com.beust:jcommander:1.82')
+    implementation('com.beust:jcommander:1.82') {
+        because('Need to parse commandline arguments')
+    }
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
