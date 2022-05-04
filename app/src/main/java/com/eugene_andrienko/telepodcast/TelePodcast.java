@@ -3,9 +3,15 @@ package com.eugene_andrienko.telepodcast;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.eugene_andrienko.telegram.api.TelegramApi;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
@@ -24,26 +30,55 @@ public class TelePodcast
     private boolean help;
     @Parameter(names = {"-d", "--debug"}, description = "Run application in debug mode")
     private boolean debug = false;
+    @Parameter(names = "--api-id", description = "Telegram API ID", password = true, order = 0)
+    private int apiId;
+    @Parameter(names = "--api-hash", description = "Telegram API hash", password = true, order = 1)
+    private String apiHash;
+
+    private static final String PROGRAM_NAME = "telepodcast";
 
     public static void main(String[] args)
     {
         TelePodcast podcast = new TelePodcast();
-
-        // Parse commandline arguments:
-        jCommander = JCommander.newBuilder().addObject(podcast).build();
-        jCommander.parse(args);
-
-        podcast.run();
+        podcast.run(args);
     }
 
-    private void run()
+    @SneakyThrows({InterruptedException.class, ExecutionException.class, TimeoutException.class})
+    private void run(String[] args)
     {
+        // Parse commandline arguments:
+        jCommander = JCommander.newBuilder().addObject(this).build();
+        jCommander.setProgramName(PROGRAM_NAME);
+        jCommander.parse(args);
+
         if(help)
         {
             showHelpMessageAndExit();
         }
+
         setupLogger(debug);
         logger = LoggerFactory.getLogger(TelePodcast.class);
+
+        try
+        {
+            TelegramApi telegram = new TelegramApi(apiId, apiHash, 50, debug);
+            telegram.login();
+            if(telegram.isReady().get(30, TimeUnit.SECONDS))
+            {
+                logger.info("Telegram ready");
+            }
+            else
+            {
+                logger.error("Telegram is not ready");
+                telegram.logout();
+            }
+            telegram.logout();
+        }
+        catch(TelegramException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
         getGreeting();
     }
 
