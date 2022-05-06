@@ -8,6 +8,7 @@
 
 package com.eugene_andrienko.telegram.impl;
 
+import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.IOException;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Example class for TDLib usage from Java.
  */
-public class Telegram
+public class Telegram implements AutoCloseable
 {
     private final int apiId;
     private final String apiHash;
@@ -80,8 +81,14 @@ public class Telegram
         }
     }
 
-    public Telegram(int apiId, String apiHash, boolean debug)
+    public Telegram(int apiId, String apiHash, boolean debug) throws TelegramAuthException
     {
+        if(apiId == 0 || apiHash == null || apiHash.isBlank())
+        {
+            logger.error("Telegram API ID or hash not provided!");
+            throw new TelegramAuthException("Telegram API ID or hash not provided");
+        }
+
         this.apiId = apiId;
         this.apiHash = apiHash;
         this.debug = debug;
@@ -145,7 +152,8 @@ public class Telegram
         });
     }
 
-    public void logout()
+    @Override
+    public void close() throws Exception
     {
         needQuit = true;
         haveAuthorization = false;

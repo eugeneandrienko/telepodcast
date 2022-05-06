@@ -4,14 +4,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eugene_andrienko.telegram.api.TelegramApi;
-import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
@@ -43,7 +39,6 @@ public class TelePodcast
         podcast.run(args);
     }
 
-    @SneakyThrows({InterruptedException.class, ExecutionException.class, TimeoutException.class})
     private void run(String[] args)
     {
         // Parse commandline arguments:
@@ -59,9 +54,8 @@ public class TelePodcast
         setupLogger(debug);
         logger = LoggerFactory.getLogger(TelePodcast.class);
 
-        try
+        try (TelegramApi telegram = new TelegramApi(apiId, apiHash, 50, debug))
         {
-            TelegramApi telegram = new TelegramApi(apiId, apiHash, 50, debug);
             telegram.login();
             if(telegram.isReady().get(30, TimeUnit.SECONDS))
             {
@@ -70,11 +64,9 @@ public class TelePodcast
             else
             {
                 logger.error("Telegram is not ready");
-                telegram.logout();
             }
-            telegram.logout();
         }
-        catch(TelegramException ex)
+        catch(Exception ex)
         {
             throw new RuntimeException(ex);
         }

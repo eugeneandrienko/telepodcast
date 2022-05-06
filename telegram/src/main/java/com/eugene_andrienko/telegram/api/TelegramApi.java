@@ -2,7 +2,6 @@ package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramChatNotFoundException;
-import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
 import com.eugene_andrienko.telegram.impl.Telegram;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * Also hides complexity of TDLib inside itself.
  */
-public class TelegramApi
+public class TelegramApi implements AutoCloseable
 {
     private final Telegram telegram;
     private final Logger logger = LoggerFactory.getLogger(TelegramApi.class);
@@ -37,19 +36,35 @@ public class TelegramApi
     public TelegramApi(int apiId, String apiHash, int loadingChatsLimit, boolean debug)
             throws TelegramAuthException
     {
-        if(apiId == 0 || apiHash == null || apiHash.isBlank())
-        {
-            logger.error("Telegram API ID or hash not provided!");
-            throw new TelegramAuthException("Telegram API ID or hash not provided");
-        }
         if(loadingChatsLimit < 1)
         {
             logger.error("Limit of chats to load is less than 1");
             throw new TelegramAuthException("Limit of chats to load < 1");
         }
+        this.loadingChatsLimit = loadingChatsLimit;
         telegram = new Telegram(apiId, apiHash, debug);
         //logger.debug("API ID: |{}|, API hash: |{}|", apiId, apiHash);
+    }
+
+    /**
+     * Initializes Telegram library.
+     *
+     * @param telegram          Initialized {@code Telegram} object.
+     * @param loadingChatsLimit Limit of chats to load from Telegram chat list
+     * @param debug             Debug mode
+     *
+     * @throws TelegramAuthException Got wrong credentials.
+     */
+    public TelegramApi(Telegram telegram, int loadingChatsLimit, boolean debug)
+            throws TelegramAuthException
+    {
+        if(loadingChatsLimit < 1)
+        {
+            logger.error("Limit of chats to load is less than 1");
+            throw new TelegramAuthException("Limit of chats to load < 1");
+        }
         this.loadingChatsLimit = loadingChatsLimit;
+        this.telegram = telegram;
     }
 
     /**
@@ -65,10 +80,8 @@ public class TelegramApi
      * All these operations performs asynchronously and this method returns <b>immediately</b>!
      * To check what all is completed successfully — use {@code isReady} method like this:
      * {@code if(telegram.isReady().get(30, TimeUnit.SECONDS)) ...}
-     *
-     * @throws TelegramException Login process failed
      */
-    public void login() throws TelegramException
+    public void login()
     {
         logger.debug("Logging into Telegram");
         // Initialize TDLib and login to Telegram:
@@ -136,10 +149,11 @@ public class TelegramApi
     /**
      * Logout from Telegram.
      */
-    public void logout()
+    @Override
+    public void close() throws Exception
     {
         logger.debug("Logging out from Telegram");
-        telegram.logout();
+        telegram.close();
         logger.info("Logout from Telegram");
     }
 
