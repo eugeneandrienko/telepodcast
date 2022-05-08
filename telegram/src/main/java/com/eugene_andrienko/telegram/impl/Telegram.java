@@ -9,6 +9,7 @@
 package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.IOException;
@@ -68,6 +69,9 @@ public class Telegram implements AutoCloseable
 
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
 
+    public enum MessageSenderState {OK, FAIL, RETRY};
+
+    // TODO: use 1.8.0 static library
     // TODO: load library from JAR
     static
     {
@@ -287,6 +291,63 @@ public class Telegram implements AutoCloseable
         return result;
     }
 
+    public CompletableFuture<MessageSenderState> sendMessage(long chatId, String message)
+    {
+        CompletableFuture<MessageSenderState> result = new CompletableFuture<>();
+        TdApi.InputMessageContent content = new TdApi.InputMessageText(
+                new TdApi.FormattedText(message, null), false, true);
+
+        Client.ResultHandler messageHandler = answer -> {
+            if(!(answer instanceof TdApi.Message))
+            {
+                logger.error("Got unknown answer in message handler: {}", answer);
+                logger.error("Constructor: {}", answer.getConstructor());
+                result.complete(MessageSenderState.FAIL);
+            }
+
+            TdApi.MessageSendingState state = ((TdApi.Message)answer).sendingState;
+            switch(state.getConstructor())
+            {
+                case TdApi.MessageSendingStatePending.CONSTRUCTOR:
+                    logger.debug("Message sent to server");
+                    result.complete(MessageSenderState.OK);
+                    break;
+                case TdApi.MessageSendingStateFailed.CONSTRUCTOR:
+                    TdApi.MessageSendingStateFailed fail = (TdApi.MessageSendingStateFailed)state;
+                    if(fail.canRetry)
+                    {
+                        result.completeAsync(() -> {
+                            try
+                            {
+                                Thread.sleep(Math.round(fail.retryAfter));
+                            }
+                            catch(InterruptedException e)
+                            {
+                                logger.error("Failed to wait {} seconds before resending message",
+                                        fail.retryAfter);
+                                return MessageSenderState.FAIL;
+                            }
+                            return MessageSenderState.RETRY;
+                        });
+                    }
+                    else
+                    {
+                        logger.error("Failed to send message! Error code: {}. Error message: {}.",
+                                fail.errorCode, fail.errorMessage);
+                        result.complete(MessageSenderState.FAIL);
+                    }
+                    break;
+                default:
+                    logger.error("Got unknown message state when sending message: {}", state);
+                    logger.error("Constructor: {}", state.getConstructor());
+                    result.completeExceptionally(new TelegramSendMessageException());
+            }
+        };
+
+        client.send(new TdApi.SendMessage(chatId, 0, 0, null, null, content), messageHandler);
+        return result;
+    }
+
     private static void print(String str)
     {
         if(currentPrompt != null)
@@ -499,24 +560,6 @@ public class Telegram implements AutoCloseable
         {
             print("Not enough arguments");
         }
-    }
-
-    private void sendMessage(long chatId, String message)
-    {
-        // initialize reply markup just for testing
-        TdApi.InlineKeyboardButton[] row = {new TdApi.InlineKeyboardButton("https://telegram.org?1",
-                new TdApi.InlineKeyboardButtonTypeUrl()),
-                                            new TdApi.InlineKeyboardButton("https://telegram.org?2",
-                                                    new TdApi.InlineKeyboardButtonTypeUrl()),
-                                            new TdApi.InlineKeyboardButton("https://telegram.org?3",
-                                                    new TdApi.InlineKeyboardButtonTypeUrl())};
-        TdApi.ReplyMarkup replyMarkup = new TdApi.ReplyMarkupInlineKeyboard(
-                new TdApi.InlineKeyboardButton[][]{row, row, row});
-
-        TdApi.InputMessageContent content = new TdApi.InputMessageText(
-                new TdApi.FormattedText(message, null), false, true);
-        client.send(new TdApi.SendMessage(chatId, 0, 0, null, replyMarkup, content),
-                defaultHandler);
     }
 
     private static class OrderedChat implements Comparable<OrderedChat>

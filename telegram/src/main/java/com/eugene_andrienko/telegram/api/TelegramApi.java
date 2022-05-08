@@ -2,10 +2,12 @@ package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramChatNotFoundException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
-import java.io.File;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,8 @@ public class TelegramApi implements AutoCloseable
 
     private final int loadingChatsLimit;
     private final AtomicLong savedMessagesId = new AtomicLong(0);
+    private final static int DEFAULT_RESEND_RETRIES = 2;
+    private final int resendRetries;
 
     /**
      * Initializes Telegram library.
@@ -42,6 +46,7 @@ public class TelegramApi implements AutoCloseable
             throw new TelegramAuthException("Limit of chats to load < 1");
         }
         this.loadingChatsLimit = loadingChatsLimit;
+        this.resendRetries = DEFAULT_RESEND_RETRIES;
         telegram = new Telegram(apiId, apiHash, debug);
         //logger.debug("API ID: |{}|, API hash: |{}|", apiId, apiHash);
     }
@@ -49,13 +54,13 @@ public class TelegramApi implements AutoCloseable
     /**
      * Initializes Telegram library.
      *
-     * @param telegram          Initialized {@code Telegram} object.
+     * @param telegram          Initialized {@code Telegram} object
      * @param loadingChatsLimit Limit of chats to load from Telegram chat list
-     * @param debug             Debug mode
+     * @param resendRetries     Count of resend retries, when sending message fails
      *
      * @throws TelegramAuthException Got wrong credentials.
      */
-    public TelegramApi(Telegram telegram, int loadingChatsLimit, boolean debug)
+    TelegramApi(Telegram telegram, int loadingChatsLimit, int resendRetries)
             throws TelegramAuthException
     {
         if(loadingChatsLimit < 1)
@@ -64,6 +69,32 @@ public class TelegramApi implements AutoCloseable
             throw new TelegramAuthException("Limit of chats to load < 1");
         }
         this.loadingChatsLimit = loadingChatsLimit;
+        if(resendRetries < 0)
+        {
+            logger.error("Wrong count of resend retries: {}!", resendRetries);
+            throw new TelegramAuthException("Resend retries < 0");
+        }
+        this.resendRetries = resendRetries;
+        this.telegram = telegram;
+    }
+
+    /**
+     * Initializes Telegram library.
+     *
+     * @param telegram          Initialized {@code Telegram} object.
+     * @param loadingChatsLimit Limit of chats to load from Telegram chat list
+     *
+     * @throws TelegramAuthException Got wrong credentials.
+     */
+    TelegramApi(Telegram telegram, int loadingChatsLimit) throws TelegramAuthException
+    {
+        if(loadingChatsLimit < 1)
+        {
+            logger.error("Limit of chats to load is less than 1");
+            throw new TelegramAuthException("Limit of chats to load < 1");
+        }
+        this.loadingChatsLimit = loadingChatsLimit;
+        this.resendRetries = DEFAULT_RESEND_RETRIES;
         this.telegram = telegram;
     }
 
@@ -157,11 +188,64 @@ public class TelegramApi implements AutoCloseable
         logger.info("Logout from Telegram");
     }
 
-    public void sendMessage(String message)
+    /**
+     * Sends message to "Saved Messages" chat.
+     *
+     * @param message Message to send
+     *
+     * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
+     *
+     * @throws TelegramSendMessageException Got unexpected error when sending the message.
+     */
+    public CompletableFuture<Boolean> sendMessage(String message)
+            throws TelegramSendMessageException
     {
+        return sendMessage(message, resendRetries);
     }
 
-    public void sendFile(File file)
+    /**
+     * Sends message to "Saved Messages" chat.
+     *
+     * @param message   Message to send
+     * @param resendTry Count of resend tries. When count < 0 — all resend tries exhausted.
+     *
+     * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
+     *
+     * @throws TelegramSendMessageException Got unexpected error when sending the message.
+     */
+    @SneakyThrows(InterruptedException.class)
+    private CompletableFuture<Boolean> sendMessage(String message, int resendTry)
+            throws TelegramSendMessageException
     {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        if(resendTry < 0)
+        {
+            logger.error("Exhaust of resend tries - cannot send message!");
+            result.complete(false);
+            return result;
+        }
+
+        CompletableFuture<Telegram.MessageSenderState> sendMessageResult =
+                telegram.sendMessage(savedMessagesId.get(), message);
+        try
+        {
+            switch(sendMessageResult.get())
+            {
+                case OK:
+                    result.complete(true);
+                    break;
+                case FAIL:
+                    result.complete(false);
+                    break;
+                case RETRY:
+                    logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
+                    return sendMessage(message, --resendTry);
+            }
+        }
+        catch(ExecutionException ex)
+        {
+            throw new TelegramSendMessageException(ex);
+        }
+        return result;
     }
 }

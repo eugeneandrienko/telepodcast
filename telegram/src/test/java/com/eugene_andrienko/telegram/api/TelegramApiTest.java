@@ -1,7 +1,9 @@
 package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
+import com.eugene_andrienko.telegram.impl.Telegram.MessageSenderState;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
@@ -26,21 +28,18 @@ public class TelegramApiTest
     @DisplayName("Test TelegramApi constructor")
     void constructorTest()
     {
+        Telegram mock = mock(Telegram.class);
         try
         {
-            new TelegramApi(1, "2", 3, true);
-            new TelegramApi(1, "2", 3, false);
+            new TelegramApi(mock, 3);
         }
         catch(TelegramAuthException ex)
         {
             fail("Constructor should not throw exception", ex);
         }
 
-        assertThrows(TelegramAuthException.class, () -> new TelegramApi(0, "2", 3, true));
-        assertThrows(TelegramAuthException.class, () -> new TelegramApi(1, null, 3, true));
-        assertThrows(TelegramAuthException.class, () -> new TelegramApi(1, "", 3, true));
-        assertThrows(TelegramAuthException.class, () -> new TelegramApi(1, " ", 3, true));
-        assertThrows(TelegramAuthException.class, () -> new TelegramApi(1, "2", 0, true));
+        assertThrows(TelegramAuthException.class, () -> new TelegramApi(mock, 0));
+        assertThrows(TelegramAuthException.class, () -> new TelegramApi(mock, 3, -1));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class TelegramApiTest
         when(mockedTelegram.getSavedMessagesChatName()).thenReturn(completableChatName);
         when(mockedTelegram.getSavedMessagesChatId(FAKE_CHAT_NAME)).thenReturn(completableChatId);
 
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         telegramApi.login();
 
         AtomicLong savedMessagesId = Objects.requireNonNull(getChatIdField(telegramApi));
@@ -86,7 +85,7 @@ public class TelegramApiTest
         Telegram mockedTelegram = mock(Telegram.class);
         when(mockedTelegram.init()).thenReturn(completableFalse);
 
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         telegramApi.login();
         assertFalse(telegramApi.isReady().isDone(), "Login should not complete");
     }
@@ -106,7 +105,7 @@ public class TelegramApiTest
         doNothing().when(mockedTelegram).loadChatList(anyInt());
         when(mockedTelegram.isChatListLoaded(anyInt())).thenReturn(completableFalse);
 
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         telegramApi.login();
         assertFalse(telegramApi.isReady().isDone(), "Login should not complete");
     }
@@ -129,7 +128,7 @@ public class TelegramApiTest
         when(mockedTelegram.isChatListLoaded(anyInt())).thenReturn(completableTrue);
         when(mockedTelegram.getSavedMessagesChatName()).thenReturn(completableChatName);
 
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         telegramApi.login();
         assertFalse(telegramApi.isReady().isDone(), "Login should not complete");
     }
@@ -159,7 +158,7 @@ public class TelegramApiTest
         when(mockedTelegram.getSavedMessagesChatName()).thenReturn(completableChatName);
         when(mockedTelegram.getSavedMessagesChatId(FAKE_CHAT_NAME)).thenReturn(completableChatId);
 
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         telegramApi.login();
         try
         {
@@ -180,7 +179,7 @@ public class TelegramApiTest
     void isReadyOkTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         AtomicLong savedMessagesId = Objects.requireNonNull(getChatIdField(telegramApi));
         savedMessagesId.set(12);
 
@@ -197,7 +196,7 @@ public class TelegramApiTest
     void isReadyFailTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
 
         try
         {
@@ -216,7 +215,7 @@ public class TelegramApiTest
     void closeTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1, true);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
         try
         {
             telegramApi.close();
@@ -232,6 +231,151 @@ public class TelegramApiTest
         catch(Exception ex)
         {
             fail("Got an exception when checks Telegram.close() count of calls", ex);
+        }
+    }
+
+    @Test
+    @DisplayName("Send message test")
+    @SneakyThrows({TelegramAuthException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void sendMessageTest()
+    {
+        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
+        completableOk.complete(MessageSenderState.OK);
+
+        Telegram mockedTelegram = mock(Telegram.class);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        when(mockedTelegram.sendMessage(anyLong(), anyString())).thenReturn(completableOk);
+
+        try
+        {
+            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            assertTrue(result.get(), "Should get true value after sending message");
+        }
+        catch(TelegramSendMessageException ex)
+        {
+            fail("TelegramApi.sendMessage() should not throw an exception here");
+        }
+    }
+
+    @Test
+    @DisplayName("Send message fail test")
+    @SneakyThrows({TelegramAuthException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void sendMessageFailTest()
+    {
+        CompletableFuture<MessageSenderState> completableFail = new CompletableFuture<>();
+        completableFail.complete(MessageSenderState.FAIL);
+
+        Telegram mockedTelegram = mock(Telegram.class);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        when(mockedTelegram.sendMessage(anyLong(), anyString())).thenReturn(completableFail);
+
+        try
+        {
+            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            assertFalse(result.get(), "Should get false value after sending message with fail");
+        }
+        catch(TelegramSendMessageException ex)
+        {
+            fail("TelegramApi.sendMessage() should not throw an exception here");
+        }
+    }
+
+    @Test
+    @DisplayName("Send message retry test")
+    @SneakyThrows({TelegramAuthException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void sendMessageRetryTest()
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
+        completableOk.complete(MessageSenderState.OK);
+
+        Telegram mockedTelegram = mock(Telegram.class);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+                .thenReturn(completableRetry) // First call
+                .thenReturn(completableRetry) // First retry
+                .thenReturn(completableOk); //   Second retry — should be successful
+
+        try
+        {
+            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            assertTrue(result.get(), "TelegramApi.sendMessage should return true after 1 call " +
+                                     "and 2 retries");
+            verify(mockedTelegram, times(3)).sendMessage(anyLong(), anyString());
+        }
+        catch(TelegramSendMessageException ex)
+        {
+            fail("TelegramApi.sendMessage() should not throw an exception here");
+        }
+    }
+
+    @Test
+    @DisplayName("Send message retry fail test")
+    @SneakyThrows({TelegramAuthException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void sendMessageRetryFailTest()
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableFail = new CompletableFuture<>();
+        completableFail.complete(MessageSenderState.FAIL);
+
+        Telegram mockedTelegram = mock(Telegram.class);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+                .thenReturn(completableRetry) //  First call
+                .thenReturn(completableRetry) //  First retry
+                .thenReturn(completableRetry); // Second retry — fail
+
+        try
+        {
+            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            assertFalse(result.get(), "TelegramApi.sendMessage should return false after 1 call " +
+                                      "and 2 retries");
+            verify(mockedTelegram, times(3)).sendMessage(anyLong(), anyString());
+        }
+        catch(TelegramSendMessageException ex)
+        {
+            fail("TelegramApi.sendMessage() should not throw an exception here");
+        }
+    }
+
+    @Test
+    @DisplayName("Send message retry complete fail test")
+    @SneakyThrows({TelegramAuthException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void sendMessageRetryCompleteFailTest()
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableFail = new CompletableFuture<>();
+        completableFail.complete(MessageSenderState.FAIL);
+
+        Telegram mockedTelegram = mock(Telegram.class);
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+                .thenReturn(completableRetry) // First call
+                .thenReturn(completableFail); // First retry — fail
+
+        try
+        {
+            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            assertFalse(result.get(), "TelegramApi.sendMessage should return false after 1 call " +
+                                      "and 1 retry");
+            verify(mockedTelegram, times(2)).sendMessage(anyLong(), anyString());
+        }
+        catch(TelegramSendMessageException ex)
+        {
+            fail("TelegramApi.sendMessage() should not throw an exception here");
         }
     }
 

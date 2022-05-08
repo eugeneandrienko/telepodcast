@@ -65,6 +65,8 @@ public class TelePodcast
             {
                 logger.error("Telegram is not ready");
             }
+            telegram.sendMessage("TEST SUCCEED!");
+            Thread.sleep(15000);
         }
         catch(Exception ex)
         {
