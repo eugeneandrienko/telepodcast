@@ -28,13 +28,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Example class for TDLib usage from Java.
  */
+@SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
 public class Telegram implements AutoCloseable
 {
     private final int apiId;
     private final String apiHash;
     private final boolean debug;
 
-    private Logger logger = LoggerFactory.getLogger(Telegram.class);
+    private final Logger logger = LoggerFactory.getLogger(Telegram.class);
 
     private static Client client = null;
 
@@ -48,26 +49,15 @@ public class Telegram implements AutoCloseable
     private static final Condition gotAuthorization = authorizationLock.newCondition();
 
     private static final ConcurrentMap<Long, TdApi.User> users = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<Long, TdApi.BasicGroup> basicGroups = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<Long, TdApi.Supergroup> supergroups = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<Integer, TdApi.SecretChat> secretChats = new ConcurrentHashMap<>();
 
     private static final ConcurrentMap<Long, TdApi.Chat> chats = new ConcurrentHashMap<>();
     private static final NavigableSet<OrderedChat> mainChatList = new TreeSet<>();
     private static boolean haveFullMainChatList = false;
 
-    private static final ConcurrentMap<Long, TdApi.UserFullInfo> usersFullInfo = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<Long, TdApi.BasicGroupFullInfo> basicGroupsFullInfo = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<Long, TdApi.SupergroupFullInfo> supergroupsFullInfo = new ConcurrentHashMap<>();
-
-    private static final String newLine = System.getProperty("line.separator");
-    private static final String commandsLine = "Enter command (gcs - GetChats, gc <chatId> - GetChat, me - GetMe, sm <chatId> <message> - SendMessage, lo - LogOut, q - Quit): ";
-    private static volatile String currentPrompt = null;
-
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
 
-    public enum MessageSenderState {OK, FAIL, RETRY};
-    public enum MessageType {TEXT, AUDIO, VIDEO};
+    public enum MessageSenderState {OK, FAIL, RETRY}
+    public enum MessageType {TEXT, AUDIO, VIDEO}
 
     // TODO: use 1.8.0 static library
     // TODO: load library from JAR
@@ -102,6 +92,7 @@ public class Telegram implements AutoCloseable
         if(debug)
         {
             Client.execute(new TdApi.SetLogVerbosityLevel(4));
+            // TODO: set path to debug log outside
             TdApi.LogStreamFile logStreamFile = new TdApi.LogStreamFile(
                     "tdlib.log", 5 * 1024 * 1024 /* 5 Mb */, false);
             if(Client.execute(new TdApi.SetLogStream(logStreamFile)) instanceof TdApi.Error)
@@ -393,18 +384,6 @@ public class Telegram implements AutoCloseable
         return result;
     }
 
-    private static void print(String str)
-    {
-        if(currentPrompt != null)
-        {
-            System.out.println();
-        }
-        System.out.println(str);
-        if(currentPrompt != null)
-        {
-            System.out.print(currentPrompt);
-        }
-    }
 
     private static void setChatPositions(TdApi.Chat chat, TdApi.ChatPosition[] positions)
     {
@@ -445,6 +424,7 @@ public class Telegram implements AutoCloseable
         {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR:
                 TdApi.TdlibParameters parameters = new TdApi.TdlibParameters();
+                // TODO: set path to directory outside
                 parameters.databaseDirectory = "tdlib";
                 parameters.useMessageDatabase = true;
                 parameters.useChatInfoDatabase = true;
@@ -473,7 +453,7 @@ public class Telegram implements AutoCloseable
             case TdApi.AuthorizationStateWaitOtherDeviceConfirmation.CONSTRUCTOR:
             {
                 String link = ((TdApi.AuthorizationStateWaitOtherDeviceConfirmation)Telegram.authorizationState).link;
-                System.out.println("Please confirm this login link on another device: " + link);
+                System.out.println("\nPlease confirm this login link on another device: " + link);
                 break;
             }
             case TdApi.AuthorizationStateWaitCode.CONSTRUCTOR:
@@ -512,7 +492,7 @@ public class Telegram implements AutoCloseable
                 break;
             case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR:
                 haveAuthorization = false;
-                print("Logging out");
+                logger.info("Logging out from Telegram");
                 break;
             case TdApi.AuthorizationStateClosing.CONSTRUCTOR:
                 haveAuthorization = false;
@@ -537,28 +517,13 @@ public class Telegram implements AutoCloseable
                 }
                 break;
             default:
-                System.err.println(
-                        "Unsupported authorization state:" + newLine + Telegram.authorizationState);
+                logger.warn("Unsupported authorization state: {}", Telegram.authorizationState);
         }
-    }
-
-    private static long getChatId(String arg)
-    {
-        long chatId = 0;
-        try
-        {
-            chatId = Long.parseLong(arg);
-        }
-        catch(NumberFormatException ignored)
-        {
-        }
-        return chatId;
     }
 
     private static String promptString(String prompt)
     {
         System.out.print(prompt);
-        currentPrompt = prompt;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String str = "";
         try
@@ -569,7 +534,6 @@ public class Telegram implements AutoCloseable
         {
             e.printStackTrace();
         }
-        currentPrompt = null;
         return str;
     }
 
@@ -645,18 +609,6 @@ public class Telegram implements AutoCloseable
                     }
                     break;
                 }
-                case TdApi.UpdateBasicGroup.CONSTRUCTOR:
-                    TdApi.UpdateBasicGroup updateBasicGroup = (TdApi.UpdateBasicGroup)object;
-                    basicGroups.put(updateBasicGroup.basicGroup.id, updateBasicGroup.basicGroup);
-                    break;
-                case TdApi.UpdateSupergroup.CONSTRUCTOR:
-                    TdApi.UpdateSupergroup updateSupergroup = (TdApi.UpdateSupergroup)object;
-                    supergroups.put(updateSupergroup.supergroup.id, updateSupergroup.supergroup);
-                    break;
-                case TdApi.UpdateSecretChat.CONSTRUCTOR:
-                    TdApi.UpdateSecretChat updateSecretChat = (TdApi.UpdateSecretChat)object;
-                    secretChats.put(updateSecretChat.secretChat.id, updateSecretChat.secretChat);
-                    break;
 
                 case TdApi.UpdateNewChat.CONSTRUCTOR:
                 {
@@ -867,22 +819,8 @@ public class Telegram implements AutoCloseable
                     break;
                 }
 
-                case TdApi.UpdateUserFullInfo.CONSTRUCTOR:
-                    TdApi.UpdateUserFullInfo updateUserFullInfo = (TdApi.UpdateUserFullInfo)object;
-                    usersFullInfo.put(updateUserFullInfo.userId, updateUserFullInfo.userFullInfo);
-                    break;
-                case TdApi.UpdateBasicGroupFullInfo.CONSTRUCTOR:
-                    TdApi.UpdateBasicGroupFullInfo updateBasicGroupFullInfo = (TdApi.UpdateBasicGroupFullInfo)object;
-                    basicGroupsFullInfo.put(updateBasicGroupFullInfo.basicGroupId,
-                            updateBasicGroupFullInfo.basicGroupFullInfo);
-                    break;
-                case TdApi.UpdateSupergroupFullInfo.CONSTRUCTOR:
-                    TdApi.UpdateSupergroupFullInfo updateSupergroupFullInfo = (TdApi.UpdateSupergroupFullInfo)object;
-                    supergroupsFullInfo.put(updateSupergroupFullInfo.supergroupId,
-                            updateSupergroupFullInfo.supergroupFullInfo);
-                    break;
                 default:
-                    // print("Unsupported update:" + newLine + object);
+                     //logger.debug("Unsupported update: {}", object);
             }
         }
     }
@@ -895,14 +833,14 @@ public class Telegram implements AutoCloseable
             switch(object.getConstructor())
             {
                 case TdApi.Error.CONSTRUCTOR:
-                    System.err.println("Receive an error:" + newLine + object);
+                    logger.warn("Receive an error: {}", object);
                     onAuthorizationStateUpdated(null); // repeat last action
                     break;
                 case TdApi.Ok.CONSTRUCTOR:
-                    // result is already received through UpdateAuthorizationState, nothing to do
+                    // result already received through UpdateAuthorizationState, nothing to do
                     break;
                 default:
-                    System.err.println("Receive wrong response from TDLib:" + newLine + object);
+                    logger.warn("Receive wrong response from TDLib: {}", object);
             }
         }
     }
