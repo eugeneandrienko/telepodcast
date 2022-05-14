@@ -10,10 +10,7 @@ package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
-import java.io.BufferedReader;
-import java.io.IOError;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -70,6 +67,7 @@ public class Telegram implements AutoCloseable
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
 
     public enum MessageSenderState {OK, FAIL, RETRY};
+    public enum MessageType {TEXT, AUDIO, VIDEO};
 
     // TODO: use 1.8.0 static library
     // TODO: load library from JAR
@@ -291,11 +289,57 @@ public class Telegram implements AutoCloseable
         return result;
     }
 
-    public CompletableFuture<MessageSenderState> sendMessage(long chatId, String message)
+    public CompletableFuture<MessageSenderState> sendMessage(long chatId, MessageType messageType,
+            Object message)
     {
         CompletableFuture<MessageSenderState> result = new CompletableFuture<>();
-        TdApi.InputMessageContent content = new TdApi.InputMessageText(
-                new TdApi.FormattedText(message, null), false, true);
+
+        TdApi.InputMessageContent content;
+        switch(messageType)
+        {
+            case TEXT:
+                if(!(message instanceof String))
+                {
+                    logger.error("Got message type: {} but type of message is {}", messageType,
+                            message.getClass().getCanonicalName());
+                    result.complete(MessageSenderState.FAIL);
+                    return result;
+                }
+                content = new TdApi.InputMessageText(
+                        new TdApi.FormattedText((String)message, null),
+                        false, true);
+                break;
+            case AUDIO:
+                if(!(message instanceof File))
+                {
+                    logger.error("Got message type: {} but type of message is not a File: {}",
+                            messageType, message.getClass().getCanonicalName());
+                    result.complete(MessageSenderState.FAIL);
+                    return result;
+                }
+                File audio = (File)message;
+                content = new TdApi.InputMessageAudio(
+                        new TdApi.InputFileLocal(audio.getAbsolutePath()),
+                        null, 0, audio.getName(), null, null);
+                break;
+            case VIDEO:
+                if(!(message instanceof File))
+                {
+                    logger.error("Got message type: {} but type of message is not a File: {}",
+                            messageType, message.getClass().getCanonicalName());
+                    result.complete(MessageSenderState.FAIL);
+                    return result;
+                }
+                File video = (File)message;
+                content = new TdApi.InputMessageVideo(
+                        new TdApi.InputFileLocal(video.getAbsolutePath()),
+                        null, new int[]{}, 0, 0, 0, true, null, 0);
+                break;
+            default:
+                logger.error("Got unknown message type: {}", messageType);
+                result.complete(MessageSenderState.FAIL);
+                return result;
+        }
 
         Client.ResultHandler messageHandler = answer -> {
             if(!(answer instanceof TdApi.Message))
@@ -303,6 +347,7 @@ public class Telegram implements AutoCloseable
                 logger.error("Got unknown answer in message handler: {}", answer);
                 logger.error("Constructor: {}", answer.getConstructor());
                 result.complete(MessageSenderState.FAIL);
+                return;
             }
 
             TdApi.MessageSendingState state = ((TdApi.Message)answer).sendingState;
@@ -526,40 +571,6 @@ public class Telegram implements AutoCloseable
         }
         currentPrompt = null;
         return str;
-    }
-
-    private void getCommand()
-    {
-        String command = promptString(commandsLine);
-        String[] commands = command.split(" ", 2);
-        try
-        {
-            switch(commands[0])
-            {
-                case "gc":
-                    client.send(new TdApi.GetChat(getChatId(commands[1])), defaultHandler);
-                    break;
-                case "me":
-                    client.send(new TdApi.GetMe(), defaultHandler);
-                    break;
-                case "sm":
-                {
-                    String[] args = commands[1].split(" ", 2);
-                    sendMessage(getChatId(args[0]), args[1]);
-                    break;
-                }
-                case "lo":
-                    haveAuthorization = false;
-                    client.send(new TdApi.LogOut(), defaultHandler);
-                    break;
-                default:
-                    System.err.println("Unsupported command: " + command);
-            }
-        }
-        catch(ArrayIndexOutOfBoundsException e)
-        {
-            print("Not enough arguments");
-        }
     }
 
     private static class OrderedChat implements Comparable<OrderedChat>

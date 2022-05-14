@@ -4,6 +4,8 @@ import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
 import com.eugene_andrienko.telegram.impl.Telegram.MessageSenderState;
+import com.eugene_andrienko.telegram.impl.Telegram.MessageType;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +17,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.platform.commons.util.ReflectionUtils;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -234,23 +238,44 @@ public class TelegramApiTest
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
     @DisplayName("Send message test")
     @SneakyThrows({TelegramAuthException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void sendMessageTest()
+    void sendMessageTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
         completableOk.complete(MessageSenderState.OK);
 
         Telegram mockedTelegram = mock(Telegram.class);
         TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
-        when(mockedTelegram.sendMessage(anyLong(), anyString())).thenReturn(completableOk);
+        when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
+                .thenReturn(completableOk);
+
+        File mockedFile = mock(File.class);
+        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
 
         try
         {
-            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegramApi.sendMessage("TEST MSG");
+                    break;
+                case AUDIO:
+                    result = telegramApi.sendAudio(mockedFile);
+                    break;
+                case VIDEO:
+                    result = telegramApi.sendVideo(mockedFile);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
             assertTrue(result.get(), "Should get true value after sending message");
         }
         catch(TelegramSendMessageException ex)
@@ -259,23 +284,44 @@ public class TelegramApiTest
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
     @DisplayName("Send message fail test")
     @SneakyThrows({TelegramAuthException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void sendMessageFailTest()
+    void sendMessageFailTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableFail = new CompletableFuture<>();
         completableFail.complete(MessageSenderState.FAIL);
 
         Telegram mockedTelegram = mock(Telegram.class);
         TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
-        when(mockedTelegram.sendMessage(anyLong(), anyString())).thenReturn(completableFail);
+        when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
+                .thenReturn(completableFail);
+
+        File mockedFile = mock(File.class);
+        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
 
         try
         {
-            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegramApi.sendMessage("TEST MSG");
+                    break;
+                case AUDIO:
+                    result = telegramApi.sendAudio(mockedFile);
+                    break;
+                case VIDEO:
+                    result = telegramApi.sendVideo(mockedFile);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
             assertFalse(result.get(), "Should get false value after sending message with fail");
         }
         catch(TelegramSendMessageException ex)
@@ -284,12 +330,13 @@ public class TelegramApiTest
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
     @DisplayName("Send message retry test")
     @SneakyThrows({TelegramAuthException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void sendMessageRetryTest()
+    void sendMessageRetryTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
         completableRetry.complete(MessageSenderState.RETRY);
@@ -298,17 +345,36 @@ public class TelegramApiTest
 
         Telegram mockedTelegram = mock(Telegram.class);
         TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
-        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+        when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableRetry) // First retry
                 .thenReturn(completableOk); //   Second retry — should be successful
 
+        File mockedFile = mock(File.class);
+        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
+
         try
         {
-            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegramApi.sendMessage("TEST MSG");
+                    break;
+                case AUDIO:
+                    result = telegramApi.sendAudio(mockedFile);
+                    break;
+                case VIDEO:
+                    result = telegramApi.sendVideo(mockedFile);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
             assertTrue(result.get(), "TelegramApi.sendMessage should return true after 1 call " +
                                      "and 2 retries");
-            verify(mockedTelegram, times(3)).sendMessage(anyLong(), anyString());
+            verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any());
         }
         catch(TelegramSendMessageException ex)
         {
@@ -316,12 +382,13 @@ public class TelegramApiTest
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
     @DisplayName("Send message retry fail test")
     @SneakyThrows({TelegramAuthException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void sendMessageRetryFailTest()
+    void sendMessageRetryFailTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
         completableRetry.complete(MessageSenderState.RETRY);
@@ -330,17 +397,36 @@ public class TelegramApiTest
 
         Telegram mockedTelegram = mock(Telegram.class);
         TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
-        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+        when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
                 .thenReturn(completableRetry) //  First call
                 .thenReturn(completableRetry) //  First retry
                 .thenReturn(completableRetry); // Second retry — fail
 
+        File mockedFile = mock(File.class);
+        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
+
         try
         {
-            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegramApi.sendMessage("TEST MSG");
+                    break;
+                case AUDIO:
+                    result = telegramApi.sendAudio(mockedFile);
+                    break;
+                case VIDEO:
+                    result = telegramApi.sendVideo(mockedFile);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
             assertFalse(result.get(), "TelegramApi.sendMessage should return false after 1 call " +
                                       "and 2 retries");
-            verify(mockedTelegram, times(3)).sendMessage(anyLong(), anyString());
+            verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any());
         }
         catch(TelegramSendMessageException ex)
         {
@@ -348,12 +434,13 @@ public class TelegramApiTest
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
     @DisplayName("Send message retry complete fail test")
     @SneakyThrows({TelegramAuthException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void sendMessageRetryCompleteFailTest()
+    void sendMessageRetryCompleteFailTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
         completableRetry.complete(MessageSenderState.RETRY);
@@ -362,16 +449,35 @@ public class TelegramApiTest
 
         Telegram mockedTelegram = mock(Telegram.class);
         TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
-        when(mockedTelegram.sendMessage(anyLong(), anyString()))
+        when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableFail); // First retry — fail
 
+        File mockedFile = mock(File.class);
+        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
+
         try
         {
-            CompletableFuture<Boolean> result = telegramApi.sendMessage("TEST MSG");
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegramApi.sendMessage("TEST MSG");
+                    break;
+                case AUDIO:
+                    result = telegramApi.sendAudio(mockedFile);
+                    break;
+                case VIDEO:
+                    result = telegramApi.sendVideo(mockedFile);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
             assertFalse(result.get(), "TelegramApi.sendMessage should return false after 1 call " +
                                       "and 1 retry");
-            verify(mockedTelegram, times(2)).sendMessage(anyLong(), anyString());
+            verify(mockedTelegram, times(2)).sendMessage(anyLong(), eq(messageType), any());
         }
         catch(TelegramSendMessageException ex)
         {

@@ -4,6 +4,8 @@ import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramChatNotFoundException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
+import com.eugene_andrienko.telegram.impl.Telegram.MessageType;
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -200,22 +202,74 @@ public class TelegramApi implements AutoCloseable
     public CompletableFuture<Boolean> sendMessage(String message)
             throws TelegramSendMessageException
     {
-        return sendMessage(message, resendRetries);
+        CompletableFuture<Boolean> result = sendMessage(message, MessageType.TEXT, resendRetries);
+        result.whenCompleteAsync((res, ex) -> {
+            if(ex == null && res)
+            {
+                logger.debug("Message |{}| sent", message.substring(0,
+                        Math.min(message.length(), 80)));
+            }
+        });
+        return result;
     }
+
+    /**
+     * Sends audio to "Saved Messages" chat.
+     *
+     * @param audio Audio file to send
+     *
+     * @return {@code CompletableFuture} with {@code true} if audio sent and {@code false} if not.
+     *
+     * @throws TelegramSendMessageException Got unexpected error when sending the audio.
+     */
+    public CompletableFuture<Boolean> sendAudio(File audio) throws TelegramSendMessageException
+    {
+        CompletableFuture<Boolean> result = sendMessage(audio, MessageType.AUDIO, resendRetries);
+        result.whenCompleteAsync((res, ex) -> {
+            if(ex == null && res)
+            {
+                logger.info("Audio {} sent", audio.getName());
+            }
+        });
+        return result;
+    }
+
+    /**
+     * Sends video to "Saved Messages" chat.
+     *
+     * @param video Video file to send
+     *
+     * @return {@code CompletableFuture} with {@code true} if video sent and {@code false} if not.
+     *
+     * @throws TelegramSendMessageException Got unexpected error when sending the video.
+     */
+    public CompletableFuture<Boolean> sendVideo(File video) throws TelegramSendMessageException
+    {
+        CompletableFuture<Boolean> result = sendMessage(video, MessageType.VIDEO, resendRetries);
+        result.whenCompleteAsync((res, ex) -> {
+            if(ex == null && res)
+            {
+                logger.info("Video {} sent", video.getName());
+            }
+        });
+        return result;
+    }
+
 
     /**
      * Sends message to "Saved Messages" chat.
      *
-     * @param message   Message to send
-     * @param resendTry Count of resend tries. When count < 0 — all resend tries exhausted.
+     * @param message     Message to send
+     * @param messageType Message type
+     * @param resendTry   Count of resend tries. When count < 0 — all resend tries exhausted.
      *
      * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the message.
      */
     @SneakyThrows(InterruptedException.class)
-    private CompletableFuture<Boolean> sendMessage(String message, int resendTry)
-            throws TelegramSendMessageException
+    private CompletableFuture<Boolean> sendMessage(Object message, MessageType messageType,
+            int resendTry) throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         if(resendTry < 0)
@@ -225,8 +279,9 @@ public class TelegramApi implements AutoCloseable
             return result;
         }
 
-        CompletableFuture<Telegram.MessageSenderState> sendMessageResult =
-                telegram.sendMessage(savedMessagesId.get(), message);
+        CompletableFuture<Telegram.MessageSenderState> sendMessageResult = telegram.sendMessage(
+                savedMessagesId.get(), messageType, message);
+
         try
         {
             switch(sendMessageResult.get())
@@ -239,7 +294,7 @@ public class TelegramApi implements AutoCloseable
                     break;
                 case RETRY:
                     logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
-                    return sendMessage(message, --resendTry);
+                    return sendMessage(message, messageType, --resendTry);
             }
         }
         catch(ExecutionException ex)
