@@ -9,6 +9,7 @@
 package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import java.io.*;
 import java.util.NavigableSet;
@@ -16,6 +17,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -54,12 +56,13 @@ public class Telegram implements AutoCloseable
     private static final NavigableSet<OrderedChat> mainChatList = new TreeSet<>();
     private static boolean haveFullMainChatList = false;
 
+    private static final String TDLIB_VERSION = "1.8.0";
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
 
     public enum MessageSenderState {OK, FAIL, RETRY}
     public enum MessageType {TEXT, AUDIO, VIDEO}
 
-    // TODO: use 1.8.0 static library
+    // TODO: use static library
     // TODO: load library from JAR
     static
     {
@@ -86,7 +89,7 @@ public class Telegram implements AutoCloseable
         this.debug = debug;
     }
 
-    public CompletableFuture<Boolean> init()
+    public CompletableFuture<Boolean> init() throws TelegramInitException
     {
         // Setup TDLib logging:
         if(debug)
@@ -98,7 +101,7 @@ public class Telegram implements AutoCloseable
             if(Client.execute(new TdApi.SetLogStream(logStreamFile)) instanceof TdApi.Error)
             {
                 logger.error("Cannot SetLogStream(LogStreamFile(\"./tdlib.log\"))");
-                throw new IOError(new IOException("Failed to start TDLib debug log"));
+                throw new TelegramInitException("Failed to start TDLib debug log");
             }
         }
         else
@@ -108,13 +111,50 @@ public class Telegram implements AutoCloseable
                     new TdApi.SetLogStream(new TdApi.LogStreamEmpty())) instanceof TdApi.Error)
             {
                 logger.error("Cannot SetLogStream(LogStreamEmpty)");
-                throw new IOError(new IOException("Failed to setup TDLib logging"));
+                throw new TelegramInitException("Failed to setup TDLib logging");
             }
         }
 
         // Authorization:
         client = Client.create(new UpdateHandler(), null, null);
         logger.debug("Created client");
+
+        CompletableFuture<Boolean> versionCheck = new CompletableFuture<>();
+        client.send(new TdApi.GetOption("version"), answer -> {
+            if(answer instanceof TdApi.OptionValueString)
+            {
+                String version = ((TdApi.OptionValueString)answer).value;
+                if(!TDLIB_VERSION.equals(version))
+                {
+                    logger.error("Wrong TDLib version! Got: {}, need: {}", version, TDLIB_VERSION);
+                    versionCheck.complete(false);
+                }
+                else
+                {
+                    logger.debug("Got TDLib version: {}", version);
+                }
+                versionCheck.complete(true);
+            }
+            else
+            {
+                logger.error("Wrong type of answer to version request: {}",
+                        answer.getClass().getCanonicalName());
+                versionCheck.complete(false);
+            }
+        });
+
+        try
+        {
+            if(!versionCheck.get())
+            {
+                throw new TelegramInitException("Wrong TDLib version");
+            }
+        }
+        catch(InterruptedException | ExecutionException e)
+        {
+            throw new TelegramInitException(e);
+        }
+
         return CompletableFuture.supplyAsync(() -> {
             logger.debug("Waiting for authorization...");
             while(!haveAuthorization)

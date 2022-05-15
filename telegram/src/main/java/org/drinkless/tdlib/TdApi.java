@@ -9,7 +9,7 @@ public class TdApi
         public abstract int getConstructor();
     }
 
-    public abstract static class Function<R extends Object> extends Object
+    public abstract static class Function extends Object
     {
         public native String toString();
     }
@@ -28,56 +28,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1324495492;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AddedReaction extends Object
-    {
-        public String reaction;
-        public MessageSender senderId;
-
-        public AddedReaction()
-        {
-        }
-
-        public AddedReaction(String reaction, MessageSender senderId)
-        {
-            this.reaction = reaction;
-            this.senderId = senderId;
-        }
-
-        public static final int CONSTRUCTOR = 454543036;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AddedReactions extends Object
-    {
-        public int totalCount;
-        public AddedReaction[] reactions;
-        public String nextOffset;
-
-        public AddedReactions()
-        {
-        }
-
-        public AddedReactions(int totalCount, AddedReaction[] reactions, String nextOffset)
-        {
-            this.totalCount = totalCount;
-            this.reactions = reactions;
-            this.nextOffset = nextOffset;
-        }
-
-        public static final int CONSTRUCTOR = 226352304;
 
         @Override
         public int getConstructor()
@@ -225,70 +175,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 344216945;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AttachmentMenuBot extends Object
-    {
-        public long botUserId;
-        public String name;
-        public AttachmentMenuBotColor nameColor;
-        public File defaultIcon;
-        public File iosStaticIcon;
-        public File iosAnimatedIcon;
-        public File androidIcon;
-        public File macosIcon;
-        public AttachmentMenuBotColor iconColor;
-
-        public AttachmentMenuBot()
-        {
-        }
-
-        public AttachmentMenuBot(long botUserId, String name, AttachmentMenuBotColor nameColor,
-                File defaultIcon, File iosStaticIcon, File iosAnimatedIcon, File androidIcon,
-                File macosIcon, AttachmentMenuBotColor iconColor)
-        {
-            this.botUserId = botUserId;
-            this.name = name;
-            this.nameColor = nameColor;
-            this.defaultIcon = defaultIcon;
-            this.iosStaticIcon = iosStaticIcon;
-            this.iosAnimatedIcon = iosAnimatedIcon;
-            this.androidIcon = androidIcon;
-            this.macosIcon = macosIcon;
-            this.iconColor = iconColor;
-        }
-
-        public static final int CONSTRUCTOR = 1585626672;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AttachmentMenuBotColor extends Object
-    {
-        public int lightColor;
-        public int darkColor;
-
-        public AttachmentMenuBotColor()
-        {
-        }
-
-        public AttachmentMenuBotColor(int lightColor, int darkColor)
-        {
-            this.lightColor = lightColor;
-            this.darkColor = darkColor;
-        }
-
-        public static final int CONSTRUCTOR = 1680039612;
 
         @Override
         public int getConstructor()
@@ -751,28 +637,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -782099166;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AvailableReactions extends Object
-    {
-        public String[] reactions;
-
-        public AvailableReactions()
-        {
-        }
-
-        public AvailableReactions(String[] reactions)
-        {
-            this.reactions = reactions;
-        }
-
-        public static final int CONSTRUCTOR = -656871316;
 
         @Override
         public int getConstructor()
@@ -1277,64 +1141,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1741364468;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class BotInfo extends Object
-    {
-        public String shareText;
-        public String description;
-        public BotMenuButton menuButton;
-        public BotCommand[] commands;
-        public ChatAdministratorRights defaultGroupAdministratorRights;
-        public ChatAdministratorRights defaultChannelAdministratorRights;
-
-        public BotInfo()
-        {
-        }
-
-        public BotInfo(String shareText, String description, BotMenuButton menuButton,
-                BotCommand[] commands, ChatAdministratorRights defaultGroupAdministratorRights,
-                ChatAdministratorRights defaultChannelAdministratorRights)
-        {
-            this.shareText = shareText;
-            this.description = description;
-            this.menuButton = menuButton;
-            this.commands = commands;
-            this.defaultGroupAdministratorRights = defaultGroupAdministratorRights;
-            this.defaultChannelAdministratorRights = defaultChannelAdministratorRights;
-        }
-
-        public static final int CONSTRUCTOR = 1262833787;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class BotMenuButton extends Object
-    {
-        public String text;
-        public String url;
-
-        public BotMenuButton()
-        {
-        }
-
-        public BotMenuButton(String text, String url)
-        {
-            this.text = text;
-            this.url = url;
-        }
-
-        public static final int CONSTRUCTOR = -944407322;
 
         @Override
         public int getConstructor()
@@ -2087,9 +1893,7 @@ public class TdApi
         public long lastReadInboxMessageId;
         public long lastReadOutboxMessageId;
         public int unreadMentionCount;
-        public int unreadReactionCount;
         public ChatNotificationSettings notificationSettings;
-        public String[] availableReactions;
         public int messageTtl;
         public String themeName;
         public ChatActionBar actionBar;
@@ -2110,8 +1914,7 @@ public class TdApi
                 boolean canBeDeletedOnlyForSelf, boolean canBeDeletedForAllUsers,
                 boolean canBeReported, boolean defaultDisableNotification, int unreadCount,
                 long lastReadInboxMessageId, long lastReadOutboxMessageId, int unreadMentionCount,
-                int unreadReactionCount, ChatNotificationSettings notificationSettings,
-                String[] availableReactions, int messageTtl, String themeName,
+                ChatNotificationSettings notificationSettings, int messageTtl, String themeName,
                 ChatActionBar actionBar, VideoChat videoChat,
                 ChatJoinRequestsInfo pendingJoinRequests, long replyMarkupMessageId,
                 DraftMessage draftMessage, String clientData)
@@ -2136,9 +1939,7 @@ public class TdApi
             this.lastReadInboxMessageId = lastReadInboxMessageId;
             this.lastReadOutboxMessageId = lastReadOutboxMessageId;
             this.unreadMentionCount = unreadMentionCount;
-            this.unreadReactionCount = unreadReactionCount;
             this.notificationSettings = notificationSettings;
-            this.availableReactions = availableReactions;
             this.messageTtl = messageTtl;
             this.themeName = themeName;
             this.actionBar = actionBar;
@@ -2149,7 +1950,7 @@ public class TdApi
             this.clientData = clientData;
         }
 
-        public static final int CONSTRUCTOR = -1601123095;
+        public static final int CONSTRUCTOR = 1617921149;
 
         @Override
         public int getConstructor()
@@ -2604,51 +2405,6 @@ public class TdApi
         }
     }
 
-    public static class ChatAdministratorRights extends Object
-    {
-        public boolean canManageChat;
-        public boolean canChangeInfo;
-        public boolean canPostMessages;
-        public boolean canEditMessages;
-        public boolean canDeleteMessages;
-        public boolean canInviteUsers;
-        public boolean canRestrictMembers;
-        public boolean canPinMessages;
-        public boolean canPromoteMembers;
-        public boolean canManageVideoChats;
-        public boolean isAnonymous;
-
-        public ChatAdministratorRights()
-        {
-        }
-
-        public ChatAdministratorRights(boolean canManageChat, boolean canChangeInfo,
-                boolean canPostMessages, boolean canEditMessages, boolean canDeleteMessages,
-                boolean canInviteUsers, boolean canRestrictMembers, boolean canPinMessages,
-                boolean canPromoteMembers, boolean canManageVideoChats, boolean isAnonymous)
-        {
-            this.canManageChat = canManageChat;
-            this.canChangeInfo = canChangeInfo;
-            this.canPostMessages = canPostMessages;
-            this.canEditMessages = canEditMessages;
-            this.canDeleteMessages = canDeleteMessages;
-            this.canInviteUsers = canInviteUsers;
-            this.canRestrictMembers = canRestrictMembers;
-            this.canPinMessages = canPinMessages;
-            this.canPromoteMembers = canPromoteMembers;
-            this.canManageVideoChats = canManageVideoChats;
-            this.isAnonymous = isAnonymous;
-        }
-
-        public static final int CONSTRUCTOR = 1878886718;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class ChatAdministrators extends Object
     {
         public ChatAdministrator[] administrators;
@@ -2749,6 +2505,28 @@ public class TdApi
         }
     }
 
+    public static class ChatEventPollStopped extends ChatEventAction
+    {
+        public Message message;
+
+        public ChatEventPollStopped()
+        {
+        }
+
+        public ChatEventPollStopped(Message message)
+        {
+            this.message = message;
+        }
+
+        public static final int CONSTRUCTOR = 2009893861;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
     public static class ChatEventMessagePinned extends ChatEventAction
     {
         public Message message;
@@ -2785,28 +2563,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -376161513;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventPollStopped extends ChatEventAction
-    {
-        public Message message;
-
-        public ChatEventPollStopped()
-        {
-        }
-
-        public ChatEventPollStopped(Message message)
-        {
-            this.message = message;
-        }
-
-        public static final int CONSTRUCTOR = 2009893861;
 
         @Override
         public int getConstructor()
@@ -2877,6 +2633,22 @@ public class TdApi
         }
     }
 
+    public static class ChatEventMemberLeft extends ChatEventAction
+    {
+
+        public ChatEventMemberLeft()
+        {
+        }
+
+        public static final int CONSTRUCTOR = -948420593;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
     public static class ChatEventMemberInvited extends ChatEventAction
     {
         public long userId;
@@ -2893,22 +2665,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 953663433;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventMemberLeft extends ChatEventAction
-    {
-
-        public ChatEventMemberLeft()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -948420593;
 
         @Override
         public int getConstructor()
@@ -2971,119 +2727,22 @@ public class TdApi
         }
     }
 
-    public static class ChatEventAvailableReactionsChanged extends ChatEventAction
+    public static class ChatEventTitleChanged extends ChatEventAction
     {
-        public String[] oldAvailableReactions;
-        public String[] newAvailableReactions;
+        public String oldTitle;
+        public String newTitle;
 
-        public ChatEventAvailableReactionsChanged()
+        public ChatEventTitleChanged()
         {
         }
 
-        public ChatEventAvailableReactionsChanged(String[] oldAvailableReactions,
-                String[] newAvailableReactions)
+        public ChatEventTitleChanged(String oldTitle, String newTitle)
         {
-            this.oldAvailableReactions = oldAvailableReactions;
-            this.newAvailableReactions = newAvailableReactions;
+            this.oldTitle = oldTitle;
+            this.newTitle = newTitle;
         }
 
-        public static final int CONSTRUCTOR = 1401674536;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventDescriptionChanged extends ChatEventAction
-    {
-        public String oldDescription;
-        public String newDescription;
-
-        public ChatEventDescriptionChanged()
-        {
-        }
-
-        public ChatEventDescriptionChanged(String oldDescription, String newDescription)
-        {
-            this.oldDescription = oldDescription;
-            this.newDescription = newDescription;
-        }
-
-        public static final int CONSTRUCTOR = 39112478;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventLinkedChatChanged extends ChatEventAction
-    {
-        public long oldLinkedChatId;
-        public long newLinkedChatId;
-
-        public ChatEventLinkedChatChanged()
-        {
-        }
-
-        public ChatEventLinkedChatChanged(long oldLinkedChatId, long newLinkedChatId)
-        {
-            this.oldLinkedChatId = oldLinkedChatId;
-            this.newLinkedChatId = newLinkedChatId;
-        }
-
-        public static final int CONSTRUCTOR = 1797419439;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventLocationChanged extends ChatEventAction
-    {
-        public ChatLocation oldLocation;
-        public ChatLocation newLocation;
-
-        public ChatEventLocationChanged()
-        {
-        }
-
-        public ChatEventLocationChanged(ChatLocation oldLocation, ChatLocation newLocation)
-        {
-            this.oldLocation = oldLocation;
-            this.newLocation = newLocation;
-        }
-
-        public static final int CONSTRUCTOR = -405930674;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventMessageTtlChanged extends ChatEventAction
-    {
-        public int oldMessageTtl;
-        public int newMessageTtl;
-
-        public ChatEventMessageTtlChanged()
-        {
-        }
-
-        public ChatEventMessageTtlChanged(int oldMessageTtl, int newMessageTtl)
-        {
-            this.oldMessageTtl = oldMessageTtl;
-            this.newMessageTtl = newMessageTtl;
-        }
-
-        public static final int CONSTRUCTOR = 776386995;
+        public static final int CONSTRUCTOR = 1134103250;
 
         @Override
         public int getConstructor()
@@ -3117,94 +2776,22 @@ public class TdApi
         }
     }
 
-    public static class ChatEventPhotoChanged extends ChatEventAction
+    public static class ChatEventDescriptionChanged extends ChatEventAction
     {
-        public ChatPhoto oldPhoto;
-        public ChatPhoto newPhoto;
+        public String oldDescription;
+        public String newDescription;
 
-        public ChatEventPhotoChanged()
+        public ChatEventDescriptionChanged()
         {
         }
 
-        public ChatEventPhotoChanged(ChatPhoto oldPhoto, ChatPhoto newPhoto)
+        public ChatEventDescriptionChanged(String oldDescription, String newDescription)
         {
-            this.oldPhoto = oldPhoto;
-            this.newPhoto = newPhoto;
+            this.oldDescription = oldDescription;
+            this.newDescription = newDescription;
         }
 
-        public static final int CONSTRUCTOR = -811572541;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventSlowModeDelayChanged extends ChatEventAction
-    {
-        public int oldSlowModeDelay;
-        public int newSlowModeDelay;
-
-        public ChatEventSlowModeDelayChanged()
-        {
-        }
-
-        public ChatEventSlowModeDelayChanged(int oldSlowModeDelay, int newSlowModeDelay)
-        {
-            this.oldSlowModeDelay = oldSlowModeDelay;
-            this.newSlowModeDelay = newSlowModeDelay;
-        }
-
-        public static final int CONSTRUCTOR = -1653195765;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventStickerSetChanged extends ChatEventAction
-    {
-        public long oldStickerSetId;
-        public long newStickerSetId;
-
-        public ChatEventStickerSetChanged()
-        {
-        }
-
-        public ChatEventStickerSetChanged(long oldStickerSetId, long newStickerSetId)
-        {
-            this.oldStickerSetId = oldStickerSetId;
-            this.newStickerSetId = newStickerSetId;
-        }
-
-        public static final int CONSTRUCTOR = -1243130481;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatEventTitleChanged extends ChatEventAction
-    {
-        public String oldTitle;
-        public String newTitle;
-
-        public ChatEventTitleChanged()
-        {
-        }
-
-        public ChatEventTitleChanged(String oldTitle, String newTitle)
-        {
-            this.oldTitle = oldTitle;
-            this.newTitle = newTitle;
-        }
-
-        public static final int CONSTRUCTOR = 1134103250;
+        public static final int CONSTRUCTOR = 39112478;
 
         @Override
         public int getConstructor()
@@ -3237,20 +2824,22 @@ public class TdApi
         }
     }
 
-    public static class ChatEventHasProtectedContentToggled extends ChatEventAction
+    public static class ChatEventPhotoChanged extends ChatEventAction
     {
-        public boolean hasProtectedContent;
+        public ChatPhoto oldPhoto;
+        public ChatPhoto newPhoto;
 
-        public ChatEventHasProtectedContentToggled()
+        public ChatEventPhotoChanged()
         {
         }
 
-        public ChatEventHasProtectedContentToggled(boolean hasProtectedContent)
+        public ChatEventPhotoChanged(ChatPhoto oldPhoto, ChatPhoto newPhoto)
         {
-            this.hasProtectedContent = hasProtectedContent;
+            this.oldPhoto = oldPhoto;
+            this.newPhoto = newPhoto;
         }
 
-        public static final int CONSTRUCTOR = -184270335;
+        public static final int CONSTRUCTOR = -811572541;
 
         @Override
         public int getConstructor()
@@ -3281,20 +2870,70 @@ public class TdApi
         }
     }
 
-    public static class ChatEventIsAllHistoryAvailableToggled extends ChatEventAction
+    public static class ChatEventLinkedChatChanged extends ChatEventAction
     {
-        public boolean isAllHistoryAvailable;
+        public long oldLinkedChatId;
+        public long newLinkedChatId;
 
-        public ChatEventIsAllHistoryAvailableToggled()
+        public ChatEventLinkedChatChanged()
         {
         }
 
-        public ChatEventIsAllHistoryAvailableToggled(boolean isAllHistoryAvailable)
+        public ChatEventLinkedChatChanged(long oldLinkedChatId, long newLinkedChatId)
         {
-            this.isAllHistoryAvailable = isAllHistoryAvailable;
+            this.oldLinkedChatId = oldLinkedChatId;
+            this.newLinkedChatId = newLinkedChatId;
         }
 
-        public static final int CONSTRUCTOR = -1599063019;
+        public static final int CONSTRUCTOR = 1797419439;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventSlowModeDelayChanged extends ChatEventAction
+    {
+        public int oldSlowModeDelay;
+        public int newSlowModeDelay;
+
+        public ChatEventSlowModeDelayChanged()
+        {
+        }
+
+        public ChatEventSlowModeDelayChanged(int oldSlowModeDelay, int newSlowModeDelay)
+        {
+            this.oldSlowModeDelay = oldSlowModeDelay;
+            this.newSlowModeDelay = newSlowModeDelay;
+        }
+
+        public static final int CONSTRUCTOR = -1653195765;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventMessageTtlChanged extends ChatEventAction
+    {
+        public int oldMessageTtl;
+        public int newMessageTtl;
+
+        public ChatEventMessageTtlChanged()
+        {
+        }
+
+        public ChatEventMessageTtlChanged(int oldMessageTtl, int newMessageTtl)
+        {
+            this.oldMessageTtl = oldMessageTtl;
+            this.newMessageTtl = newMessageTtl;
+        }
+
+        public static final int CONSTRUCTOR = 776386995;
 
         @Override
         public int getConstructor()
@@ -3317,6 +2956,98 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -1313265634;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventHasProtectedContentToggled extends ChatEventAction
+    {
+        public boolean hasProtectedContent;
+
+        public ChatEventHasProtectedContentToggled()
+        {
+        }
+
+        public ChatEventHasProtectedContentToggled(boolean hasProtectedContent)
+        {
+            this.hasProtectedContent = hasProtectedContent;
+        }
+
+        public static final int CONSTRUCTOR = -184270335;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventStickerSetChanged extends ChatEventAction
+    {
+        public long oldStickerSetId;
+        public long newStickerSetId;
+
+        public ChatEventStickerSetChanged()
+        {
+        }
+
+        public ChatEventStickerSetChanged(long oldStickerSetId, long newStickerSetId)
+        {
+            this.oldStickerSetId = oldStickerSetId;
+            this.newStickerSetId = newStickerSetId;
+        }
+
+        public static final int CONSTRUCTOR = -1243130481;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventLocationChanged extends ChatEventAction
+    {
+        public ChatLocation oldLocation;
+        public ChatLocation newLocation;
+
+        public ChatEventLocationChanged()
+        {
+        }
+
+        public ChatEventLocationChanged(ChatLocation oldLocation, ChatLocation newLocation)
+        {
+            this.oldLocation = oldLocation;
+            this.newLocation = newLocation;
+        }
+
+        public static final int CONSTRUCTOR = -405930674;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventIsAllHistoryAvailableToggled extends ChatEventAction
+    {
+        public boolean isAllHistoryAvailable;
+
+        public ChatEventIsAllHistoryAvailableToggled()
+        {
+        }
+
+        public ChatEventIsAllHistoryAvailableToggled(boolean isAllHistoryAvailable)
+        {
+            this.isAllHistoryAvailable = isAllHistoryAvailable;
+        }
+
+        public static final int CONSTRUCTOR = -1599063019;
 
         @Override
         public int getConstructor()
@@ -3437,28 +3168,6 @@ public class TdApi
         }
     }
 
-    public static class ChatEventVideoChatMuteNewParticipantsToggled extends ChatEventAction
-    {
-        public boolean muteNewParticipants;
-
-        public ChatEventVideoChatMuteNewParticipantsToggled()
-        {
-        }
-
-        public ChatEventVideoChatMuteNewParticipantsToggled(boolean muteNewParticipants)
-        {
-            this.muteNewParticipants = muteNewParticipants;
-        }
-
-        public static final int CONSTRUCTOR = -126547970;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class ChatEventVideoChatParticipantIsMutedToggled extends ChatEventAction
     {
         public MessageSender participantId;
@@ -3501,6 +3210,28 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1131385534;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ChatEventVideoChatMuteNewParticipantsToggled extends ChatEventAction
+    {
+        public boolean muteNewParticipants;
+
+        public ChatEventVideoChatMuteNewParticipantsToggled()
+        {
+        }
+
+        public ChatEventVideoChatMuteNewParticipantsToggled(boolean muteNewParticipants)
+        {
+            this.muteNewParticipants = muteNewParticipants;
+        }
+
+        public static final int CONSTRUCTOR = -126547970;
 
         @Override
         public int getConstructor()
@@ -4107,21 +3838,44 @@ public class TdApi
     {
         public String customTitle;
         public boolean canBeEdited;
-        public ChatAdministratorRights rights;
+        public boolean canManageChat;
+        public boolean canChangeInfo;
+        public boolean canPostMessages;
+        public boolean canEditMessages;
+        public boolean canDeleteMessages;
+        public boolean canInviteUsers;
+        public boolean canRestrictMembers;
+        public boolean canPinMessages;
+        public boolean canPromoteMembers;
+        public boolean canManageVideoChats;
+        public boolean isAnonymous;
 
         public ChatMemberStatusAdministrator()
         {
         }
 
         public ChatMemberStatusAdministrator(String customTitle, boolean canBeEdited,
-                ChatAdministratorRights rights)
+                boolean canManageChat, boolean canChangeInfo, boolean canPostMessages,
+                boolean canEditMessages, boolean canDeleteMessages, boolean canInviteUsers,
+                boolean canRestrictMembers, boolean canPinMessages, boolean canPromoteMembers,
+                boolean canManageVideoChats, boolean isAnonymous)
         {
             this.customTitle = customTitle;
             this.canBeEdited = canBeEdited;
-            this.rights = rights;
+            this.canManageChat = canManageChat;
+            this.canChangeInfo = canChangeInfo;
+            this.canPostMessages = canPostMessages;
+            this.canEditMessages = canEditMessages;
+            this.canDeleteMessages = canDeleteMessages;
+            this.canInviteUsers = canInviteUsers;
+            this.canRestrictMembers = canRestrictMembers;
+            this.canPinMessages = canPinMessages;
+            this.canPromoteMembers = canPromoteMembers;
+            this.canManageVideoChats = canManageVideoChats;
+            this.isAnonymous = isAnonymous;
         }
 
-        public static final int CONSTRUCTOR = -70024163;
+        public static final int CONSTRUCTOR = 82243562;
 
         @Override
         public int getConstructor()
@@ -4386,7 +4140,7 @@ public class TdApi
         public boolean useDefaultMuteFor;
         public int muteFor;
         public boolean useDefaultSound;
-        public long soundId;
+        public String sound;
         public boolean useDefaultShowPreview;
         public boolean showPreview;
         public boolean useDefaultDisablePinnedMessageNotifications;
@@ -4399,7 +4153,7 @@ public class TdApi
         }
 
         public ChatNotificationSettings(boolean useDefaultMuteFor, int muteFor,
-                boolean useDefaultSound, long soundId, boolean useDefaultShowPreview,
+                boolean useDefaultSound, String sound, boolean useDefaultShowPreview,
                 boolean showPreview, boolean useDefaultDisablePinnedMessageNotifications,
                 boolean disablePinnedMessageNotifications,
                 boolean useDefaultDisableMentionNotifications, boolean disableMentionNotifications)
@@ -4407,7 +4161,7 @@ public class TdApi
             this.useDefaultMuteFor = useDefaultMuteFor;
             this.muteFor = muteFor;
             this.useDefaultSound = useDefaultSound;
-            this.soundId = soundId;
+            this.sound = sound;
             this.useDefaultShowPreview = useDefaultShowPreview;
             this.showPreview = showPreview;
             this.useDefaultDisablePinnedMessageNotifications = useDefaultDisablePinnedMessageNotifications;
@@ -4416,7 +4170,7 @@ public class TdApi
             this.disableMentionNotifications = disableMentionNotifications;
         }
 
-        public static final int CONSTRUCTOR = 944322400;
+        public static final int CONSTRUCTOR = 1503183218;
 
         @Override
         public int getConstructor()
@@ -4683,38 +4437,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -1713230446;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatReportReasonIllegalDrugs extends ChatReportReason
-    {
-
-        public ChatReportReasonIllegalDrugs()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -844539307;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ChatReportReasonPersonalDetails extends ChatReportReason
-    {
-
-        public ChatReportReasonPersonalDetails()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 1121159029;
 
         @Override
         public int getConstructor()
@@ -6079,32 +5801,6 @@ public class TdApi
         }
     }
 
-    public static class DownloadedFileCounts extends Object
-    {
-        public int activeCount;
-        public int pausedCount;
-        public int completedCount;
-
-        public DownloadedFileCounts()
-        {
-        }
-
-        public DownloadedFileCounts(int activeCount, int pausedCount, int completedCount)
-        {
-            this.activeCount = activeCount;
-            this.pausedCount = pausedCount;
-            this.completedCount = completedCount;
-        }
-
-        public static final int CONSTRUCTOR = -1973999550;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class DraftMessage extends Object
     {
         public long replyToMessageId;
@@ -6297,37 +5993,6 @@ public class TdApi
         }
     }
 
-    public static class FileDownload extends Object
-    {
-        public int fileId;
-        public Message message;
-        public int addDate;
-        public int completeDate;
-        public boolean isPaused;
-
-        public FileDownload()
-        {
-        }
-
-        public FileDownload(int fileId, Message message, int addDate, int completeDate,
-                boolean isPaused)
-        {
-            this.fileId = fileId;
-            this.message = message;
-            this.addDate = addDate;
-            this.completeDate = completeDate;
-            this.isPaused = isPaused;
-        }
-
-        public static final int CONSTRUCTOR = -2092100780;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class FilePart extends Object
     {
         public byte[] data;
@@ -6410,22 +6075,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -564722929;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class FileTypeNotificationSound extends FileType
-    {
-
-        public FileTypeNotificationSound()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -1020289271;
 
         @Override
         public int getConstructor()
@@ -6650,33 +6299,6 @@ public class TdApi
         }
     }
 
-    public static class FoundFileDownloads extends Object
-    {
-        public DownloadedFileCounts totalCounts;
-        public FileDownload[] files;
-        public String nextOffset;
-
-        public FoundFileDownloads()
-        {
-        }
-
-        public FoundFileDownloads(DownloadedFileCounts totalCounts, FileDownload[] files,
-                String nextOffset)
-        {
-            this.totalCounts = totalCounts;
-            this.files = files;
-            this.nextOffset = nextOffset;
-        }
-
-        public static final int CONSTRUCTOR = 1395890392;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class FoundMessages extends Object
     {
         public int totalCount;
@@ -6793,12 +6415,10 @@ public class TdApi
         public int scheduledStartDate;
         public boolean enabledStartNotification;
         public boolean isActive;
-        public boolean isRtmpStream;
         public boolean isJoined;
         public boolean needRejoin;
         public boolean canBeManaged;
         public int participantCount;
-        public boolean hasHiddenListeners;
         public boolean loadedAllParticipants;
         public GroupCallRecentSpeaker[] recentSpeakers;
         public boolean isMyVideoEnabled;
@@ -6815,25 +6435,22 @@ public class TdApi
         }
 
         public GroupCall(int id, String title, int scheduledStartDate,
-                boolean enabledStartNotification, boolean isActive, boolean isRtmpStream,
-                boolean isJoined, boolean needRejoin, boolean canBeManaged, int participantCount,
-                boolean hasHiddenListeners, boolean loadedAllParticipants,
-                GroupCallRecentSpeaker[] recentSpeakers, boolean isMyVideoEnabled,
-                boolean isMyVideoPaused, boolean canEnableVideo, boolean muteNewParticipants,
-                boolean canToggleMuteNewParticipants, int recordDuration, boolean isVideoRecorded,
-                int duration)
+                boolean enabledStartNotification, boolean isActive, boolean isJoined,
+                boolean needRejoin, boolean canBeManaged, int participantCount,
+                boolean loadedAllParticipants, GroupCallRecentSpeaker[] recentSpeakers,
+                boolean isMyVideoEnabled, boolean isMyVideoPaused, boolean canEnableVideo,
+                boolean muteNewParticipants, boolean canToggleMuteNewParticipants,
+                int recordDuration, boolean isVideoRecorded, int duration)
         {
             this.id = id;
             this.title = title;
             this.scheduledStartDate = scheduledStartDate;
             this.enabledStartNotification = enabledStartNotification;
             this.isActive = isActive;
-            this.isRtmpStream = isRtmpStream;
             this.isJoined = isJoined;
             this.needRejoin = needRejoin;
             this.canBeManaged = canBeManaged;
             this.participantCount = participantCount;
-            this.hasHiddenListeners = hasHiddenListeners;
             this.loadedAllParticipants = loadedAllParticipants;
             this.recentSpeakers = recentSpeakers;
             this.isMyVideoEnabled = isMyVideoEnabled;
@@ -6846,7 +6463,7 @@ public class TdApi
             this.duration = duration;
         }
 
-        public static final int CONSTRUCTOR = -123443355;
+        public static final int CONSTRUCTOR = 1548892209;
 
         @Override
         public int getConstructor()
@@ -6983,54 +6600,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1819519436;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GroupCallStream extends Object
-    {
-        public int channelId;
-        public int scale;
-        public long timeOffset;
-
-        public GroupCallStream()
-        {
-        }
-
-        public GroupCallStream(int channelId, int scale, long timeOffset)
-        {
-            this.channelId = channelId;
-            this.scale = scale;
-            this.timeOffset = timeOffset;
-        }
-
-        public static final int CONSTRUCTOR = -264564795;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GroupCallStreams extends Object
-    {
-        public GroupCallStream[] streams;
-
-        public GroupCallStreams()
-        {
-        }
-
-        public GroupCallStreams(GroupCallStream[] streams)
-        {
-            this.streams = streams;
-        }
-
-        public static final int CONSTRUCTOR = -1032959578;
 
         @Override
         public int getConstructor()
@@ -7284,28 +6853,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -1203413081;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class InlineKeyboardButtonTypeWebApp extends InlineKeyboardButtonType
-    {
-        public String url;
-
-        public InlineKeyboardButtonTypeWebApp()
-        {
-        }
-
-        public InlineKeyboardButtonTypeWebApp(String url)
-        {
-            this.url = url;
-        }
-
-        public static final int CONSTRUCTOR = -1767471672;
 
         @Override
         public int getConstructor()
@@ -9676,24 +9223,52 @@ public class TdApi
         }
     }
 
-    public static class InputSticker extends Object
+    public abstract static class InputSticker extends Object
+    {
+    }
+
+    public static class InputStickerStatic extends InputSticker
     {
         public InputFile sticker;
         public String emojis;
-        public StickerType type;
+        public MaskPosition maskPosition;
 
-        public InputSticker()
+        public InputStickerStatic()
         {
         }
 
-        public InputSticker(InputFile sticker, String emojis, StickerType type)
+        public InputStickerStatic(InputFile sticker, String emojis, MaskPosition maskPosition)
         {
             this.sticker = sticker;
             this.emojis = emojis;
-            this.type = type;
+            this.maskPosition = maskPosition;
         }
 
-        public static final int CONSTRUCTOR = 878376494;
+        public static final int CONSTRUCTOR = 1409680603;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class InputStickerAnimated extends InputSticker
+    {
+        public InputFile sticker;
+        public String emojis;
+
+        public InputStickerAnimated()
+        {
+        }
+
+        public InputStickerAnimated(InputFile sticker, String emojis)
+        {
+            this.sticker = sticker;
+            this.emojis = emojis;
+        }
+
+        public static final int CONSTRUCTOR = -1127265952;
 
         @Override
         public int getConstructor()
@@ -9740,33 +9315,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1886108589;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class InternalLinkTypeAttachmentMenuBot extends InternalLinkType
-    {
-        public InternalLinkType chatLink;
-        public String botUsername;
-        public String url;
-
-        public InternalLinkTypeAttachmentMenuBot()
-        {
-        }
-
-        public InternalLinkTypeAttachmentMenuBot(InternalLinkType chatLink, String botUsername,
-                String url)
-        {
-            this.chatLink = chatLink;
-            this.botUsername = botUsername;
-            this.url = url;
-        }
-
-        public static final int CONSTRUCTOR = 1670586452;
 
         @Override
         public int getConstructor()
@@ -9847,46 +9395,18 @@ public class TdApi
     {
         public String botUsername;
         public String startParameter;
-        public ChatAdministratorRights administratorRights;
 
         public InternalLinkTypeBotStartInGroup()
         {
         }
 
-        public InternalLinkTypeBotStartInGroup(String botUsername, String startParameter,
-                ChatAdministratorRights administratorRights)
+        public InternalLinkTypeBotStartInGroup(String botUsername, String startParameter)
         {
             this.botUsername = botUsername;
             this.startParameter = startParameter;
-            this.administratorRights = administratorRights;
         }
 
-        public static final int CONSTRUCTOR = -905081650;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class InternalLinkTypeBotAddToChannel extends InternalLinkType
-    {
-        public String botUsername;
-        public ChatAdministratorRights administratorRights;
-
-        public InternalLinkTypeBotAddToChannel()
-        {
-        }
-
-        public InternalLinkTypeBotAddToChannel(String botUsername,
-                ChatAdministratorRights administratorRights)
-        {
-            this.botUsername = botUsername;
-            this.administratorRights = administratorRights;
-        }
-
-        public static final int CONSTRUCTOR = 1401602752;
+        public static final int CONSTRUCTOR = -1040096100;
 
         @Override
         public int getConstructor()
@@ -9995,22 +9515,6 @@ public class TdApi
         }
     }
 
-    public static class InternalLinkTypeLanguageSettings extends InternalLinkType
-    {
-
-        public InternalLinkTypeLanguageSettings()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -1340479770;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class InternalLinkTypeMessage extends InternalLinkType
     {
         public String url;
@@ -10104,22 +9608,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1757375254;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class InternalLinkTypePrivacyAndSecuritySettings extends InternalLinkType
-    {
-
-        public InternalLinkTypePrivacyAndSecuritySettings()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -1386255665;
 
         @Override
         public int getConstructor()
@@ -10298,28 +9786,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -566649079;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class InternalLinkTypeUserPhoneNumber extends InternalLinkType
-    {
-        public String phoneNumber;
-
-        public InternalLinkTypeUserPhoneNumber()
-        {
-        }
-
-        public InternalLinkTypeUserPhoneNumber(String phoneNumber)
-        {
-            this.phoneNumber = phoneNumber;
-        }
-
-        public static final int CONSTRUCTOR = -1955751319;
 
         @Override
         public int getConstructor()
@@ -10649,28 +10115,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1902435512;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class KeyboardButtonTypeWebApp extends KeyboardButtonType
-    {
-        public String url;
-
-        public KeyboardButtonTypeWebApp()
-        {
-        }
-
-        public KeyboardButtonTypeWebApp(String url)
-        {
-            this.url = url;
-        }
-
-        public static final int CONSTRUCTOR = 1892220770;
 
         @Override
         public int getConstructor()
@@ -11232,7 +10676,6 @@ public class TdApi
         public boolean canBeSaved;
         public boolean canBeDeletedOnlyForSelf;
         public boolean canBeDeletedForAllUsers;
-        public boolean canGetAddedReactions;
         public boolean canGetStatistics;
         public boolean canGetMessageThread;
         public boolean canGetViewers;
@@ -11244,7 +10687,6 @@ public class TdApi
         public int editDate;
         public MessageForwardInfo forwardInfo;
         public MessageInteractionInfo interactionInfo;
-        public UnreadReaction[] unreadReactions;
         public long replyInChatId;
         public long replyToMessageId;
         public long messageThreadId;
@@ -11265,15 +10707,14 @@ public class TdApi
                 MessageSendingState sendingState, MessageSchedulingState schedulingState,
                 boolean isOutgoing, boolean isPinned, boolean canBeEdited, boolean canBeForwarded,
                 boolean canBeSaved, boolean canBeDeletedOnlyForSelf,
-                boolean canBeDeletedForAllUsers, boolean canGetAddedReactions,
-                boolean canGetStatistics, boolean canGetMessageThread, boolean canGetViewers,
+                boolean canBeDeletedForAllUsers, boolean canGetStatistics,
+                boolean canGetMessageThread, boolean canGetViewers,
                 boolean canGetMediaTimestampLinks, boolean hasTimestampedMedia,
                 boolean isChannelPost, boolean containsUnreadMention, int date, int editDate,
                 MessageForwardInfo forwardInfo, MessageInteractionInfo interactionInfo,
-                UnreadReaction[] unreadReactions, long replyInChatId, long replyToMessageId,
-                long messageThreadId, int ttl, double ttlExpiresIn, long viaBotUserId,
-                String authorSignature, long mediaAlbumId, String restrictionReason,
-                MessageContent content, ReplyMarkup replyMarkup)
+                long replyInChatId, long replyToMessageId, long messageThreadId, int ttl,
+                double ttlExpiresIn, long viaBotUserId, String authorSignature, long mediaAlbumId,
+                String restrictionReason, MessageContent content, ReplyMarkup replyMarkup)
         {
             this.id = id;
             this.senderId = senderId;
@@ -11287,7 +10728,6 @@ public class TdApi
             this.canBeSaved = canBeSaved;
             this.canBeDeletedOnlyForSelf = canBeDeletedOnlyForSelf;
             this.canBeDeletedForAllUsers = canBeDeletedForAllUsers;
-            this.canGetAddedReactions = canGetAddedReactions;
             this.canGetStatistics = canGetStatistics;
             this.canGetMessageThread = canGetMessageThread;
             this.canGetViewers = canGetViewers;
@@ -11299,7 +10739,6 @@ public class TdApi
             this.editDate = editDate;
             this.forwardInfo = forwardInfo;
             this.interactionInfo = interactionInfo;
-            this.unreadReactions = unreadReactions;
             this.replyInChatId = replyInChatId;
             this.replyToMessageId = replyToMessageId;
             this.messageThreadId = messageThreadId;
@@ -11313,7 +10752,7 @@ public class TdApi
             this.replyMarkup = replyMarkup;
         }
 
-        public static final int CONSTRUCTOR = 1435961258;
+        public static final int CONSTRUCTOR = -961280585;
 
         @Override
         public int getConstructor()
@@ -12423,52 +11862,6 @@ public class TdApi
         }
     }
 
-    public static class MessageWebAppDataSent extends MessageContent
-    {
-        public String buttonText;
-
-        public MessageWebAppDataSent()
-        {
-        }
-
-        public MessageWebAppDataSent(String buttonText)
-        {
-            this.buttonText = buttonText;
-        }
-
-        public static final int CONSTRUCTOR = -83674862;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class MessageWebAppDataReceived extends MessageContent
-    {
-        public String buttonText;
-        public String data;
-
-        public MessageWebAppDataReceived()
-        {
-        }
-
-        public MessageWebAppDataReceived(String buttonText, String data)
-        {
-            this.buttonText = buttonText;
-            this.data = data;
-        }
-
-        public static final int CONSTRUCTOR = -8578539;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class MessagePassportDataSent extends MessageContent
     {
         public PassportElementType[] types;
@@ -12806,22 +12199,19 @@ public class TdApi
         public int viewCount;
         public int forwardCount;
         public MessageReplyInfo replyInfo;
-        public MessageReaction[] reactions;
 
         public MessageInteractionInfo()
         {
         }
 
-        public MessageInteractionInfo(int viewCount, int forwardCount, MessageReplyInfo replyInfo,
-                MessageReaction[] reactions)
+        public MessageInteractionInfo(int viewCount, int forwardCount, MessageReplyInfo replyInfo)
         {
             this.viewCount = viewCount;
             this.forwardCount = forwardCount;
             this.replyInfo = replyInfo;
-            this.reactions = reactions;
         }
 
-        public static final int CONSTRUCTOR = -574858485;
+        public static final int CONSTRUCTOR = -620714966;
 
         @Override
         public int getConstructor()
@@ -12937,35 +12327,6 @@ public class TdApi
         }
     }
 
-    public static class MessageReaction extends Object
-    {
-        public String reaction;
-        public int totalCount;
-        public boolean isChosen;
-        public MessageSender[] recentSenderIds;
-
-        public MessageReaction()
-        {
-        }
-
-        public MessageReaction(String reaction, int totalCount, boolean isChosen,
-                MessageSender[] recentSenderIds)
-        {
-            this.reaction = reaction;
-            this.totalCount = totalCount;
-            this.isChosen = isChosen;
-            this.recentSenderIds = recentSenderIds;
-        }
-
-        public static final int CONSTRUCTOR = -1168486082;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class MessageReplyInfo extends Object
     {
         public int replyCount;
@@ -13043,7 +12404,6 @@ public class TdApi
     {
         public boolean disableNotification;
         public boolean fromBackground;
-        public boolean protectContent;
         public MessageSchedulingState schedulingState;
 
         public MessageSendOptions()
@@ -13051,15 +12411,14 @@ public class TdApi
         }
 
         public MessageSendOptions(boolean disableNotification, boolean fromBackground,
-                boolean protectContent, MessageSchedulingState schedulingState)
+                MessageSchedulingState schedulingState)
         {
             this.disableNotification = disableNotification;
             this.fromBackground = fromBackground;
-            this.protectContent = protectContent;
             this.schedulingState = schedulingState;
         }
 
-        public static final int CONSTRUCTOR = -871066572;
+        public static final int CONSTRUCTOR = 914544314;
 
         @Override
         public int getConstructor()
@@ -13470,22 +12829,22 @@ public class TdApi
     {
         public int id;
         public int date;
-        public long soundId;
+        public boolean isSilent;
         public NotificationType type;
 
         public Notification()
         {
         }
 
-        public Notification(int id, int date, long soundId, NotificationType type)
+        public Notification(int id, int date, boolean isSilent, NotificationType type)
         {
             this.id = id;
             this.date = date;
-            this.soundId = soundId;
+            this.isSilent = isSilent;
             this.type = type;
         }
 
-        public static final int CONSTRUCTOR = -2114315370;
+        public static final int CONSTRUCTOR = 788743120;
 
         @Override
         public int getConstructor()
@@ -13637,61 +12996,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 548013448;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class NotificationSound extends Object
-    {
-        public long id;
-        public int duration;
-        public int date;
-        public String title;
-        public String data;
-        public File sound;
-
-        public NotificationSound()
-        {
-        }
-
-        public NotificationSound(long id, int duration, int date, String title, String data,
-                File sound)
-        {
-            this.id = id;
-            this.duration = duration;
-            this.date = date;
-            this.title = title;
-            this.data = data;
-            this.sound = sound;
-        }
-
-        public static final int CONSTRUCTOR = -185638601;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class NotificationSounds extends Object
-    {
-        public NotificationSound[] notificationSounds;
-
-        public NotificationSounds()
-        {
-        }
-
-        public NotificationSounds(NotificationSound[] notificationSounds)
-        {
-            this.notificationSounds = notificationSounds;
-        }
-
-        public static final int CONSTRUCTOR = -630813169;
 
         @Override
         public int getConstructor()
@@ -15762,6 +15066,39 @@ public class TdApi
         }
     }
 
+    public static class PaymentFormTheme extends Object
+    {
+        public int backgroundColor;
+        public int textColor;
+        public int hintColor;
+        public int linkColor;
+        public int buttonColor;
+        public int buttonTextColor;
+
+        public PaymentFormTheme()
+        {
+        }
+
+        public PaymentFormTheme(int backgroundColor, int textColor, int hintColor, int linkColor,
+                int buttonColor, int buttonTextColor)
+        {
+            this.backgroundColor = backgroundColor;
+            this.textColor = textColor;
+            this.hintColor = hintColor;
+            this.linkColor = linkColor;
+            this.buttonColor = buttonColor;
+            this.buttonTextColor = buttonTextColor;
+        }
+
+        public static final int CONSTRUCTOR = -1760030833;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
     public static class PaymentReceipt extends Object
     {
         public String title;
@@ -17059,48 +16396,6 @@ public class TdApi
         }
     }
 
-    public static class Reaction extends Object
-    {
-        public String reaction;
-        public String title;
-        public boolean isActive;
-        public Sticker staticIcon;
-        public Sticker appearAnimation;
-        public Sticker selectAnimation;
-        public Sticker activateAnimation;
-        public Sticker effectAnimation;
-        public Sticker aroundAnimation;
-        public Sticker centerAnimation;
-
-        public Reaction()
-        {
-        }
-
-        public Reaction(String reaction, String title, boolean isActive, Sticker staticIcon,
-                Sticker appearAnimation, Sticker selectAnimation, Sticker activateAnimation,
-                Sticker effectAnimation, Sticker aroundAnimation, Sticker centerAnimation)
-        {
-            this.reaction = reaction;
-            this.title = title;
-            this.isActive = isActive;
-            this.staticIcon = staticIcon;
-            this.appearAnimation = appearAnimation;
-            this.selectAnimation = selectAnimation;
-            this.activateAnimation = activateAnimation;
-            this.effectAnimation = effectAnimation;
-            this.aroundAnimation = aroundAnimation;
-            this.centerAnimation = centerAnimation;
-        }
-
-        public static final int CONSTRUCTOR = -9677071;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class RecommendedChatFilter extends Object
     {
         public ChatFilter filter;
@@ -17765,30 +17060,6 @@ public class TdApi
         }
     }
 
-    public static class RtmpUrl extends Object
-    {
-        public String url;
-        public String streamKey;
-
-        public RtmpUrl()
-        {
-        }
-
-        public RtmpUrl(String url, String streamKey)
-        {
-            this.url = url;
-            this.streamKey = streamKey;
-        }
-
-        public static final int CONSTRUCTOR = 1009302613;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class SavedCredentials extends Object
     {
         public String id;
@@ -17816,7 +17087,7 @@ public class TdApi
     public static class ScopeNotificationSettings extends Object
     {
         public int muteFor;
-        public long soundId;
+        public String sound;
         public boolean showPreview;
         public boolean disablePinnedMessageNotifications;
         public boolean disableMentionNotifications;
@@ -17825,17 +17096,17 @@ public class TdApi
         {
         }
 
-        public ScopeNotificationSettings(int muteFor, long soundId, boolean showPreview,
+        public ScopeNotificationSettings(int muteFor, String sound, boolean showPreview,
                 boolean disablePinnedMessageNotifications, boolean disableMentionNotifications)
         {
             this.muteFor = muteFor;
-            this.soundId = soundId;
+            this.sound = sound;
             this.showPreview = showPreview;
             this.disablePinnedMessageNotifications = disablePinnedMessageNotifications;
             this.disableMentionNotifications = disableMentionNotifications;
         }
 
-        public static final int CONSTRUCTOR = -1383458661;
+        public static final int CONSTRUCTOR = -426103745;
 
         @Override
         public int getConstructor()
@@ -18072,22 +17343,6 @@ public class TdApi
         }
     }
 
-    public static class SearchMessagesFilterUnreadReaction extends SearchMessagesFilter
-    {
-
-        public SearchMessagesFilterUnreadReaction()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -1379651328;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class SearchMessagesFilterFailedToSend extends SearchMessagesFilter
     {
 
@@ -18227,28 +17482,6 @@ public class TdApi
         }
     }
 
-    public static class SentWebAppMessage extends Object
-    {
-        public String inlineMessageId;
-
-        public SentWebAppMessage()
-        {
-        }
-
-        public SentWebAppMessage(String inlineMessageId)
-        {
-            this.inlineMessageId = inlineMessageId;
-        }
-
-        public static final int CONSTRUCTOR = 1243934400;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class Session extends Object
     {
         public long id;
@@ -18361,7 +17594,6 @@ public class TdApi
     {
         public long messageId;
         public long sponsorChatId;
-        public ChatInviteLinkInfo sponsorChatInfo;
         public InternalLinkType link;
         public MessageContent content;
 
@@ -18369,17 +17601,16 @@ public class TdApi
         {
         }
 
-        public SponsoredMessage(long messageId, long sponsorChatId,
-                ChatInviteLinkInfo sponsorChatInfo, InternalLinkType link, MessageContent content)
+        public SponsoredMessage(long messageId, long sponsorChatId, InternalLinkType link,
+                MessageContent content)
         {
             this.messageId = messageId;
             this.sponsorChatId = sponsorChatId;
-            this.sponsorChatInfo = sponsorChatInfo;
             this.link = link;
             this.content = content;
         }
 
-        public static final int CONSTRUCTOR = -1384343080;
+        public static final int CONSTRUCTOR = -1734768993;
 
         @Override
         public int getConstructor()
@@ -18492,7 +17723,9 @@ public class TdApi
         public int width;
         public int height;
         public String emoji;
-        public StickerType type;
+        public boolean isAnimated;
+        public boolean isMask;
+        public MaskPosition maskPosition;
         public ClosedVectorPath[] outline;
         public Thumbnail thumbnail;
         public File sticker;
@@ -18501,20 +17734,23 @@ public class TdApi
         {
         }
 
-        public Sticker(long setId, int width, int height, String emoji, StickerType type,
-                ClosedVectorPath[] outline, Thumbnail thumbnail, File sticker)
+        public Sticker(long setId, int width, int height, String emoji, boolean isAnimated,
+                boolean isMask, MaskPosition maskPosition, ClosedVectorPath[] outline,
+                Thumbnail thumbnail, File sticker)
         {
             this.setId = setId;
             this.width = width;
             this.height = height;
             this.emoji = emoji;
-            this.type = type;
+            this.isAnimated = isAnimated;
+            this.isMask = isMask;
+            this.maskPosition = maskPosition;
             this.outline = outline;
             this.thumbnail = thumbnail;
             this.sticker = sticker;
         }
 
-        public static final int CONSTRUCTOR = -1504840173;
+        public static final int CONSTRUCTOR = 45883239;
 
         @Override
         public int getConstructor()
@@ -18533,7 +17769,8 @@ public class TdApi
         public boolean isInstalled;
         public boolean isArchived;
         public boolean isOfficial;
-        public StickerType stickerType;
+        public boolean isAnimated;
+        public boolean isMasks;
         public boolean isViewed;
         public Sticker[] stickers;
         public Emojis[] emojis;
@@ -18544,8 +17781,8 @@ public class TdApi
 
         public StickerSet(long id, String title, String name, Thumbnail thumbnail,
                 ClosedVectorPath[] thumbnailOutline, boolean isInstalled, boolean isArchived,
-                boolean isOfficial, StickerType stickerType, boolean isViewed, Sticker[] stickers,
-                Emojis[] emojis)
+                boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed,
+                Sticker[] stickers, Emojis[] emojis)
         {
             this.id = id;
             this.title = title;
@@ -18555,13 +17792,14 @@ public class TdApi
             this.isInstalled = isInstalled;
             this.isArchived = isArchived;
             this.isOfficial = isOfficial;
-            this.stickerType = stickerType;
+            this.isAnimated = isAnimated;
+            this.isMasks = isMasks;
             this.isViewed = isViewed;
             this.stickers = stickers;
             this.emojis = emojis;
         }
 
-        public static final int CONSTRUCTOR = -1816236758;
+        public static final int CONSTRUCTOR = -79542167;
 
         @Override
         public int getConstructor()
@@ -18580,7 +17818,8 @@ public class TdApi
         public boolean isInstalled;
         public boolean isArchived;
         public boolean isOfficial;
-        public StickerType stickerType;
+        public boolean isAnimated;
+        public boolean isMasks;
         public boolean isViewed;
         public int size;
         public Sticker[] covers;
@@ -18591,7 +17830,7 @@ public class TdApi
 
         public StickerSetInfo(long id, String title, String name, Thumbnail thumbnail,
                 ClosedVectorPath[] thumbnailOutline, boolean isInstalled, boolean isArchived,
-                boolean isOfficial, StickerType stickerType, boolean isViewed, int size,
+                boolean isOfficial, boolean isAnimated, boolean isMasks, boolean isViewed, int size,
                 Sticker[] covers)
         {
             this.id = id;
@@ -18602,13 +17841,14 @@ public class TdApi
             this.isInstalled = isInstalled;
             this.isArchived = isArchived;
             this.isOfficial = isOfficial;
-            this.stickerType = stickerType;
+            this.isAnimated = isAnimated;
+            this.isMasks = isMasks;
             this.isViewed = isViewed;
             this.size = size;
             this.covers = covers;
         }
 
-        public static final int CONSTRUCTOR = 1207538697;
+        public static final int CONSTRUCTOR = 1307322248;
 
         @Override
         public int getConstructor()
@@ -18633,80 +17873,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -1883828812;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public abstract static class StickerType extends Object
-    {
-    }
-
-    public static class StickerTypeStatic extends StickerType
-    {
-
-        public StickerTypeStatic()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 1804483793;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class StickerTypeAnimated extends StickerType
-    {
-
-        public StickerTypeAnimated()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 1763255981;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class StickerTypeVideo extends StickerType
-    {
-
-        public StickerTypeVideo()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 522366836;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class StickerTypeMask extends StickerType
-    {
-        public MaskPosition maskPosition;
-
-        public StickerTypeMask()
-        {
-        }
-
-        public StickerTypeMask(MaskPosition maskPosition)
-        {
-            this.maskPosition = maskPosition;
-        }
-
-        public static final int CONSTRUCTOR = -839756573;
 
         @Override
         public int getConstructor()
@@ -19908,22 +19074,6 @@ public class TdApi
         }
     }
 
-    public static class TextEntityTypeSpoiler extends TextEntityType
-    {
-
-        public TextEntityTypeSpoiler()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 544019899;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class TextEntityTypeCode extends TextEntityType
     {
 
@@ -20086,39 +19236,6 @@ public class TdApi
         }
     }
 
-    public static class ThemeParameters extends Object
-    {
-        public int backgroundColor;
-        public int textColor;
-        public int hintColor;
-        public int linkColor;
-        public int buttonColor;
-        public int buttonTextColor;
-
-        public ThemeParameters()
-        {
-        }
-
-        public ThemeParameters(int backgroundColor, int textColor, int hintColor, int linkColor,
-                int buttonColor, int buttonTextColor)
-        {
-            this.backgroundColor = backgroundColor;
-            this.textColor = textColor;
-            this.hintColor = hintColor;
-            this.linkColor = linkColor;
-            this.buttonColor = buttonColor;
-            this.buttonTextColor = buttonTextColor;
-        }
-
-        public static final int CONSTRUCTOR = -1922104364;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class ThemeSettings extends Object
     {
         public int accentColor;
@@ -20199,38 +19316,6 @@ public class TdApi
         }
     }
 
-    public static class ThumbnailFormatGif extends ThumbnailFormat
-    {
-
-        public ThumbnailFormatGif()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 1252205962;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ThumbnailFormatMpeg4 extends ThumbnailFormat
-    {
-
-        public ThumbnailFormatMpeg4()
-        {
-        }
-
-        public static final int CONSTRUCTOR = 278616062;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class ThumbnailFormatPng extends ThumbnailFormat
     {
 
@@ -20239,6 +19324,38 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1577490421;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ThumbnailFormatWebp extends ThumbnailFormat
+    {
+
+        public ThumbnailFormatWebp()
+        {
+        }
+
+        public static final int CONSTRUCTOR = -53588974;
+
+        @Override
+        public int getConstructor()
+        {
+            return CONSTRUCTOR;
+        }
+    }
+
+    public static class ThumbnailFormatGif extends ThumbnailFormat
+    {
+
+        public ThumbnailFormatGif()
+        {
+        }
+
+        public static final int CONSTRUCTOR = 1252205962;
 
         @Override
         public int getConstructor()
@@ -20263,30 +19380,14 @@ public class TdApi
         }
     }
 
-    public static class ThumbnailFormatWebm extends ThumbnailFormat
+    public static class ThumbnailFormatMpeg4 extends ThumbnailFormat
     {
 
-        public ThumbnailFormatWebm()
+        public ThumbnailFormatMpeg4()
         {
         }
 
-        public static final int CONSTRUCTOR = -660084953;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ThumbnailFormatWebp extends ThumbnailFormat
-    {
-
-        public ThumbnailFormatWebp()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -53588974;
+        public static final int CONSTRUCTOR = 278616062;
 
         @Override
         public int getConstructor()
@@ -20403,32 +19504,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = 1695922133;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UnreadReaction extends Object
-    {
-        public String reaction;
-        public MessageSender senderId;
-        public boolean isBig;
-
-        public UnreadReaction()
-        {
-        }
-
-        public UnreadReaction(String reaction, MessageSender senderId, boolean isBig)
-        {
-            this.reaction = reaction;
-            this.senderId = senderId;
-            this.isBig = isBig;
-        }
-
-        public static final int CONSTRUCTOR = 88800067;
 
         @Override
         public int getConstructor()
@@ -20720,35 +19795,6 @@ public class TdApi
         }
     }
 
-    public static class UpdateMessageUnreadReactions extends Update
-    {
-        public long chatId;
-        public long messageId;
-        public UnreadReaction[] unreadReactions;
-        public int unreadReactionCount;
-
-        public UpdateMessageUnreadReactions()
-        {
-        }
-
-        public UpdateMessageUnreadReactions(long chatId, long messageId,
-                UnreadReaction[] unreadReactions, int unreadReactionCount)
-        {
-            this.chatId = chatId;
-            this.messageId = messageId;
-            this.unreadReactions = unreadReactions;
-            this.unreadReactionCount = unreadReactionCount;
-        }
-
-        public static final int CONSTRUCTOR = 942840008;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class UpdateMessageLiveLocationViewed extends Update
     {
         public long chatId;
@@ -20991,30 +20037,6 @@ public class TdApi
         }
     }
 
-    public static class UpdateChatAvailableReactions extends Update
-    {
-        public long chatId;
-        public String[] availableReactions;
-
-        public UpdateChatAvailableReactions()
-        {
-        }
-
-        public UpdateChatAvailableReactions(long chatId, String[] availableReactions)
-        {
-            this.chatId = chatId;
-            this.availableReactions = availableReactions;
-        }
-
-        public static final int CONSTRUCTOR = 1461776531;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class UpdateChatDraftMessage extends Update
     {
         public long chatId;
@@ -21203,30 +20225,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -2131461348;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateChatUnreadReactionCount extends Update
-    {
-        public long chatId;
-        public int unreadReactionCount;
-
-        public UpdateChatUnreadReactionCount()
-        {
-        }
-
-        public UpdateChatUnreadReactionCount(long chatId, int unreadReactionCount)
-        {
-            this.chatId = chatId;
-            this.unreadReactionCount = unreadReactionCount;
-        }
-
-        public static final int CONSTRUCTOR = -2124399395;
 
         @Override
         public int getConstructor()
@@ -21480,7 +20478,7 @@ public class TdApi
         public NotificationGroupType type;
         public long chatId;
         public long notificationSettingsChatId;
-        public long notificationSoundId;
+        public boolean isSilent;
         public int totalCount;
         public Notification[] addedNotifications;
         public int[] removedNotificationIds;
@@ -21490,20 +20488,20 @@ public class TdApi
         }
 
         public UpdateNotificationGroup(int notificationGroupId, NotificationGroupType type,
-                long chatId, long notificationSettingsChatId, long notificationSoundId,
-                int totalCount, Notification[] addedNotifications, int[] removedNotificationIds)
+                long chatId, long notificationSettingsChatId, boolean isSilent, int totalCount,
+                Notification[] addedNotifications, int[] removedNotificationIds)
         {
             this.notificationGroupId = notificationGroupId;
             this.type = type;
             this.chatId = chatId;
             this.notificationSettingsChatId = notificationSettingsChatId;
-            this.notificationSoundId = notificationSoundId;
+            this.isSilent = isSilent;
             this.totalCount = totalCount;
             this.addedNotifications = addedNotifications;
             this.removedNotificationIds = removedNotificationIds;
         }
 
-        public static final int CONSTRUCTOR = 1381081378;
+        public static final int CONSTRUCTOR = -2049005665;
 
         @Override
         public int getConstructor()
@@ -21898,109 +20896,6 @@ public class TdApi
         }
     }
 
-    public static class UpdateFileDownloads extends Update
-    {
-        public long totalSize;
-        public int totalCount;
-        public long downloadedSize;
-
-        public UpdateFileDownloads()
-        {
-        }
-
-        public UpdateFileDownloads(long totalSize, int totalCount, long downloadedSize)
-        {
-            this.totalSize = totalSize;
-            this.totalCount = totalCount;
-            this.downloadedSize = downloadedSize;
-        }
-
-        public static final int CONSTRUCTOR = -389213497;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateFileAddedToDownloads extends Update
-    {
-        public FileDownload fileDownload;
-        public DownloadedFileCounts counts;
-
-        public UpdateFileAddedToDownloads()
-        {
-        }
-
-        public UpdateFileAddedToDownloads(FileDownload fileDownload, DownloadedFileCounts counts)
-        {
-            this.fileDownload = fileDownload;
-            this.counts = counts;
-        }
-
-        public static final int CONSTRUCTOR = 1609929242;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateFileDownload extends Update
-    {
-        public int fileId;
-        public int completeDate;
-        public boolean isPaused;
-        public DownloadedFileCounts counts;
-
-        public UpdateFileDownload()
-        {
-        }
-
-        public UpdateFileDownload(int fileId, int completeDate, boolean isPaused,
-                DownloadedFileCounts counts)
-        {
-            this.fileId = fileId;
-            this.completeDate = completeDate;
-            this.isPaused = isPaused;
-            this.counts = counts;
-        }
-
-        public static final int CONSTRUCTOR = 875529162;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateFileRemovedFromDownloads extends Update
-    {
-        public int fileId;
-        public DownloadedFileCounts counts;
-
-        public UpdateFileRemovedFromDownloads()
-        {
-        }
-
-        public UpdateFileRemovedFromDownloads(int fileId, DownloadedFileCounts counts)
-        {
-            this.fileId = fileId;
-            this.counts = counts;
-        }
-
-        public static final int CONSTRUCTOR = 1853625576;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class UpdateCall extends Update
     {
         public Call call;
@@ -22337,28 +21232,6 @@ public class TdApi
         }
     }
 
-    public static class UpdateSavedNotificationSounds extends Update
-    {
-        public long[] notificationSoundIds;
-
-        public UpdateSavedNotificationSounds()
-        {
-        }
-
-        public UpdateSavedNotificationSounds(long[] notificationSoundIds)
-        {
-            this.notificationSoundIds = notificationSoundIds;
-        }
-
-        public static final int CONSTRUCTOR = 1052725698;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class UpdateSelectedBackground extends Update
     {
         public boolean forDarkTheme;
@@ -22492,72 +21365,6 @@ public class TdApi
         }
 
         public static final int CONSTRUCTOR = -1517109163;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateAttachmentMenuBots extends Update
-    {
-        public AttachmentMenuBot[] bots;
-
-        public UpdateAttachmentMenuBots()
-        {
-        }
-
-        public UpdateAttachmentMenuBots(AttachmentMenuBot[] bots)
-        {
-            this.bots = bots;
-        }
-
-        public static final int CONSTRUCTOR = 291369922;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateWebAppMessageSent extends Update
-    {
-        public long webAppLaunchId;
-
-        public UpdateWebAppMessageSent()
-        {
-        }
-
-        public UpdateWebAppMessageSent(long webAppLaunchId)
-        {
-            this.webAppLaunchId = webAppLaunchId;
-        }
-
-        public static final int CONSTRUCTOR = 1480790569;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UpdateReactions extends Update
-    {
-        public Reaction[] reactions;
-
-        public UpdateReactions()
-        {
-        }
-
-        public UpdateReactions(Reaction[] reactions)
-        {
-            this.reactions = reactions;
-        }
-
-        public static final int CONSTRUCTOR = -1086911093;
 
         @Override
         public int getConstructor()
@@ -23102,8 +21909,10 @@ public class TdApi
         public boolean hasPrivateForwards;
         public boolean needPhoneNumberPrivacyException;
         public String bio;
+        public String shareText;
+        public String description;
         public int groupInCommonCount;
-        public BotInfo botInfo;
+        public BotCommand[] commands;
 
         public UserFullInfo()
         {
@@ -23111,8 +21920,8 @@ public class TdApi
 
         public UserFullInfo(ChatPhoto photo, boolean isBlocked, boolean canBeCalled,
                 boolean supportsVideoCalls, boolean hasPrivateCalls, boolean hasPrivateForwards,
-                boolean needPhoneNumberPrivacyException, String bio, int groupInCommonCount,
-                BotInfo botInfo)
+                boolean needPhoneNumberPrivacyException, String bio, String shareText,
+                String description, int groupInCommonCount, BotCommand[] commands)
         {
             this.photo = photo;
             this.isBlocked = isBlocked;
@@ -23122,11 +21931,13 @@ public class TdApi
             this.hasPrivateForwards = hasPrivateForwards;
             this.needPhoneNumberPrivacyException = needPhoneNumberPrivacyException;
             this.bio = bio;
+            this.shareText = shareText;
+            this.description = description;
             this.groupInCommonCount = groupInCommonCount;
-            this.botInfo = botInfo;
+            this.commands = commands;
         }
 
-        public static final int CONSTRUCTOR = -1308032111;
+        public static final int CONSTRUCTOR = 2138747126;
 
         @Override
         public int getConstructor()
@@ -23600,25 +22411,22 @@ public class TdApi
         public boolean isInline;
         public String inlineQueryPlaceholder;
         public boolean needLocation;
-        public boolean canBeAddedToAttachmentMenu;
 
         public UserTypeBot()
         {
         }
 
         public UserTypeBot(boolean canJoinGroups, boolean canReadAllGroupMessages, boolean isInline,
-                String inlineQueryPlaceholder, boolean needLocation,
-                boolean canBeAddedToAttachmentMenu)
+                String inlineQueryPlaceholder, boolean needLocation)
         {
             this.canJoinGroups = canJoinGroups;
             this.canReadAllGroupMessages = canReadAllGroupMessages;
             this.isInline = isInline;
             this.inlineQueryPlaceholder = inlineQueryPlaceholder;
             this.needLocation = needLocation;
-            this.canBeAddedToAttachmentMenu = canBeAddedToAttachmentMenu;
         }
 
-        public static final int CONSTRUCTOR = -970625144;
+        public static final int CONSTRUCTOR = 1262387765;
 
         @Override
         public int getConstructor()
@@ -23905,30 +22713,6 @@ public class TdApi
         }
     }
 
-    public static class WebAppInfo extends Object
-    {
-        public long launchId;
-        public String url;
-
-        public WebAppInfo()
-        {
-        }
-
-        public WebAppInfo(long launchId, String url)
-        {
-            this.launchId = launchId;
-            this.url = url;
-        }
-
-        public static final int CONSTRUCTOR = 788378344;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
     public static class WebPage extends Object
     {
         public String url;
@@ -24028,7 +22812,7 @@ public class TdApi
         }
     }
 
-    public static class AcceptCall extends Function<Ok>
+    public static class AcceptCall extends Function
     {
         public int callId;
         public CallProtocol protocol;
@@ -24052,7 +22836,7 @@ public class TdApi
         }
     }
 
-    public static class AcceptTermsOfService extends Function<Ok>
+    public static class AcceptTermsOfService extends Function
     {
         public String termsOfServiceId;
 
@@ -24074,7 +22858,7 @@ public class TdApi
         }
     }
 
-    public static class AddChatMember extends Function<Ok>
+    public static class AddChatMember extends Function
     {
         public long chatId;
         public long userId;
@@ -24100,7 +22884,7 @@ public class TdApi
         }
     }
 
-    public static class AddChatMembers extends Function<Ok>
+    public static class AddChatMembers extends Function
     {
         public long chatId;
         public long[] userIds;
@@ -24124,7 +22908,7 @@ public class TdApi
         }
     }
 
-    public static class AddChatToList extends Function<Ok>
+    public static class AddChatToList extends Function
     {
         public long chatId;
         public ChatList chatList;
@@ -24148,7 +22932,7 @@ public class TdApi
         }
     }
 
-    public static class AddContact extends Function<Ok>
+    public static class AddContact extends Function
     {
         public Contact contact;
         public boolean sharePhoneNumber;
@@ -24172,7 +22956,7 @@ public class TdApi
         }
     }
 
-    public static class AddCustomServerLanguagePack extends Function<Ok>
+    public static class AddCustomServerLanguagePack extends Function
     {
         public String languagePackId;
 
@@ -24194,7 +22978,7 @@ public class TdApi
         }
     }
 
-    public static class AddFavoriteSticker extends Function<Ok>
+    public static class AddFavoriteSticker extends Function
     {
         public InputFile sticker;
 
@@ -24216,35 +23000,7 @@ public class TdApi
         }
     }
 
-    public static class AddFileToDownloads extends Function<File>
-    {
-        public int fileId;
-        public long chatId;
-        public long messageId;
-        public int priority;
-
-        public AddFileToDownloads()
-        {
-        }
-
-        public AddFileToDownloads(int fileId, long chatId, long messageId, int priority)
-        {
-            this.fileId = fileId;
-            this.chatId = chatId;
-            this.messageId = messageId;
-            this.priority = priority;
-        }
-
-        public static final int CONSTRUCTOR = 867533751;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AddLocalMessage extends Function<Message>
+    public static class AddLocalMessage extends Function
     {
         public long chatId;
         public MessageSender senderId;
@@ -24275,7 +23031,7 @@ public class TdApi
         }
     }
 
-    public static class AddLogMessage extends Function<Ok>
+    public static class AddLogMessage extends Function
     {
         public int verbosityLevel;
         public String text;
@@ -24299,7 +23055,7 @@ public class TdApi
         }
     }
 
-    public static class AddNetworkStatistics extends Function<Ok>
+    public static class AddNetworkStatistics extends Function
     {
         public NetworkStatisticsEntry entry;
 
@@ -24321,7 +23077,7 @@ public class TdApi
         }
     }
 
-    public static class AddProxy extends Function<Proxy>
+    public static class AddProxy extends Function
     {
         public String server;
         public int port;
@@ -24349,7 +23105,7 @@ public class TdApi
         }
     }
 
-    public static class AddRecentSticker extends Function<Stickers>
+    public static class AddRecentSticker extends Function
     {
         public boolean isAttached;
         public InputFile sticker;
@@ -24373,7 +23129,7 @@ public class TdApi
         }
     }
 
-    public static class AddRecentlyFoundChat extends Function<Ok>
+    public static class AddRecentlyFoundChat extends Function
     {
         public long chatId;
 
@@ -24395,7 +23151,7 @@ public class TdApi
         }
     }
 
-    public static class AddSavedAnimation extends Function<Ok>
+    public static class AddSavedAnimation extends Function
     {
         public InputFile animation;
 
@@ -24417,29 +23173,7 @@ public class TdApi
         }
     }
 
-    public static class AddSavedNotificationSound extends Function<NotificationSound>
-    {
-        public InputFile sound;
-
-        public AddSavedNotificationSound()
-        {
-        }
-
-        public AddSavedNotificationSound(InputFile sound)
-        {
-            this.sound = sound;
-        }
-
-        public static final int CONSTRUCTOR = 1043956975;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class AddStickerToSet extends Function<StickerSet>
+    public static class AddStickerToSet extends Function
     {
         public long userId;
         public String name;
@@ -24456,7 +23190,7 @@ public class TdApi
             this.sticker = sticker;
         }
 
-        public static final int CONSTRUCTOR = -1340783267;
+        public static final int CONSTRUCTOR = 3869569;
 
         @Override
         public int getConstructor()
@@ -24465,7 +23199,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerCallbackQuery extends Function<Ok>
+    public static class AnswerCallbackQuery extends Function
     {
         public long callbackQueryId;
         public String text;
@@ -24496,7 +23230,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerCustomQuery extends Function<Ok>
+    public static class AnswerCustomQuery extends Function
     {
         public long customQueryId;
         public String data;
@@ -24520,7 +23254,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerInlineQuery extends Function<Ok>
+    public static class AnswerInlineQuery extends Function
     {
         public long inlineQueryId;
         public boolean isPersonal;
@@ -24556,7 +23290,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerPreCheckoutQuery extends Function<Ok>
+    public static class AnswerPreCheckoutQuery extends Function
     {
         public long preCheckoutQueryId;
         public String errorMessage;
@@ -24580,7 +23314,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerShippingQuery extends Function<Ok>
+    public static class AnswerShippingQuery extends Function
     {
         public long shippingQueryId;
         public ShippingOption[] shippingOptions;
@@ -24607,31 +23341,7 @@ public class TdApi
         }
     }
 
-    public static class AnswerWebAppQuery extends Function<SentWebAppMessage>
-    {
-        public String webAppQueryId;
-        public InputInlineQueryResult result;
-
-        public AnswerWebAppQuery()
-        {
-        }
-
-        public AnswerWebAppQuery(String webAppQueryId, InputInlineQueryResult result)
-        {
-            this.webAppQueryId = webAppQueryId;
-            this.result = result;
-        }
-
-        public static final int CONSTRUCTOR = -1598776079;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class BanChatMember extends Function<Ok>
+    public static class BanChatMember extends Function
     {
         public long chatId;
         public MessageSender memberId;
@@ -24660,7 +23370,7 @@ public class TdApi
         }
     }
 
-    public static class BlockMessageSenderFromReplies extends Function<Ok>
+    public static class BlockMessageSenderFromReplies extends Function
     {
         public long messageId;
         public boolean deleteMessage;
@@ -24689,7 +23399,7 @@ public class TdApi
         }
     }
 
-    public static class CanTransferOwnership extends Function<CanTransferOwnershipResult>
+    public static class CanTransferOwnership extends Function
     {
 
         public CanTransferOwnership()
@@ -24705,7 +23415,7 @@ public class TdApi
         }
     }
 
-    public static class CancelDownloadFile extends Function<Ok>
+    public static class CancelDownloadFile extends Function
     {
         public int fileId;
         public boolean onlyIfPending;
@@ -24729,7 +23439,7 @@ public class TdApi
         }
     }
 
-    public static class CancelPasswordReset extends Function<Ok>
+    public static class CancelPasswordReset extends Function
     {
 
         public CancelPasswordReset()
@@ -24745,7 +23455,7 @@ public class TdApi
         }
     }
 
-    public static class CancelUploadFile extends Function<Ok>
+    public static class CancelUploadFile extends Function
     {
         public int fileId;
 
@@ -24767,7 +23477,7 @@ public class TdApi
         }
     }
 
-    public static class ChangeImportedContacts extends Function<ImportedContacts>
+    public static class ChangeImportedContacts extends Function
     {
         public Contact[] contacts;
 
@@ -24789,7 +23499,7 @@ public class TdApi
         }
     }
 
-    public static class ChangePhoneNumber extends Function<AuthenticationCodeInfo>
+    public static class ChangePhoneNumber extends Function
     {
         public String phoneNumber;
         public PhoneNumberAuthenticationSettings settings;
@@ -24813,7 +23523,7 @@ public class TdApi
         }
     }
 
-    public static class ChangeStickerSet extends Function<Ok>
+    public static class ChangeStickerSet extends Function
     {
         public long setId;
         public boolean isInstalled;
@@ -24839,7 +23549,7 @@ public class TdApi
         }
     }
 
-    public static class CheckAuthenticationBotToken extends Function<Ok>
+    public static class CheckAuthenticationBotToken extends Function
     {
         public String token;
 
@@ -24861,7 +23571,7 @@ public class TdApi
         }
     }
 
-    public static class CheckAuthenticationCode extends Function<Ok>
+    public static class CheckAuthenticationCode extends Function
     {
         public String code;
 
@@ -24883,7 +23593,7 @@ public class TdApi
         }
     }
 
-    public static class CheckAuthenticationPassword extends Function<Ok>
+    public static class CheckAuthenticationPassword extends Function
     {
         public String password;
 
@@ -24905,7 +23615,7 @@ public class TdApi
         }
     }
 
-    public static class CheckAuthenticationPasswordRecoveryCode extends Function<Ok>
+    public static class CheckAuthenticationPasswordRecoveryCode extends Function
     {
         public String recoveryCode;
 
@@ -24927,7 +23637,7 @@ public class TdApi
         }
     }
 
-    public static class CheckChangePhoneNumberCode extends Function<Ok>
+    public static class CheckChangePhoneNumberCode extends Function
     {
         public String code;
 
@@ -24949,7 +23659,7 @@ public class TdApi
         }
     }
 
-    public static class CheckChatInviteLink extends Function<ChatInviteLinkInfo>
+    public static class CheckChatInviteLink extends Function
     {
         public String inviteLink;
 
@@ -24971,7 +23681,7 @@ public class TdApi
         }
     }
 
-    public static class CheckChatUsername extends Function<CheckChatUsernameResult>
+    public static class CheckChatUsername extends Function
     {
         public long chatId;
         public String username;
@@ -24995,7 +23705,7 @@ public class TdApi
         }
     }
 
-    public static class CheckCreatedPublicChatsLimit extends Function<Ok>
+    public static class CheckCreatedPublicChatsLimit extends Function
     {
         public PublicChatType type;
 
@@ -25017,7 +23727,7 @@ public class TdApi
         }
     }
 
-    public static class CheckDatabaseEncryptionKey extends Function<Ok>
+    public static class CheckDatabaseEncryptionKey extends Function
     {
         public byte[] encryptionKey;
 
@@ -25039,7 +23749,7 @@ public class TdApi
         }
     }
 
-    public static class CheckEmailAddressVerificationCode extends Function<Ok>
+    public static class CheckEmailAddressVerificationCode extends Function
     {
         public String code;
 
@@ -25061,7 +23771,7 @@ public class TdApi
         }
     }
 
-    public static class CheckPasswordRecoveryCode extends Function<Ok>
+    public static class CheckPasswordRecoveryCode extends Function
     {
         public String recoveryCode;
 
@@ -25083,7 +23793,7 @@ public class TdApi
         }
     }
 
-    public static class CheckPhoneNumberConfirmationCode extends Function<Ok>
+    public static class CheckPhoneNumberConfirmationCode extends Function
     {
         public String code;
 
@@ -25105,7 +23815,7 @@ public class TdApi
         }
     }
 
-    public static class CheckPhoneNumberVerificationCode extends Function<Ok>
+    public static class CheckPhoneNumberVerificationCode extends Function
     {
         public String code;
 
@@ -25127,7 +23837,7 @@ public class TdApi
         }
     }
 
-    public static class CheckRecoveryEmailAddressCode extends Function<PasswordState>
+    public static class CheckRecoveryEmailAddressCode extends Function
     {
         public String code;
 
@@ -25149,7 +23859,7 @@ public class TdApi
         }
     }
 
-    public static class CheckStickerSetName extends Function<CheckStickerSetNameResult>
+    public static class CheckStickerSetName extends Function
     {
         public String name;
 
@@ -25171,7 +23881,7 @@ public class TdApi
         }
     }
 
-    public static class CleanFileName extends Function<Text>
+    public static class CleanFileName extends Function
     {
         public String fileName;
 
@@ -25193,7 +23903,7 @@ public class TdApi
         }
     }
 
-    public static class ClearAllDraftMessages extends Function<Ok>
+    public static class ClearAllDraftMessages extends Function
     {
         public boolean excludeSecretChats;
 
@@ -25215,7 +23925,7 @@ public class TdApi
         }
     }
 
-    public static class ClearImportedContacts extends Function<Ok>
+    public static class ClearImportedContacts extends Function
     {
 
         public ClearImportedContacts()
@@ -25231,7 +23941,7 @@ public class TdApi
         }
     }
 
-    public static class ClearRecentStickers extends Function<Ok>
+    public static class ClearRecentStickers extends Function
     {
         public boolean isAttached;
 
@@ -25253,7 +23963,7 @@ public class TdApi
         }
     }
 
-    public static class ClearRecentlyFoundChats extends Function<Ok>
+    public static class ClearRecentlyFoundChats extends Function
     {
 
         public ClearRecentlyFoundChats()
@@ -25269,7 +23979,7 @@ public class TdApi
         }
     }
 
-    public static class ClickAnimatedEmojiMessage extends Function<Sticker>
+    public static class ClickAnimatedEmojiMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -25293,7 +24003,7 @@ public class TdApi
         }
     }
 
-    public static class Close extends Function<Ok>
+    public static class Close extends Function
     {
 
         public Close()
@@ -25309,7 +24019,7 @@ public class TdApi
         }
     }
 
-    public static class CloseChat extends Function<Ok>
+    public static class CloseChat extends Function
     {
         public long chatId;
 
@@ -25331,7 +24041,7 @@ public class TdApi
         }
     }
 
-    public static class CloseSecretChat extends Function<Ok>
+    public static class CloseSecretChat extends Function
     {
         public int secretChatId;
 
@@ -25353,29 +24063,7 @@ public class TdApi
         }
     }
 
-    public static class CloseWebApp extends Function<Ok>
-    {
-        public long webAppLaunchId;
-
-        public CloseWebApp()
-        {
-        }
-
-        public CloseWebApp(long webAppLaunchId)
-        {
-            this.webAppLaunchId = webAppLaunchId;
-        }
-
-        public static final int CONSTRUCTOR = 1755391174;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ConfirmQrCodeAuthentication extends Function<Session>
+    public static class ConfirmQrCodeAuthentication extends Function
     {
         public String link;
 
@@ -25397,7 +24085,7 @@ public class TdApi
         }
     }
 
-    public static class CreateBasicGroupChat extends Function<Chat>
+    public static class CreateBasicGroupChat extends Function
     {
         public long basicGroupId;
         public boolean force;
@@ -25421,7 +24109,7 @@ public class TdApi
         }
     }
 
-    public static class CreateCall extends Function<CallId>
+    public static class CreateCall extends Function
     {
         public long userId;
         public CallProtocol protocol;
@@ -25447,7 +24135,7 @@ public class TdApi
         }
     }
 
-    public static class CreateChatFilter extends Function<ChatFilterInfo>
+    public static class CreateChatFilter extends Function
     {
         public ChatFilter filter;
 
@@ -25469,7 +24157,7 @@ public class TdApi
         }
     }
 
-    public static class CreateChatInviteLink extends Function<ChatInviteLink>
+    public static class CreateChatInviteLink extends Function
     {
         public long chatId;
         public String name;
@@ -25500,7 +24188,7 @@ public class TdApi
         }
     }
 
-    public static class CreateNewBasicGroupChat extends Function<Chat>
+    public static class CreateNewBasicGroupChat extends Function
     {
         public long[] userIds;
         public String title;
@@ -25524,7 +24212,7 @@ public class TdApi
         }
     }
 
-    public static class CreateNewSecretChat extends Function<Chat>
+    public static class CreateNewSecretChat extends Function
     {
         public long userId;
 
@@ -25546,11 +24234,12 @@ public class TdApi
         }
     }
 
-    public static class CreateNewStickerSet extends Function<StickerSet>
+    public static class CreateNewStickerSet extends Function
     {
         public long userId;
         public String title;
         public String name;
+        public boolean isMasks;
         public InputSticker[] stickers;
         public String source;
 
@@ -25558,17 +24247,18 @@ public class TdApi
         {
         }
 
-        public CreateNewStickerSet(long userId, String title, String name, InputSticker[] stickers,
-                String source)
+        public CreateNewStickerSet(long userId, String title, String name, boolean isMasks,
+                InputSticker[] stickers, String source)
         {
             this.userId = userId;
             this.title = title;
             this.name = name;
+            this.isMasks = isMasks;
             this.stickers = stickers;
             this.source = source;
         }
 
-        public static final int CONSTRUCTOR = -1682292738;
+        public static final int CONSTRUCTOR = -396493358;
 
         @Override
         public int getConstructor()
@@ -25577,7 +24267,7 @@ public class TdApi
         }
     }
 
-    public static class CreateNewSupergroupChat extends Function<Chat>
+    public static class CreateNewSupergroupChat extends Function
     {
         public String title;
         public boolean isChannel;
@@ -25608,7 +24298,7 @@ public class TdApi
         }
     }
 
-    public static class CreatePrivateChat extends Function<Chat>
+    public static class CreatePrivateChat extends Function
     {
         public long userId;
         public boolean force;
@@ -25632,7 +24322,7 @@ public class TdApi
         }
     }
 
-    public static class CreateSecretChat extends Function<Chat>
+    public static class CreateSecretChat extends Function
     {
         public int secretChatId;
 
@@ -25654,7 +24344,7 @@ public class TdApi
         }
     }
 
-    public static class CreateSupergroupChat extends Function<Chat>
+    public static class CreateSupergroupChat extends Function
     {
         public long supergroupId;
         public boolean force;
@@ -25678,7 +24368,7 @@ public class TdApi
         }
     }
 
-    public static class CreateTemporaryPassword extends Function<TemporaryPasswordState>
+    public static class CreateTemporaryPassword extends Function
     {
         public String password;
         public int validFor;
@@ -25702,26 +24392,24 @@ public class TdApi
         }
     }
 
-    public static class CreateVideoChat extends Function<GroupCallId>
+    public static class CreateVideoChat extends Function
     {
         public long chatId;
         public String title;
         public int startDate;
-        public boolean isRtmpStream;
 
         public CreateVideoChat()
         {
         }
 
-        public CreateVideoChat(long chatId, String title, int startDate, boolean isRtmpStream)
+        public CreateVideoChat(long chatId, String title, int startDate)
         {
             this.chatId = chatId;
             this.title = title;
             this.startDate = startDate;
-            this.isRtmpStream = isRtmpStream;
         }
 
-        public static final int CONSTRUCTOR = 2124715405;
+        public static final int CONSTRUCTOR = -917641210;
 
         @Override
         public int getConstructor()
@@ -25730,7 +24418,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteAccount extends Function<Ok>
+    public static class DeleteAccount extends Function
     {
         public String reason;
 
@@ -25752,7 +24440,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteAllCallMessages extends Function<Ok>
+    public static class DeleteAllCallMessages extends Function
     {
         public boolean revoke;
 
@@ -25774,7 +24462,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteAllRevokedChatInviteLinks extends Function<Ok>
+    public static class DeleteAllRevokedChatInviteLinks extends Function
     {
         public long chatId;
         public long creatorUserId;
@@ -25798,7 +24486,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChat extends Function<Ok>
+    public static class DeleteChat extends Function
     {
         public long chatId;
 
@@ -25820,7 +24508,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChatFilter extends Function<Ok>
+    public static class DeleteChatFilter extends Function
     {
         public int chatFilterId;
 
@@ -25842,7 +24530,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChatHistory extends Function<Ok>
+    public static class DeleteChatHistory extends Function
     {
         public long chatId;
         public boolean removeFromChatList;
@@ -25868,7 +24556,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChatMessagesByDate extends Function<Ok>
+    public static class DeleteChatMessagesByDate extends Function
     {
         public long chatId;
         public int minDate;
@@ -25896,7 +24584,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChatMessagesBySender extends Function<Ok>
+    public static class DeleteChatMessagesBySender extends Function
     {
         public long chatId;
         public MessageSender senderId;
@@ -25920,7 +24608,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteChatReplyMarkup extends Function<Ok>
+    public static class DeleteChatReplyMarkup extends Function
     {
         public long chatId;
         public long messageId;
@@ -25944,7 +24632,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteCommands extends Function<Ok>
+    public static class DeleteCommands extends Function
     {
         public BotCommandScope scope;
         public String languageCode;
@@ -25968,7 +24656,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteFile extends Function<Ok>
+    public static class DeleteFile extends Function
     {
         public int fileId;
 
@@ -25990,7 +24678,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteLanguagePack extends Function<Ok>
+    public static class DeleteLanguagePack extends Function
     {
         public String languagePackId;
 
@@ -26012,7 +24700,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteMessages extends Function<Ok>
+    public static class DeleteMessages extends Function
     {
         public long chatId;
         public long[] messageIds;
@@ -26038,7 +24726,7 @@ public class TdApi
         }
     }
 
-    public static class DeletePassportElement extends Function<Ok>
+    public static class DeletePassportElement extends Function
     {
         public PassportElementType type;
 
@@ -26060,7 +24748,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteProfilePhoto extends Function<Ok>
+    public static class DeleteProfilePhoto extends Function
     {
         public long profilePhotoId;
 
@@ -26082,7 +24770,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteRevokedChatInviteLink extends Function<Ok>
+    public static class DeleteRevokedChatInviteLink extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -26106,7 +24794,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteSavedCredentials extends Function<Ok>
+    public static class DeleteSavedCredentials extends Function
     {
 
         public DeleteSavedCredentials()
@@ -26122,7 +24810,7 @@ public class TdApi
         }
     }
 
-    public static class DeleteSavedOrderInfo extends Function<Ok>
+    public static class DeleteSavedOrderInfo extends Function
     {
 
         public DeleteSavedOrderInfo()
@@ -26138,7 +24826,7 @@ public class TdApi
         }
     }
 
-    public static class Destroy extends Function<Ok>
+    public static class Destroy extends Function
     {
 
         public Destroy()
@@ -26154,7 +24842,7 @@ public class TdApi
         }
     }
 
-    public static class DisableProxy extends Function<Ok>
+    public static class DisableProxy extends Function
     {
 
         public DisableProxy()
@@ -26170,7 +24858,7 @@ public class TdApi
         }
     }
 
-    public static class DiscardCall extends Function<Ok>
+    public static class DiscardCall extends Function
     {
         public int callId;
         public boolean isDisconnected;
@@ -26201,7 +24889,7 @@ public class TdApi
         }
     }
 
-    public static class DisconnectAllWebsites extends Function<Ok>
+    public static class DisconnectAllWebsites extends Function
     {
 
         public DisconnectAllWebsites()
@@ -26217,7 +24905,7 @@ public class TdApi
         }
     }
 
-    public static class DisconnectWebsite extends Function<Ok>
+    public static class DisconnectWebsite extends Function
     {
         public long websiteId;
 
@@ -26239,7 +24927,7 @@ public class TdApi
         }
     }
 
-    public static class DownloadFile extends Function<File>
+    public static class DownloadFile extends Function
     {
         public int fileId;
         public int priority;
@@ -26269,7 +24957,7 @@ public class TdApi
         }
     }
 
-    public static class EditChatFilter extends Function<ChatFilterInfo>
+    public static class EditChatFilter extends Function
     {
         public int chatFilterId;
         public ChatFilter filter;
@@ -26293,7 +24981,7 @@ public class TdApi
         }
     }
 
-    public static class EditChatInviteLink extends Function<ChatInviteLink>
+    public static class EditChatInviteLink extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -26326,7 +25014,7 @@ public class TdApi
         }
     }
 
-    public static class EditCustomLanguagePackInfo extends Function<Ok>
+    public static class EditCustomLanguagePackInfo extends Function
     {
         public LanguagePackInfo info;
 
@@ -26348,7 +25036,7 @@ public class TdApi
         }
     }
 
-    public static class EditInlineMessageCaption extends Function<Ok>
+    public static class EditInlineMessageCaption extends Function
     {
         public String inlineMessageId;
         public ReplyMarkup replyMarkup;
@@ -26375,7 +25063,7 @@ public class TdApi
         }
     }
 
-    public static class EditInlineMessageLiveLocation extends Function<Ok>
+    public static class EditInlineMessageLiveLocation extends Function
     {
         public String inlineMessageId;
         public ReplyMarkup replyMarkup;
@@ -26406,7 +25094,7 @@ public class TdApi
         }
     }
 
-    public static class EditInlineMessageMedia extends Function<Ok>
+    public static class EditInlineMessageMedia extends Function
     {
         public String inlineMessageId;
         public ReplyMarkup replyMarkup;
@@ -26433,7 +25121,7 @@ public class TdApi
         }
     }
 
-    public static class EditInlineMessageReplyMarkup extends Function<Ok>
+    public static class EditInlineMessageReplyMarkup extends Function
     {
         public String inlineMessageId;
         public ReplyMarkup replyMarkup;
@@ -26457,7 +25145,7 @@ public class TdApi
         }
     }
 
-    public static class EditInlineMessageText extends Function<Ok>
+    public static class EditInlineMessageText extends Function
     {
         public String inlineMessageId;
         public ReplyMarkup replyMarkup;
@@ -26484,7 +25172,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageCaption extends Function<Message>
+    public static class EditMessageCaption extends Function
     {
         public long chatId;
         public long messageId;
@@ -26513,7 +25201,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageLiveLocation extends Function<Message>
+    public static class EditMessageLiveLocation extends Function
     {
         public long chatId;
         public long messageId;
@@ -26546,7 +25234,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageMedia extends Function<Message>
+    public static class EditMessageMedia extends Function
     {
         public long chatId;
         public long messageId;
@@ -26575,7 +25263,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageReplyMarkup extends Function<Message>
+    public static class EditMessageReplyMarkup extends Function
     {
         public long chatId;
         public long messageId;
@@ -26601,7 +25289,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageSchedulingState extends Function<Ok>
+    public static class EditMessageSchedulingState extends Function
     {
         public long chatId;
         public long messageId;
@@ -26628,7 +25316,7 @@ public class TdApi
         }
     }
 
-    public static class EditMessageText extends Function<Message>
+    public static class EditMessageText extends Function
     {
         public long chatId;
         public long messageId;
@@ -26657,7 +25345,7 @@ public class TdApi
         }
     }
 
-    public static class EditProxy extends Function<Proxy>
+    public static class EditProxy extends Function
     {
         public int proxyId;
         public String server;
@@ -26687,7 +25375,7 @@ public class TdApi
         }
     }
 
-    public static class EnableProxy extends Function<Ok>
+    public static class EnableProxy extends Function
     {
         public int proxyId;
 
@@ -26709,7 +25397,7 @@ public class TdApi
         }
     }
 
-    public static class EndGroupCall extends Function<Ok>
+    public static class EndGroupCall extends Function
     {
         public int groupCallId;
 
@@ -26731,7 +25419,7 @@ public class TdApi
         }
     }
 
-    public static class EndGroupCallRecording extends Function<Ok>
+    public static class EndGroupCallRecording extends Function
     {
         public int groupCallId;
 
@@ -26753,7 +25441,7 @@ public class TdApi
         }
     }
 
-    public static class EndGroupCallScreenSharing extends Function<Ok>
+    public static class EndGroupCallScreenSharing extends Function
     {
         public int groupCallId;
 
@@ -26775,7 +25463,7 @@ public class TdApi
         }
     }
 
-    public static class FinishFileGeneration extends Function<Ok>
+    public static class FinishFileGeneration extends Function
     {
         public long generationId;
         public Error error;
@@ -26799,7 +25487,7 @@ public class TdApi
         }
     }
 
-    public static class ForwardMessages extends Function<Messages>
+    public static class ForwardMessages extends Function
     {
         public long chatId;
         public long fromChatId;
@@ -26835,7 +25523,7 @@ public class TdApi
         }
     }
 
-    public static class GetAccountTtl extends Function<AccountTtl>
+    public static class GetAccountTtl extends Function
     {
 
         public GetAccountTtl()
@@ -26851,7 +25539,7 @@ public class TdApi
         }
     }
 
-    public static class GetActiveLiveLocationMessages extends Function<Messages>
+    public static class GetActiveLiveLocationMessages extends Function
     {
 
         public GetActiveLiveLocationMessages()
@@ -26867,7 +25555,7 @@ public class TdApi
         }
     }
 
-    public static class GetActiveSessions extends Function<Sessions>
+    public static class GetActiveSessions extends Function
     {
 
         public GetActiveSessions()
@@ -26883,7 +25571,7 @@ public class TdApi
         }
     }
 
-    public static class GetAllPassportElements extends Function<PassportElements>
+    public static class GetAllPassportElements extends Function
     {
         public String password;
 
@@ -26905,7 +25593,7 @@ public class TdApi
         }
     }
 
-    public static class GetAnimatedEmoji extends Function<AnimatedEmoji>
+    public static class GetAnimatedEmoji extends Function
     {
         public String emoji;
 
@@ -26927,7 +25615,7 @@ public class TdApi
         }
     }
 
-    public static class GetApplicationConfig extends Function<JsonValue>
+    public static class GetApplicationConfig extends Function
     {
 
         public GetApplicationConfig()
@@ -26943,7 +25631,7 @@ public class TdApi
         }
     }
 
-    public static class GetApplicationDownloadLink extends Function<HttpUrl>
+    public static class GetApplicationDownloadLink extends Function
     {
 
         public GetApplicationDownloadLink()
@@ -26959,7 +25647,7 @@ public class TdApi
         }
     }
 
-    public static class GetArchivedStickerSets extends Function<StickerSets>
+    public static class GetArchivedStickerSets extends Function
     {
         public boolean isMasks;
         public long offsetStickerSetId;
@@ -26985,7 +25673,7 @@ public class TdApi
         }
     }
 
-    public static class GetAttachedStickerSets extends Function<StickerSets>
+    public static class GetAttachedStickerSets extends Function
     {
         public int fileId;
 
@@ -27007,29 +25695,7 @@ public class TdApi
         }
     }
 
-    public static class GetAttachmentMenuBot extends Function<AttachmentMenuBot>
-    {
-        public long botUserId;
-
-        public GetAttachmentMenuBot()
-        {
-        }
-
-        public GetAttachmentMenuBot(long botUserId)
-        {
-            this.botUserId = botUserId;
-        }
-
-        public static final int CONSTRUCTOR = 1034248699;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetAuthorizationState extends Function<AuthorizationState>
+    public static class GetAuthorizationState extends Function
     {
 
         public GetAuthorizationState()
@@ -27045,7 +25711,7 @@ public class TdApi
         }
     }
 
-    public static class GetAutoDownloadSettingsPresets extends Function<AutoDownloadSettingsPresets>
+    public static class GetAutoDownloadSettingsPresets extends Function
     {
 
         public GetAutoDownloadSettingsPresets()
@@ -27061,7 +25727,7 @@ public class TdApi
         }
     }
 
-    public static class GetBackgroundUrl extends Function<HttpUrl>
+    public static class GetBackgroundUrl extends Function
     {
         public String name;
         public BackgroundType type;
@@ -27085,7 +25751,7 @@ public class TdApi
         }
     }
 
-    public static class GetBackgrounds extends Function<Backgrounds>
+    public static class GetBackgrounds extends Function
     {
         public boolean forDarkTheme;
 
@@ -27107,7 +25773,7 @@ public class TdApi
         }
     }
 
-    public static class GetBankCardInfo extends Function<BankCardInfo>
+    public static class GetBankCardInfo extends Function
     {
         public String bankCardNumber;
 
@@ -27129,7 +25795,7 @@ public class TdApi
         }
     }
 
-    public static class GetBasicGroup extends Function<BasicGroup>
+    public static class GetBasicGroup extends Function
     {
         public long basicGroupId;
 
@@ -27151,7 +25817,7 @@ public class TdApi
         }
     }
 
-    public static class GetBasicGroupFullInfo extends Function<BasicGroupFullInfo>
+    public static class GetBasicGroupFullInfo extends Function
     {
         public long basicGroupId;
 
@@ -27173,7 +25839,7 @@ public class TdApi
         }
     }
 
-    public static class GetBlockedMessageSenders extends Function<MessageSenders>
+    public static class GetBlockedMessageSenders extends Function
     {
         public int offset;
         public int limit;
@@ -27197,7 +25863,7 @@ public class TdApi
         }
     }
 
-    public static class GetCallbackQueryAnswer extends Function<CallbackQueryAnswer>
+    public static class GetCallbackQueryAnswer extends Function
     {
         public long chatId;
         public long messageId;
@@ -27223,7 +25889,7 @@ public class TdApi
         }
     }
 
-    public static class GetCallbackQueryMessage extends Function<Message>
+    public static class GetCallbackQueryMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -27249,7 +25915,7 @@ public class TdApi
         }
     }
 
-    public static class GetChat extends Function<Chat>
+    public static class GetChat extends Function
     {
         public long chatId;
 
@@ -27271,7 +25937,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatAdministrators extends Function<ChatAdministrators>
+    public static class GetChatAdministrators extends Function
     {
         public long chatId;
 
@@ -27293,7 +25959,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatAvailableMessageSenders extends Function<MessageSenders>
+    public static class GetChatAvailableMessageSenders extends Function
     {
         public long chatId;
 
@@ -27315,7 +25981,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatEventLog extends Function<ChatEvents>
+    public static class GetChatEventLog extends Function
     {
         public long chatId;
         public String query;
@@ -27348,7 +26014,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatFilter extends Function<ChatFilter>
+    public static class GetChatFilter extends Function
     {
         public int chatFilterId;
 
@@ -27370,7 +26036,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatFilterDefaultIconName extends Function<Text>
+    public static class GetChatFilterDefaultIconName extends Function
     {
         public ChatFilter filter;
 
@@ -27392,7 +26058,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatHistory extends Function<Messages>
+    public static class GetChatHistory extends Function
     {
         public long chatId;
         public long fromMessageId;
@@ -27423,7 +26089,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatInviteLink extends Function<ChatInviteLink>
+    public static class GetChatInviteLink extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -27447,7 +26113,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatInviteLinkCounts extends Function<ChatInviteLinkCounts>
+    public static class GetChatInviteLinkCounts extends Function
     {
         public long chatId;
 
@@ -27469,7 +26135,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatInviteLinkMembers extends Function<ChatInviteLinkMembers>
+    public static class GetChatInviteLinkMembers extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -27498,7 +26164,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatInviteLinks extends Function<ChatInviteLinks>
+    public static class GetChatInviteLinks extends Function
     {
         public long chatId;
         public long creatorUserId;
@@ -27531,7 +26197,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatJoinRequests extends Function<ChatJoinRequests>
+    public static class GetChatJoinRequests extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -27562,7 +26228,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatListsToAddChat extends Function<ChatLists>
+    public static class GetChatListsToAddChat extends Function
     {
         public long chatId;
 
@@ -27584,7 +26250,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatMember extends Function<ChatMember>
+    public static class GetChatMember extends Function
     {
         public long chatId;
         public MessageSender memberId;
@@ -27608,7 +26274,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatMessageByDate extends Function<Message>
+    public static class GetChatMessageByDate extends Function
     {
         public long chatId;
         public int date;
@@ -27632,7 +26298,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatMessageCalendar extends Function<MessageCalendar>
+    public static class GetChatMessageCalendar extends Function
     {
         public long chatId;
         public SearchMessagesFilter filter;
@@ -27658,7 +26324,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatMessageCount extends Function<Count>
+    public static class GetChatMessageCount extends Function
     {
         public long chatId;
         public SearchMessagesFilter filter;
@@ -27684,7 +26350,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatNotificationSettingsExceptions extends Function<Chats>
+    public static class GetChatNotificationSettingsExceptions extends Function
     {
         public NotificationSettingsScope scope;
         public boolean compareSound;
@@ -27709,7 +26375,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatPinnedMessage extends Function<Message>
+    public static class GetChatPinnedMessage extends Function
     {
         public long chatId;
 
@@ -27731,7 +26397,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatScheduledMessages extends Function<Messages>
+    public static class GetChatScheduledMessages extends Function
     {
         public long chatId;
 
@@ -27753,7 +26419,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatSparseMessagePositions extends Function<MessagePositions>
+    public static class GetChatSparseMessagePositions extends Function
     {
         public long chatId;
         public SearchMessagesFilter filter;
@@ -27782,7 +26448,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatSponsoredMessage extends Function<SponsoredMessage>
+    public static class GetChatSponsoredMessage extends Function
     {
         public long chatId;
 
@@ -27804,7 +26470,7 @@ public class TdApi
         }
     }
 
-    public static class GetChatStatistics extends Function<ChatStatistics>
+    public static class GetChatStatistics extends Function
     {
         public long chatId;
         public boolean isDark;
@@ -27828,7 +26494,7 @@ public class TdApi
         }
     }
 
-    public static class GetChats extends Function<Chats>
+    public static class GetChats extends Function
     {
         public ChatList chatList;
         public int limit;
@@ -27852,7 +26518,7 @@ public class TdApi
         }
     }
 
-    public static class GetCommands extends Function<BotCommands>
+    public static class GetCommands extends Function
     {
         public BotCommandScope scope;
         public String languageCode;
@@ -27876,7 +26542,7 @@ public class TdApi
         }
     }
 
-    public static class GetConnectedWebsites extends Function<ConnectedWebsites>
+    public static class GetConnectedWebsites extends Function
     {
 
         public GetConnectedWebsites()
@@ -27892,7 +26558,7 @@ public class TdApi
         }
     }
 
-    public static class GetContacts extends Function<Users>
+    public static class GetContacts extends Function
     {
 
         public GetContacts()
@@ -27908,7 +26574,7 @@ public class TdApi
         }
     }
 
-    public static class GetCountries extends Function<Countries>
+    public static class GetCountries extends Function
     {
 
         public GetCountries()
@@ -27924,7 +26590,7 @@ public class TdApi
         }
     }
 
-    public static class GetCountryCode extends Function<Text>
+    public static class GetCountryCode extends Function
     {
 
         public GetCountryCode()
@@ -27940,7 +26606,7 @@ public class TdApi
         }
     }
 
-    public static class GetCreatedPublicChats extends Function<Chats>
+    public static class GetCreatedPublicChats extends Function
     {
         public PublicChatType type;
 
@@ -27962,7 +26628,7 @@ public class TdApi
         }
     }
 
-    public static class GetCurrentState extends Function<Updates>
+    public static class GetCurrentState extends Function
     {
 
         public GetCurrentState()
@@ -27978,7 +26644,7 @@ public class TdApi
         }
     }
 
-    public static class GetDatabaseStatistics extends Function<DatabaseStatistics>
+    public static class GetDatabaseStatistics extends Function
     {
 
         public GetDatabaseStatistics()
@@ -27994,7 +26660,7 @@ public class TdApi
         }
     }
 
-    public static class GetDeepLinkInfo extends Function<DeepLinkInfo>
+    public static class GetDeepLinkInfo extends Function
     {
         public String link;
 
@@ -28016,7 +26682,7 @@ public class TdApi
         }
     }
 
-    public static class GetEmojiSuggestionsUrl extends Function<HttpUrl>
+    public static class GetEmojiSuggestionsUrl extends Function
     {
         public String languageCode;
 
@@ -28038,7 +26704,7 @@ public class TdApi
         }
     }
 
-    public static class GetExternalLink extends Function<HttpUrl>
+    public static class GetExternalLink extends Function
     {
         public String link;
         public boolean allowWriteAccess;
@@ -28062,7 +26728,7 @@ public class TdApi
         }
     }
 
-    public static class GetExternalLinkInfo extends Function<LoginUrlInfo>
+    public static class GetExternalLinkInfo extends Function
     {
         public String link;
 
@@ -28084,7 +26750,7 @@ public class TdApi
         }
     }
 
-    public static class GetFavoriteStickers extends Function<Stickers>
+    public static class GetFavoriteStickers extends Function
     {
 
         public GetFavoriteStickers()
@@ -28100,7 +26766,7 @@ public class TdApi
         }
     }
 
-    public static class GetFile extends Function<File>
+    public static class GetFile extends Function
     {
         public int fileId;
 
@@ -28122,7 +26788,7 @@ public class TdApi
         }
     }
 
-    public static class GetFileDownloadedPrefixSize extends Function<Count>
+    public static class GetFileDownloadedPrefixSize extends Function
     {
         public int fileId;
         public int offset;
@@ -28146,7 +26812,7 @@ public class TdApi
         }
     }
 
-    public static class GetFileExtension extends Function<Text>
+    public static class GetFileExtension extends Function
     {
         public String mimeType;
 
@@ -28168,7 +26834,7 @@ public class TdApi
         }
     }
 
-    public static class GetFileMimeType extends Function<Text>
+    public static class GetFileMimeType extends Function
     {
         public String fileName;
 
@@ -28190,7 +26856,7 @@ public class TdApi
         }
     }
 
-    public static class GetGameHighScores extends Function<GameHighScores>
+    public static class GetGameHighScores extends Function
     {
         public long chatId;
         public long messageId;
@@ -28216,7 +26882,7 @@ public class TdApi
         }
     }
 
-    public static class GetGroupCall extends Function<GroupCall>
+    public static class GetGroupCall extends Function
     {
         public int groupCallId;
 
@@ -28238,7 +26904,7 @@ public class TdApi
         }
     }
 
-    public static class GetGroupCallInviteLink extends Function<HttpUrl>
+    public static class GetGroupCallInviteLink extends Function
     {
         public int groupCallId;
         public boolean canSelfUnmute;
@@ -28262,7 +26928,7 @@ public class TdApi
         }
     }
 
-    public static class GetGroupCallStreamSegment extends Function<FilePart>
+    public static class GetGroupCallStreamSegment extends Function
     {
         public int groupCallId;
         public long timeOffset;
@@ -28293,29 +26959,7 @@ public class TdApi
         }
     }
 
-    public static class GetGroupCallStreams extends Function<GroupCallStreams>
-    {
-        public int groupCallId;
-
-        public GetGroupCallStreams()
-        {
-        }
-
-        public GetGroupCallStreams(int groupCallId)
-        {
-            this.groupCallId = groupCallId;
-        }
-
-        public static final int CONSTRUCTOR = -1619226268;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetGroupsInCommon extends Function<Chats>
+    public static class GetGroupsInCommon extends Function
     {
         public long userId;
         public long offsetChatId;
@@ -28341,7 +26985,7 @@ public class TdApi
         }
     }
 
-    public static class GetImportedContactCount extends Function<Count>
+    public static class GetImportedContactCount extends Function
     {
 
         public GetImportedContactCount()
@@ -28357,7 +27001,7 @@ public class TdApi
         }
     }
 
-    public static class GetInactiveSupergroupChats extends Function<Chats>
+    public static class GetInactiveSupergroupChats extends Function
     {
 
         public GetInactiveSupergroupChats()
@@ -28373,7 +27017,7 @@ public class TdApi
         }
     }
 
-    public static class GetInlineGameHighScores extends Function<GameHighScores>
+    public static class GetInlineGameHighScores extends Function
     {
         public String inlineMessageId;
         public long userId;
@@ -28397,7 +27041,7 @@ public class TdApi
         }
     }
 
-    public static class GetInlineQueryResults extends Function<InlineQueryResults>
+    public static class GetInlineQueryResults extends Function
     {
         public long botUserId;
         public long chatId;
@@ -28428,7 +27072,7 @@ public class TdApi
         }
     }
 
-    public static class GetInstalledStickerSets extends Function<StickerSets>
+    public static class GetInstalledStickerSets extends Function
     {
         public boolean isMasks;
 
@@ -28450,7 +27094,7 @@ public class TdApi
         }
     }
 
-    public static class GetInternalLinkType extends Function<InternalLinkType>
+    public static class GetInternalLinkType extends Function
     {
         public String link;
 
@@ -28472,7 +27116,7 @@ public class TdApi
         }
     }
 
-    public static class GetJsonString extends Function<Text>
+    public static class GetJsonString extends Function
     {
         public JsonValue jsonValue;
 
@@ -28494,7 +27138,7 @@ public class TdApi
         }
     }
 
-    public static class GetJsonValue extends Function<JsonValue>
+    public static class GetJsonValue extends Function
     {
         public String json;
 
@@ -28516,7 +27160,7 @@ public class TdApi
         }
     }
 
-    public static class GetLanguagePackInfo extends Function<LanguagePackInfo>
+    public static class GetLanguagePackInfo extends Function
     {
         public String languagePackId;
 
@@ -28538,7 +27182,7 @@ public class TdApi
         }
     }
 
-    public static class GetLanguagePackString extends Function<LanguagePackStringValue>
+    public static class GetLanguagePackString extends Function
     {
         public String languagePackDatabasePath;
         public String localizationTarget;
@@ -28567,7 +27211,7 @@ public class TdApi
         }
     }
 
-    public static class GetLanguagePackStrings extends Function<LanguagePackStrings>
+    public static class GetLanguagePackStrings extends Function
     {
         public String languagePackId;
         public String[] keys;
@@ -28591,7 +27235,7 @@ public class TdApi
         }
     }
 
-    public static class GetLocalizationTargetInfo extends Function<LocalizationTargetInfo>
+    public static class GetLocalizationTargetInfo extends Function
     {
         public boolean onlyLocal;
 
@@ -28613,7 +27257,7 @@ public class TdApi
         }
     }
 
-    public static class GetLogStream extends Function<LogStream>
+    public static class GetLogStream extends Function
     {
 
         public GetLogStream()
@@ -28629,7 +27273,7 @@ public class TdApi
         }
     }
 
-    public static class GetLogTagVerbosityLevel extends Function<LogVerbosityLevel>
+    public static class GetLogTagVerbosityLevel extends Function
     {
         public String tag;
 
@@ -28651,7 +27295,7 @@ public class TdApi
         }
     }
 
-    public static class GetLogTags extends Function<LogTags>
+    public static class GetLogTags extends Function
     {
 
         public GetLogTags()
@@ -28667,7 +27311,7 @@ public class TdApi
         }
     }
 
-    public static class GetLogVerbosityLevel extends Function<LogVerbosityLevel>
+    public static class GetLogVerbosityLevel extends Function
     {
 
         public GetLogVerbosityLevel()
@@ -28683,7 +27327,7 @@ public class TdApi
         }
     }
 
-    public static class GetLoginUrl extends Function<HttpUrl>
+    public static class GetLoginUrl extends Function
     {
         public long chatId;
         public long messageId;
@@ -28711,7 +27355,7 @@ public class TdApi
         }
     }
 
-    public static class GetLoginUrlInfo extends Function<LoginUrlInfo>
+    public static class GetLoginUrlInfo extends Function
     {
         public long chatId;
         public long messageId;
@@ -28737,7 +27381,7 @@ public class TdApi
         }
     }
 
-    public static class GetMapThumbnailFile extends Function<File>
+    public static class GetMapThumbnailFile extends Function
     {
         public Location location;
         public int zoom;
@@ -28770,7 +27414,7 @@ public class TdApi
         }
     }
 
-    public static class GetMarkdownText extends Function<FormattedText>
+    public static class GetMarkdownText extends Function
     {
         public FormattedText text;
 
@@ -28792,7 +27436,7 @@ public class TdApi
         }
     }
 
-    public static class GetMe extends Function<User>
+    public static class GetMe extends Function
     {
 
         public GetMe()
@@ -28808,29 +27452,7 @@ public class TdApi
         }
     }
 
-    public static class GetMenuButton extends Function<BotMenuButton>
-    {
-        public long userId;
-
-        public GetMenuButton()
-        {
-        }
-
-        public GetMenuButton(long userId)
-        {
-            this.userId = userId;
-        }
-
-        public static final int CONSTRUCTOR = -437324736;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetMessage extends Function<Message>
+    public static class GetMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -28854,62 +27476,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageAddedReactions extends Function<AddedReactions>
-    {
-        public long chatId;
-        public long messageId;
-        public String reaction;
-        public String offset;
-        public int limit;
-
-        public GetMessageAddedReactions()
-        {
-        }
-
-        public GetMessageAddedReactions(long chatId, long messageId, String reaction, String offset,
-                int limit)
-        {
-            this.chatId = chatId;
-            this.messageId = messageId;
-            this.reaction = reaction;
-            this.offset = offset;
-            this.limit = limit;
-        }
-
-        public static final int CONSTRUCTOR = -1430014415;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetMessageAvailableReactions extends Function<AvailableReactions>
-    {
-        public long chatId;
-        public long messageId;
-
-        public GetMessageAvailableReactions()
-        {
-        }
-
-        public GetMessageAvailableReactions(long chatId, long messageId)
-        {
-            this.chatId = chatId;
-            this.messageId = messageId;
-        }
-
-        public static final int CONSTRUCTOR = 205497679;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetMessageEmbeddingCode extends Function<Text>
+    public static class GetMessageEmbeddingCode extends Function
     {
         public long chatId;
         public long messageId;
@@ -28935,7 +27502,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageFileType extends Function<MessageFileType>
+    public static class GetMessageFileType extends Function
     {
         public String messageFileHead;
 
@@ -28957,7 +27524,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageImportConfirmationText extends Function<Text>
+    public static class GetMessageImportConfirmationText extends Function
     {
         public long chatId;
 
@@ -28979,7 +27546,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageLink extends Function<MessageLink>
+    public static class GetMessageLink extends Function
     {
         public long chatId;
         public long messageId;
@@ -29010,7 +27577,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageLinkInfo extends Function<MessageLinkInfo>
+    public static class GetMessageLinkInfo extends Function
     {
         public String url;
 
@@ -29032,7 +27599,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageLocally extends Function<Message>
+    public static class GetMessageLocally extends Function
     {
         public long chatId;
         public long messageId;
@@ -29056,7 +27623,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessagePublicForwards extends Function<FoundMessages>
+    public static class GetMessagePublicForwards extends Function
     {
         public long chatId;
         public long messageId;
@@ -29084,7 +27651,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageStatistics extends Function<MessageStatistics>
+    public static class GetMessageStatistics extends Function
     {
         public long chatId;
         public long messageId;
@@ -29110,7 +27677,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageThread extends Function<MessageThreadInfo>
+    public static class GetMessageThread extends Function
     {
         public long chatId;
         public long messageId;
@@ -29134,7 +27701,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageThreadHistory extends Function<Messages>
+    public static class GetMessageThreadHistory extends Function
     {
         public long chatId;
         public long messageId;
@@ -29165,7 +27732,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessageViewers extends Function<Users>
+    public static class GetMessageViewers extends Function
     {
         public long chatId;
         public long messageId;
@@ -29189,7 +27756,7 @@ public class TdApi
         }
     }
 
-    public static class GetMessages extends Function<Messages>
+    public static class GetMessages extends Function
     {
         public long chatId;
         public long[] messageIds;
@@ -29213,7 +27780,7 @@ public class TdApi
         }
     }
 
-    public static class GetNetworkStatistics extends Function<NetworkStatistics>
+    public static class GetNetworkStatistics extends Function
     {
         public boolean onlyCurrent;
 
@@ -29235,7 +27802,7 @@ public class TdApi
         }
     }
 
-    public static class GetOption extends Function<OptionValue>
+    public static class GetOption extends Function
     {
         public String name;
 
@@ -29257,7 +27824,7 @@ public class TdApi
         }
     }
 
-    public static class GetPassportAuthorizationForm extends Function<PassportAuthorizationForm>
+    public static class GetPassportAuthorizationForm extends Function
     {
         public long botUserId;
         public String scope;
@@ -29286,8 +27853,7 @@ public class TdApi
         }
     }
 
-    public static class GetPassportAuthorizationFormAvailableElements
-            extends Function<PassportElementsWithErrors>
+    public static class GetPassportAuthorizationFormAvailableElements extends Function
     {
         public int autorizationFormId;
         public String password;
@@ -29312,7 +27878,7 @@ public class TdApi
         }
     }
 
-    public static class GetPassportElement extends Function<PassportElement>
+    public static class GetPassportElement extends Function
     {
         public PassportElementType type;
         public String password;
@@ -29336,7 +27902,7 @@ public class TdApi
         }
     }
 
-    public static class GetPasswordState extends Function<PasswordState>
+    public static class GetPasswordState extends Function
     {
 
         public GetPasswordState()
@@ -29352,24 +27918,24 @@ public class TdApi
         }
     }
 
-    public static class GetPaymentForm extends Function<PaymentForm>
+    public static class GetPaymentForm extends Function
     {
         public long chatId;
         public long messageId;
-        public ThemeParameters theme;
+        public PaymentFormTheme theme;
 
         public GetPaymentForm()
         {
         }
 
-        public GetPaymentForm(long chatId, long messageId, ThemeParameters theme)
+        public GetPaymentForm(long chatId, long messageId, PaymentFormTheme theme)
         {
             this.chatId = chatId;
             this.messageId = messageId;
             this.theme = theme;
         }
 
-        public static final int CONSTRUCTOR = -1874784169;
+        public static final int CONSTRUCTOR = 158229273;
 
         @Override
         public int getConstructor()
@@ -29378,7 +27944,7 @@ public class TdApi
         }
     }
 
-    public static class GetPaymentReceipt extends Function<PaymentReceipt>
+    public static class GetPaymentReceipt extends Function
     {
         public long chatId;
         public long messageId;
@@ -29402,7 +27968,7 @@ public class TdApi
         }
     }
 
-    public static class GetPhoneNumberInfo extends Function<PhoneNumberInfo>
+    public static class GetPhoneNumberInfo extends Function
     {
         public String phoneNumberPrefix;
 
@@ -29424,7 +27990,7 @@ public class TdApi
         }
     }
 
-    public static class GetPhoneNumberInfoSync extends Function<PhoneNumberInfo>
+    public static class GetPhoneNumberInfoSync extends Function
     {
         public String languageCode;
         public String phoneNumberPrefix;
@@ -29448,7 +28014,7 @@ public class TdApi
         }
     }
 
-    public static class GetPollVoters extends Function<Users>
+    public static class GetPollVoters extends Function
     {
         public long chatId;
         public long messageId;
@@ -29478,7 +28044,7 @@ public class TdApi
         }
     }
 
-    public static class GetPreferredCountryLanguage extends Function<Text>
+    public static class GetPreferredCountryLanguage extends Function
     {
         public String countryCode;
 
@@ -29500,7 +28066,7 @@ public class TdApi
         }
     }
 
-    public static class GetProxies extends Function<Proxies>
+    public static class GetProxies extends Function
     {
 
         public GetProxies()
@@ -29516,7 +28082,7 @@ public class TdApi
         }
     }
 
-    public static class GetProxyLink extends Function<HttpUrl>
+    public static class GetProxyLink extends Function
     {
         public int proxyId;
 
@@ -29538,7 +28104,7 @@ public class TdApi
         }
     }
 
-    public static class GetPushReceiverId extends Function<PushReceiverId>
+    public static class GetPushReceiverId extends Function
     {
         public String payload;
 
@@ -29560,7 +28126,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecentInlineBots extends Function<Users>
+    public static class GetRecentInlineBots extends Function
     {
 
         public GetRecentInlineBots()
@@ -29576,7 +28142,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecentStickers extends Function<Stickers>
+    public static class GetRecentStickers extends Function
     {
         public boolean isAttached;
 
@@ -29598,7 +28164,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecentlyOpenedChats extends Function<Chats>
+    public static class GetRecentlyOpenedChats extends Function
     {
         public int limit;
 
@@ -29620,7 +28186,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecentlyVisitedTMeUrls extends Function<TMeUrls>
+    public static class GetRecentlyVisitedTMeUrls extends Function
     {
         public String referrer;
 
@@ -29642,7 +28208,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecommendedChatFilters extends Function<RecommendedChatFilters>
+    public static class GetRecommendedChatFilters extends Function
     {
 
         public GetRecommendedChatFilters()
@@ -29658,7 +28224,7 @@ public class TdApi
         }
     }
 
-    public static class GetRecoveryEmailAddress extends Function<RecoveryEmailAddress>
+    public static class GetRecoveryEmailAddress extends Function
     {
         public String password;
 
@@ -29680,7 +28246,7 @@ public class TdApi
         }
     }
 
-    public static class GetRemoteFile extends Function<File>
+    public static class GetRemoteFile extends Function
     {
         public String remoteFileId;
         public FileType fileType;
@@ -29704,7 +28270,7 @@ public class TdApi
         }
     }
 
-    public static class GetRepliedMessage extends Function<Message>
+    public static class GetRepliedMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -29728,7 +28294,7 @@ public class TdApi
         }
     }
 
-    public static class GetSavedAnimations extends Function<Animations>
+    public static class GetSavedAnimations extends Function
     {
 
         public GetSavedAnimations()
@@ -29744,45 +28310,7 @@ public class TdApi
         }
     }
 
-    public static class GetSavedNotificationSound extends Function<NotificationSounds>
-    {
-        public long notificationSoundId;
-
-        public GetSavedNotificationSound()
-        {
-        }
-
-        public GetSavedNotificationSound(long notificationSoundId)
-        {
-            this.notificationSoundId = notificationSoundId;
-        }
-
-        public static final int CONSTRUCTOR = 459569431;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetSavedNotificationSounds extends Function<NotificationSounds>
-    {
-
-        public GetSavedNotificationSounds()
-        {
-        }
-
-        public static final int CONSTRUCTOR = -1070305368;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetSavedOrderInfo extends Function<OrderInfo>
+    public static class GetSavedOrderInfo extends Function
     {
 
         public GetSavedOrderInfo()
@@ -29798,7 +28326,7 @@ public class TdApi
         }
     }
 
-    public static class GetScopeNotificationSettings extends Function<ScopeNotificationSettings>
+    public static class GetScopeNotificationSettings extends Function
     {
         public NotificationSettingsScope scope;
 
@@ -29820,7 +28348,7 @@ public class TdApi
         }
     }
 
-    public static class GetSecretChat extends Function<SecretChat>
+    public static class GetSecretChat extends Function
     {
         public int secretChatId;
 
@@ -29842,7 +28370,7 @@ public class TdApi
         }
     }
 
-    public static class GetStatisticalGraph extends Function<StatisticalGraph>
+    public static class GetStatisticalGraph extends Function
     {
         public long chatId;
         public String token;
@@ -29868,7 +28396,7 @@ public class TdApi
         }
     }
 
-    public static class GetStickerEmojis extends Function<Emojis>
+    public static class GetStickerEmojis extends Function
     {
         public InputFile sticker;
 
@@ -29890,7 +28418,7 @@ public class TdApi
         }
     }
 
-    public static class GetStickerSet extends Function<StickerSet>
+    public static class GetStickerSet extends Function
     {
         public long setId;
 
@@ -29912,7 +28440,7 @@ public class TdApi
         }
     }
 
-    public static class GetStickers extends Function<Stickers>
+    public static class GetStickers extends Function
     {
         public String emoji;
         public int limit;
@@ -29936,7 +28464,7 @@ public class TdApi
         }
     }
 
-    public static class GetStorageStatistics extends Function<StorageStatistics>
+    public static class GetStorageStatistics extends Function
     {
         public int chatLimit;
 
@@ -29958,7 +28486,7 @@ public class TdApi
         }
     }
 
-    public static class GetStorageStatisticsFast extends Function<StorageStatisticsFast>
+    public static class GetStorageStatisticsFast extends Function
     {
 
         public GetStorageStatisticsFast()
@@ -29974,7 +28502,7 @@ public class TdApi
         }
     }
 
-    public static class GetSuggestedFileName extends Function<Text>
+    public static class GetSuggestedFileName extends Function
     {
         public int fileId;
         public String directory;
@@ -29998,7 +28526,7 @@ public class TdApi
         }
     }
 
-    public static class GetSuggestedStickerSetName extends Function<Text>
+    public static class GetSuggestedStickerSetName extends Function
     {
         public String title;
 
@@ -30020,7 +28548,7 @@ public class TdApi
         }
     }
 
-    public static class GetSuitableDiscussionChats extends Function<Chats>
+    public static class GetSuitableDiscussionChats extends Function
     {
 
         public GetSuitableDiscussionChats()
@@ -30036,7 +28564,7 @@ public class TdApi
         }
     }
 
-    public static class GetSupergroup extends Function<Supergroup>
+    public static class GetSupergroup extends Function
     {
         public long supergroupId;
 
@@ -30058,7 +28586,7 @@ public class TdApi
         }
     }
 
-    public static class GetSupergroupFullInfo extends Function<SupergroupFullInfo>
+    public static class GetSupergroupFullInfo extends Function
     {
         public long supergroupId;
 
@@ -30080,7 +28608,7 @@ public class TdApi
         }
     }
 
-    public static class GetSupergroupMembers extends Function<ChatMembers>
+    public static class GetSupergroupMembers extends Function
     {
         public long supergroupId;
         public SupergroupMembersFilter filter;
@@ -30109,7 +28637,7 @@ public class TdApi
         }
     }
 
-    public static class GetSupportUser extends Function<User>
+    public static class GetSupportUser extends Function
     {
 
         public GetSupportUser()
@@ -30125,7 +28653,7 @@ public class TdApi
         }
     }
 
-    public static class GetTemporaryPasswordState extends Function<TemporaryPasswordState>
+    public static class GetTemporaryPasswordState extends Function
     {
 
         public GetTemporaryPasswordState()
@@ -30141,7 +28669,7 @@ public class TdApi
         }
     }
 
-    public static class GetTextEntities extends Function<TextEntities>
+    public static class GetTextEntities extends Function
     {
         public String text;
 
@@ -30163,29 +28691,7 @@ public class TdApi
         }
     }
 
-    public static class GetThemeParametersJsonString extends Function<Text>
-    {
-        public ThemeParameters theme;
-
-        public GetThemeParametersJsonString()
-        {
-        }
-
-        public GetThemeParametersJsonString(ThemeParameters theme)
-        {
-            this.theme = theme;
-        }
-
-        public static final int CONSTRUCTOR = -1850145288;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetTopChats extends Function<Chats>
+    public static class GetTopChats extends Function
     {
         public TopChatCategory category;
         public int limit;
@@ -30209,7 +28715,7 @@ public class TdApi
         }
     }
 
-    public static class GetTrendingStickerSets extends Function<StickerSets>
+    public static class GetTrendingStickerSets extends Function
     {
         public int offset;
         public int limit;
@@ -30233,7 +28739,7 @@ public class TdApi
         }
     }
 
-    public static class GetUser extends Function<User>
+    public static class GetUser extends Function
     {
         public long userId;
 
@@ -30255,7 +28761,7 @@ public class TdApi
         }
     }
 
-    public static class GetUserFullInfo extends Function<UserFullInfo>
+    public static class GetUserFullInfo extends Function
     {
         public long userId;
 
@@ -30277,7 +28783,7 @@ public class TdApi
         }
     }
 
-    public static class GetUserPrivacySettingRules extends Function<UserPrivacySettingRules>
+    public static class GetUserPrivacySettingRules extends Function
     {
         public UserPrivacySetting setting;
 
@@ -30299,7 +28805,7 @@ public class TdApi
         }
     }
 
-    public static class GetUserProfilePhotos extends Function<ChatPhotos>
+    public static class GetUserProfilePhotos extends Function
     {
         public long userId;
         public int offset;
@@ -30325,7 +28831,7 @@ public class TdApi
         }
     }
 
-    public static class GetVideoChatAvailableParticipants extends Function<MessageSenders>
+    public static class GetVideoChatAvailableParticipants extends Function
     {
         public long chatId;
 
@@ -30347,55 +28853,7 @@ public class TdApi
         }
     }
 
-    public static class GetVideoChatRtmpUrl extends Function<RtmpUrl>
-    {
-        public long chatId;
-
-        public GetVideoChatRtmpUrl()
-        {
-        }
-
-        public GetVideoChatRtmpUrl(long chatId)
-        {
-            this.chatId = chatId;
-        }
-
-        public static final int CONSTRUCTOR = 1210784543;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetWebAppUrl extends Function<HttpUrl>
-    {
-        public long botUserId;
-        public String url;
-        public ThemeParameters theme;
-
-        public GetWebAppUrl()
-        {
-        }
-
-        public GetWebAppUrl(long botUserId, String url, ThemeParameters theme)
-        {
-            this.botUserId = botUserId;
-            this.url = url;
-            this.theme = theme;
-        }
-
-        public static final int CONSTRUCTOR = 1600690867;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class GetWebPageInstantView extends Function<WebPageInstantView>
+    public static class GetWebPageInstantView extends Function
     {
         public String url;
         public boolean forceFull;
@@ -30419,7 +28877,7 @@ public class TdApi
         }
     }
 
-    public static class GetWebPagePreview extends Function<WebPage>
+    public static class GetWebPagePreview extends Function
     {
         public FormattedText text;
 
@@ -30441,7 +28899,7 @@ public class TdApi
         }
     }
 
-    public static class HideSuggestedAction extends Function<Ok>
+    public static class HideSuggestedAction extends Function
     {
         public SuggestedAction action;
 
@@ -30463,7 +28921,7 @@ public class TdApi
         }
     }
 
-    public static class ImportContacts extends Function<ImportedContacts>
+    public static class ImportContacts extends Function
     {
         public Contact[] contacts;
 
@@ -30485,7 +28943,7 @@ public class TdApi
         }
     }
 
-    public static class ImportMessages extends Function<Ok>
+    public static class ImportMessages extends Function
     {
         public long chatId;
         public InputFile messageFile;
@@ -30511,7 +28969,7 @@ public class TdApi
         }
     }
 
-    public static class InviteGroupCallParticipants extends Function<Ok>
+    public static class InviteGroupCallParticipants extends Function
     {
         public int groupCallId;
         public long[] userIds;
@@ -30535,7 +28993,7 @@ public class TdApi
         }
     }
 
-    public static class JoinChat extends Function<Ok>
+    public static class JoinChat extends Function
     {
         public long chatId;
 
@@ -30557,7 +29015,7 @@ public class TdApi
         }
     }
 
-    public static class JoinChatByInviteLink extends Function<Chat>
+    public static class JoinChatByInviteLink extends Function
     {
         public String inviteLink;
 
@@ -30579,7 +29037,7 @@ public class TdApi
         }
     }
 
-    public static class JoinGroupCall extends Function<Text>
+    public static class JoinGroupCall extends Function
     {
         public int groupCallId;
         public MessageSender participantId;
@@ -30614,7 +29072,7 @@ public class TdApi
         }
     }
 
-    public static class LeaveChat extends Function<Ok>
+    public static class LeaveChat extends Function
     {
         public long chatId;
 
@@ -30636,7 +29094,7 @@ public class TdApi
         }
     }
 
-    public static class LeaveGroupCall extends Function<Ok>
+    public static class LeaveGroupCall extends Function
     {
         public int groupCallId;
 
@@ -30658,7 +29116,7 @@ public class TdApi
         }
     }
 
-    public static class LoadChats extends Function<Ok>
+    public static class LoadChats extends Function
     {
         public ChatList chatList;
         public int limit;
@@ -30682,7 +29140,7 @@ public class TdApi
         }
     }
 
-    public static class LoadGroupCallParticipants extends Function<Ok>
+    public static class LoadGroupCallParticipants extends Function
     {
         public int groupCallId;
         public int limit;
@@ -30706,7 +29164,7 @@ public class TdApi
         }
     }
 
-    public static class LogOut extends Function<Ok>
+    public static class LogOut extends Function
     {
 
         public LogOut()
@@ -30722,7 +29180,7 @@ public class TdApi
         }
     }
 
-    public static class OpenChat extends Function<Ok>
+    public static class OpenChat extends Function
     {
         public long chatId;
 
@@ -30744,7 +29202,7 @@ public class TdApi
         }
     }
 
-    public static class OpenMessageContent extends Function<Ok>
+    public static class OpenMessageContent extends Function
     {
         public long chatId;
         public long messageId;
@@ -30768,38 +29226,7 @@ public class TdApi
         }
     }
 
-    public static class OpenWebApp extends Function<WebAppInfo>
-    {
-        public long chatId;
-        public long botUserId;
-        public String url;
-        public ThemeParameters theme;
-        public long replyToMessageId;
-
-        public OpenWebApp()
-        {
-        }
-
-        public OpenWebApp(long chatId, long botUserId, String url, ThemeParameters theme,
-                long replyToMessageId)
-        {
-            this.chatId = chatId;
-            this.botUserId = botUserId;
-            this.url = url;
-            this.theme = theme;
-            this.replyToMessageId = replyToMessageId;
-        }
-
-        public static final int CONSTRUCTOR = -1857371112;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class OptimizeStorage extends Function<StorageStatistics>
+    public static class OptimizeStorage extends Function
     {
         public long size;
         public int ttl;
@@ -30839,7 +29266,7 @@ public class TdApi
         }
     }
 
-    public static class ParseMarkdown extends Function<FormattedText>
+    public static class ParseMarkdown extends Function
     {
         public FormattedText text;
 
@@ -30861,7 +29288,7 @@ public class TdApi
         }
     }
 
-    public static class ParseTextEntities extends Function<FormattedText>
+    public static class ParseTextEntities extends Function
     {
         public String text;
         public TextParseMode parseMode;
@@ -30885,7 +29312,7 @@ public class TdApi
         }
     }
 
-    public static class PinChatMessage extends Function<Ok>
+    public static class PinChatMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -30914,7 +29341,7 @@ public class TdApi
         }
     }
 
-    public static class PingProxy extends Function<Seconds>
+    public static class PingProxy extends Function
     {
         public int proxyId;
 
@@ -30936,7 +29363,7 @@ public class TdApi
         }
     }
 
-    public static class ProcessChatJoinRequest extends Function<Ok>
+    public static class ProcessChatJoinRequest extends Function
     {
         public long chatId;
         public long userId;
@@ -30962,7 +29389,7 @@ public class TdApi
         }
     }
 
-    public static class ProcessChatJoinRequests extends Function<Ok>
+    public static class ProcessChatJoinRequests extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -30988,7 +29415,7 @@ public class TdApi
         }
     }
 
-    public static class ProcessPushNotification extends Function<Ok>
+    public static class ProcessPushNotification extends Function
     {
         public String payload;
 
@@ -31010,7 +29437,7 @@ public class TdApi
         }
     }
 
-    public static class ReadAllChatMentions extends Function<Ok>
+    public static class ReadAllChatMentions extends Function
     {
         public long chatId;
 
@@ -31032,29 +29459,7 @@ public class TdApi
         }
     }
 
-    public static class ReadAllChatReactions extends Function<Ok>
-    {
-        public long chatId;
-
-        public ReadAllChatReactions()
-        {
-        }
-
-        public ReadAllChatReactions(long chatId)
-        {
-            this.chatId = chatId;
-        }
-
-        public static final int CONSTRUCTOR = 1421973357;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ReadFilePart extends Function<FilePart>
+    public static class ReadFilePart extends Function
     {
         public int fileId;
         public int offset;
@@ -31080,7 +29485,7 @@ public class TdApi
         }
     }
 
-    public static class RecoverAuthenticationPassword extends Function<Ok>
+    public static class RecoverAuthenticationPassword extends Function
     {
         public String recoveryCode;
         public String newPassword;
@@ -31107,7 +29512,7 @@ public class TdApi
         }
     }
 
-    public static class RecoverPassword extends Function<PasswordState>
+    public static class RecoverPassword extends Function
     {
         public String recoveryCode;
         public String newPassword;
@@ -31133,7 +29538,7 @@ public class TdApi
         }
     }
 
-    public static class RegisterDevice extends Function<PushReceiverId>
+    public static class RegisterDevice extends Function
     {
         public DeviceToken deviceToken;
         public long[] otherUserIds;
@@ -31157,7 +29562,7 @@ public class TdApi
         }
     }
 
-    public static class RegisterUser extends Function<Ok>
+    public static class RegisterUser extends Function
     {
         public String firstName;
         public String lastName;
@@ -31181,34 +29586,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveAllFilesFromDownloads extends Function<Ok>
-    {
-        public boolean onlyActive;
-        public boolean onlyCompleted;
-        public boolean deleteFromCache;
-
-        public RemoveAllFilesFromDownloads()
-        {
-        }
-
-        public RemoveAllFilesFromDownloads(boolean onlyActive, boolean onlyCompleted,
-                boolean deleteFromCache)
-        {
-            this.onlyActive = onlyActive;
-            this.onlyCompleted = onlyCompleted;
-            this.deleteFromCache = deleteFromCache;
-        }
-
-        public static final int CONSTRUCTOR = -1186433402;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class RemoveBackground extends Function<Ok>
+    public static class RemoveBackground extends Function
     {
         public long backgroundId;
 
@@ -31230,7 +29608,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveChatActionBar extends Function<Ok>
+    public static class RemoveChatActionBar extends Function
     {
         public long chatId;
 
@@ -31252,7 +29630,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveContacts extends Function<Ok>
+    public static class RemoveContacts extends Function
     {
         public long[] userIds;
 
@@ -31274,7 +29652,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveFavoriteSticker extends Function<Ok>
+    public static class RemoveFavoriteSticker extends Function
     {
         public InputFile sticker;
 
@@ -31296,31 +29674,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveFileFromDownloads extends Function<Ok>
-    {
-        public int fileId;
-        public boolean deleteFromCache;
-
-        public RemoveFileFromDownloads()
-        {
-        }
-
-        public RemoveFileFromDownloads(int fileId, boolean deleteFromCache)
-        {
-            this.fileId = fileId;
-            this.deleteFromCache = deleteFromCache;
-        }
-
-        public static final int CONSTRUCTOR = 1460060142;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class RemoveNotification extends Function<Ok>
+    public static class RemoveNotification extends Function
     {
         public int notificationGroupId;
         public int notificationId;
@@ -31344,7 +29698,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveNotificationGroup extends Function<Ok>
+    public static class RemoveNotificationGroup extends Function
     {
         public int notificationGroupId;
         public int maxNotificationId;
@@ -31368,7 +29722,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveProxy extends Function<Ok>
+    public static class RemoveProxy extends Function
     {
         public int proxyId;
 
@@ -31390,7 +29744,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveRecentHashtag extends Function<Ok>
+    public static class RemoveRecentHashtag extends Function
     {
         public String hashtag;
 
@@ -31412,7 +29766,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveRecentSticker extends Function<Ok>
+    public static class RemoveRecentSticker extends Function
     {
         public boolean isAttached;
         public InputFile sticker;
@@ -31436,7 +29790,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveRecentlyFoundChat extends Function<Ok>
+    public static class RemoveRecentlyFoundChat extends Function
     {
         public long chatId;
 
@@ -31458,7 +29812,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveSavedAnimation extends Function<Ok>
+    public static class RemoveSavedAnimation extends Function
     {
         public InputFile animation;
 
@@ -31480,29 +29834,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveSavedNotificationSound extends Function<Ok>
-    {
-        public long notificationSoundId;
-
-        public RemoveSavedNotificationSound()
-        {
-        }
-
-        public RemoveSavedNotificationSound(long notificationSoundId)
-        {
-            this.notificationSoundId = notificationSoundId;
-        }
-
-        public static final int CONSTRUCTOR = -480032946;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class RemoveStickerFromSet extends Function<Ok>
+    public static class RemoveStickerFromSet extends Function
     {
         public InputFile sticker;
 
@@ -31524,7 +29856,7 @@ public class TdApi
         }
     }
 
-    public static class RemoveTopChat extends Function<Ok>
+    public static class RemoveTopChat extends Function
     {
         public TopChatCategory category;
         public long chatId;
@@ -31548,7 +29880,7 @@ public class TdApi
         }
     }
 
-    public static class ReorderChatFilters extends Function<Ok>
+    public static class ReorderChatFilters extends Function
     {
         public int[] chatFilterIds;
 
@@ -31570,7 +29902,7 @@ public class TdApi
         }
     }
 
-    public static class ReorderInstalledStickerSets extends Function<Ok>
+    public static class ReorderInstalledStickerSets extends Function
     {
         public boolean isMasks;
         public long[] stickerSetIds;
@@ -31594,7 +29926,7 @@ public class TdApi
         }
     }
 
-    public static class ReplacePrimaryChatInviteLink extends Function<ChatInviteLink>
+    public static class ReplacePrimaryChatInviteLink extends Function
     {
         public long chatId;
 
@@ -31616,29 +29948,7 @@ public class TdApi
         }
     }
 
-    public static class ReplaceVideoChatRtmpUrl extends Function<RtmpUrl>
-    {
-        public long chatId;
-
-        public ReplaceVideoChatRtmpUrl()
-        {
-        }
-
-        public ReplaceVideoChatRtmpUrl(long chatId)
-        {
-            this.chatId = chatId;
-        }
-
-        public static final int CONSTRUCTOR = 558862304;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ReportChat extends Function<Ok>
+    public static class ReportChat extends Function
     {
         public long chatId;
         public long[] messageIds;
@@ -31666,7 +29976,7 @@ public class TdApi
         }
     }
 
-    public static class ReportChatPhoto extends Function<Ok>
+    public static class ReportChatPhoto extends Function
     {
         public long chatId;
         public int fileId;
@@ -31694,7 +30004,7 @@ public class TdApi
         }
     }
 
-    public static class ReportSupergroupSpam extends Function<Ok>
+    public static class ReportSupergroupSpam extends Function
     {
         public long supergroupId;
         public long[] messageIds;
@@ -31718,7 +30028,7 @@ public class TdApi
         }
     }
 
-    public static class RequestAuthenticationPasswordRecovery extends Function<Ok>
+    public static class RequestAuthenticationPasswordRecovery extends Function
     {
 
         public RequestAuthenticationPasswordRecovery()
@@ -31734,7 +30044,7 @@ public class TdApi
         }
     }
 
-    public static class RequestPasswordRecovery extends Function<EmailAddressAuthenticationCodeInfo>
+    public static class RequestPasswordRecovery extends Function
     {
 
         public RequestPasswordRecovery()
@@ -31750,7 +30060,7 @@ public class TdApi
         }
     }
 
-    public static class RequestQrCodeAuthentication extends Function<Ok>
+    public static class RequestQrCodeAuthentication extends Function
     {
         public long[] otherUserIds;
 
@@ -31772,7 +30082,7 @@ public class TdApi
         }
     }
 
-    public static class ResendAuthenticationCode extends Function<Ok>
+    public static class ResendAuthenticationCode extends Function
     {
 
         public ResendAuthenticationCode()
@@ -31788,7 +30098,7 @@ public class TdApi
         }
     }
 
-    public static class ResendChangePhoneNumberCode extends Function<AuthenticationCodeInfo>
+    public static class ResendChangePhoneNumberCode extends Function
     {
 
         public ResendChangePhoneNumberCode()
@@ -31804,8 +30114,7 @@ public class TdApi
         }
     }
 
-    public static class ResendEmailAddressVerificationCode
-            extends Function<EmailAddressAuthenticationCodeInfo>
+    public static class ResendEmailAddressVerificationCode extends Function
     {
 
         public ResendEmailAddressVerificationCode()
@@ -31821,7 +30130,7 @@ public class TdApi
         }
     }
 
-    public static class ResendMessages extends Function<Messages>
+    public static class ResendMessages extends Function
     {
         public long chatId;
         public long[] messageIds;
@@ -31845,7 +30154,7 @@ public class TdApi
         }
     }
 
-    public static class ResendPhoneNumberConfirmationCode extends Function<AuthenticationCodeInfo>
+    public static class ResendPhoneNumberConfirmationCode extends Function
     {
 
         public ResendPhoneNumberConfirmationCode()
@@ -31861,7 +30170,7 @@ public class TdApi
         }
     }
 
-    public static class ResendPhoneNumberVerificationCode extends Function<AuthenticationCodeInfo>
+    public static class ResendPhoneNumberVerificationCode extends Function
     {
 
         public ResendPhoneNumberVerificationCode()
@@ -31877,7 +30186,7 @@ public class TdApi
         }
     }
 
-    public static class ResendRecoveryEmailAddressCode extends Function<PasswordState>
+    public static class ResendRecoveryEmailAddressCode extends Function
     {
 
         public ResendRecoveryEmailAddressCode()
@@ -31893,7 +30202,7 @@ public class TdApi
         }
     }
 
-    public static class ResetAllNotificationSettings extends Function<Ok>
+    public static class ResetAllNotificationSettings extends Function
     {
 
         public ResetAllNotificationSettings()
@@ -31909,7 +30218,7 @@ public class TdApi
         }
     }
 
-    public static class ResetBackgrounds extends Function<Ok>
+    public static class ResetBackgrounds extends Function
     {
 
         public ResetBackgrounds()
@@ -31925,7 +30234,7 @@ public class TdApi
         }
     }
 
-    public static class ResetNetworkStatistics extends Function<Ok>
+    public static class ResetNetworkStatistics extends Function
     {
 
         public ResetNetworkStatistics()
@@ -31941,7 +30250,7 @@ public class TdApi
         }
     }
 
-    public static class ResetPassword extends Function<ResetPasswordResult>
+    public static class ResetPassword extends Function
     {
 
         public ResetPassword()
@@ -31957,7 +30266,7 @@ public class TdApi
         }
     }
 
-    public static class RevokeChatInviteLink extends Function<ChatInviteLinks>
+    public static class RevokeChatInviteLink extends Function
     {
         public long chatId;
         public String inviteLink;
@@ -31981,7 +30290,7 @@ public class TdApi
         }
     }
 
-    public static class RevokeGroupCallInviteLink extends Function<Ok>
+    public static class RevokeGroupCallInviteLink extends Function
     {
         public int groupCallId;
 
@@ -32003,7 +30312,7 @@ public class TdApi
         }
     }
 
-    public static class SaveApplicationLogEvent extends Function<Ok>
+    public static class SaveApplicationLogEvent extends Function
     {
         public String type;
         public long chatId;
@@ -32029,7 +30338,7 @@ public class TdApi
         }
     }
 
-    public static class SearchBackground extends Function<Background>
+    public static class SearchBackground extends Function
     {
         public String name;
 
@@ -32051,7 +30360,7 @@ public class TdApi
         }
     }
 
-    public static class SearchCallMessages extends Function<Messages>
+    public static class SearchCallMessages extends Function
     {
         public long fromMessageId;
         public int limit;
@@ -32077,7 +30386,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChatMembers extends Function<ChatMembers>
+    public static class SearchChatMembers extends Function
     {
         public long chatId;
         public String query;
@@ -32105,7 +30414,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChatMessages extends Function<Messages>
+    public static class SearchChatMessages extends Function
     {
         public long chatId;
         public String query;
@@ -32143,7 +30452,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChatRecentLocationMessages extends Function<Messages>
+    public static class SearchChatRecentLocationMessages extends Function
     {
         public long chatId;
         public int limit;
@@ -32167,7 +30476,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChats extends Function<Chats>
+    public static class SearchChats extends Function
     {
         public String query;
         public int limit;
@@ -32191,7 +30500,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChatsNearby extends Function<ChatsNearby>
+    public static class SearchChatsNearby extends Function
     {
         public Location location;
 
@@ -32213,7 +30522,7 @@ public class TdApi
         }
     }
 
-    public static class SearchChatsOnServer extends Function<Chats>
+    public static class SearchChatsOnServer extends Function
     {
         public String query;
         public int limit;
@@ -32237,7 +30546,7 @@ public class TdApi
         }
     }
 
-    public static class SearchContacts extends Function<Users>
+    public static class SearchContacts extends Function
     {
         public String query;
         public int limit;
@@ -32261,7 +30570,7 @@ public class TdApi
         }
     }
 
-    public static class SearchEmojis extends Function<Emojis>
+    public static class SearchEmojis extends Function
     {
         public String text;
         public boolean exactMatch;
@@ -32287,38 +30596,7 @@ public class TdApi
         }
     }
 
-    public static class SearchFileDownloads extends Function<FoundFileDownloads>
-    {
-        public String query;
-        public boolean onlyActive;
-        public boolean onlyCompleted;
-        public String offset;
-        public int limit;
-
-        public SearchFileDownloads()
-        {
-        }
-
-        public SearchFileDownloads(String query, boolean onlyActive, boolean onlyCompleted,
-                String offset, int limit)
-        {
-            this.query = query;
-            this.onlyActive = onlyActive;
-            this.onlyCompleted = onlyCompleted;
-            this.offset = offset;
-            this.limit = limit;
-        }
-
-        public static final int CONSTRUCTOR = 706611286;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SearchHashtags extends Function<Hashtags>
+    public static class SearchHashtags extends Function
     {
         public String prefix;
         public int limit;
@@ -32342,7 +30620,7 @@ public class TdApi
         }
     }
 
-    public static class SearchInstalledStickerSets extends Function<StickerSets>
+    public static class SearchInstalledStickerSets extends Function
     {
         public boolean isMasks;
         public String query;
@@ -32368,7 +30646,7 @@ public class TdApi
         }
     }
 
-    public static class SearchMessages extends Function<Messages>
+    public static class SearchMessages extends Function
     {
         public ChatList chatList;
         public String query;
@@ -32408,31 +30686,7 @@ public class TdApi
         }
     }
 
-    public static class SearchOutgoingDocumentMessages extends Function<FoundMessages>
-    {
-        public String query;
-        public int limit;
-
-        public SearchOutgoingDocumentMessages()
-        {
-        }
-
-        public SearchOutgoingDocumentMessages(String query, int limit)
-        {
-            this.query = query;
-            this.limit = limit;
-        }
-
-        public static final int CONSTRUCTOR = -1071397762;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SearchPublicChat extends Function<Chat>
+    public static class SearchPublicChat extends Function
     {
         public String username;
 
@@ -32454,7 +30708,7 @@ public class TdApi
         }
     }
 
-    public static class SearchPublicChats extends Function<Chats>
+    public static class SearchPublicChats extends Function
     {
         public String query;
 
@@ -32476,7 +30730,7 @@ public class TdApi
         }
     }
 
-    public static class SearchSecretMessages extends Function<FoundMessages>
+    public static class SearchSecretMessages extends Function
     {
         public long chatId;
         public String query;
@@ -32507,7 +30761,7 @@ public class TdApi
         }
     }
 
-    public static class SearchStickerSet extends Function<StickerSet>
+    public static class SearchStickerSet extends Function
     {
         public String name;
 
@@ -32529,7 +30783,7 @@ public class TdApi
         }
     }
 
-    public static class SearchStickerSets extends Function<StickerSets>
+    public static class SearchStickerSets extends Function
     {
         public String query;
 
@@ -32551,7 +30805,7 @@ public class TdApi
         }
     }
 
-    public static class SearchStickers extends Function<Stickers>
+    public static class SearchStickers extends Function
     {
         public String emoji;
         public int limit;
@@ -32575,29 +30829,7 @@ public class TdApi
         }
     }
 
-    public static class SearchUserByPhoneNumber extends Function<User>
-    {
-        public String phoneNumber;
-
-        public SearchUserByPhoneNumber()
-        {
-        }
-
-        public SearchUserByPhoneNumber(String phoneNumber)
-        {
-            this.phoneNumber = phoneNumber;
-        }
-
-        public static final int CONSTRUCTOR = -1562236142;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SendBotStartMessage extends Function<Message>
+    public static class SendBotStartMessage extends Function
     {
         public long botUserId;
         public long chatId;
@@ -32623,7 +30855,7 @@ public class TdApi
         }
     }
 
-    public static class SendCallDebugInformation extends Function<Ok>
+    public static class SendCallDebugInformation extends Function
     {
         public int callId;
         public String debugInformation;
@@ -32647,7 +30879,7 @@ public class TdApi
         }
     }
 
-    public static class SendCallRating extends Function<Ok>
+    public static class SendCallRating extends Function
     {
         public int callId;
         public int rating;
@@ -32675,7 +30907,7 @@ public class TdApi
         }
     }
 
-    public static class SendCallSignalingData extends Function<Ok>
+    public static class SendCallSignalingData extends Function
     {
         public int callId;
         public byte[] data;
@@ -32699,7 +30931,7 @@ public class TdApi
         }
     }
 
-    public static class SendChatAction extends Function<Ok>
+    public static class SendChatAction extends Function
     {
         public long chatId;
         public long messageThreadId;
@@ -32725,7 +30957,7 @@ public class TdApi
         }
     }
 
-    public static class SendChatScreenshotTakenNotification extends Function<Ok>
+    public static class SendChatScreenshotTakenNotification extends Function
     {
         public long chatId;
 
@@ -32747,7 +30979,7 @@ public class TdApi
         }
     }
 
-    public static class SendCustomRequest extends Function<CustomRequestResult>
+    public static class SendCustomRequest extends Function
     {
         public String method;
         public String parameters;
@@ -32771,8 +31003,7 @@ public class TdApi
         }
     }
 
-    public static class SendEmailAddressVerificationCode
-            extends Function<EmailAddressAuthenticationCodeInfo>
+    public static class SendEmailAddressVerificationCode extends Function
     {
         public String emailAddress;
 
@@ -32794,7 +31025,7 @@ public class TdApi
         }
     }
 
-    public static class SendInlineQueryResultMessage extends Function<Message>
+    public static class SendInlineQueryResultMessage extends Function
     {
         public long chatId;
         public long messageThreadId;
@@ -32830,7 +31061,7 @@ public class TdApi
         }
     }
 
-    public static class SendMessage extends Function<Message>
+    public static class SendMessage extends Function
     {
         public long chatId;
         public long messageThreadId;
@@ -32864,32 +31095,29 @@ public class TdApi
         }
     }
 
-    public static class SendMessageAlbum extends Function<Messages>
+    public static class SendMessageAlbum extends Function
     {
         public long chatId;
         public long messageThreadId;
         public long replyToMessageId;
         public MessageSendOptions options;
         public InputMessageContent[] inputMessageContents;
-        public boolean onlyPreview;
 
         public SendMessageAlbum()
         {
         }
 
         public SendMessageAlbum(long chatId, long messageThreadId, long replyToMessageId,
-                MessageSendOptions options, InputMessageContent[] inputMessageContents,
-                boolean onlyPreview)
+                MessageSendOptions options, InputMessageContent[] inputMessageContents)
         {
             this.chatId = chatId;
             this.messageThreadId = messageThreadId;
             this.replyToMessageId = replyToMessageId;
             this.options = options;
             this.inputMessageContents = inputMessageContents;
-            this.onlyPreview = onlyPreview;
         }
 
-        public static final int CONSTRUCTOR = -1639797862;
+        public static final int CONSTRUCTOR = 983360432;
 
         @Override
         public int getConstructor()
@@ -32898,7 +31126,7 @@ public class TdApi
         }
     }
 
-    public static class SendPassportAuthorizationForm extends Function<Ok>
+    public static class SendPassportAuthorizationForm extends Function
     {
         public int autorizationFormId;
         public PassportElementType[] types;
@@ -32922,7 +31150,7 @@ public class TdApi
         }
     }
 
-    public static class SendPaymentForm extends Function<PaymentResult>
+    public static class SendPaymentForm extends Function
     {
         public long chatId;
         public long messageId;
@@ -32957,7 +31185,7 @@ public class TdApi
         }
     }
 
-    public static class SendPhoneNumberConfirmationCode extends Function<AuthenticationCodeInfo>
+    public static class SendPhoneNumberConfirmationCode extends Function
     {
         public String hash;
         public String phoneNumber;
@@ -32984,7 +31212,7 @@ public class TdApi
         }
     }
 
-    public static class SendPhoneNumberVerificationCode extends Function<AuthenticationCodeInfo>
+    public static class SendPhoneNumberVerificationCode extends Function
     {
         public String phoneNumber;
         public PhoneNumberAuthenticationSettings settings;
@@ -33009,33 +31237,7 @@ public class TdApi
         }
     }
 
-    public static class SendWebAppData extends Function<Ok>
-    {
-        public long botUserId;
-        public String buttonText;
-        public String data;
-
-        public SendWebAppData()
-        {
-        }
-
-        public SendWebAppData(long botUserId, String buttonText, String data)
-        {
-            this.botUserId = botUserId;
-            this.buttonText = buttonText;
-            this.data = data;
-        }
-
-        public static final int CONSTRUCTOR = -1423978996;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetAccountTtl extends Function<Ok>
+    public static class SetAccountTtl extends Function
     {
         public AccountTtl ttl;
 
@@ -33057,7 +31259,7 @@ public class TdApi
         }
     }
 
-    public static class SetAlarm extends Function<Ok>
+    public static class SetAlarm extends Function
     {
         public double seconds;
 
@@ -33079,7 +31281,7 @@ public class TdApi
         }
     }
 
-    public static class SetAuthenticationPhoneNumber extends Function<Ok>
+    public static class SetAuthenticationPhoneNumber extends Function
     {
         public String phoneNumber;
         public PhoneNumberAuthenticationSettings settings;
@@ -33104,7 +31306,7 @@ public class TdApi
         }
     }
 
-    public static class SetAutoDownloadSettings extends Function<Ok>
+    public static class SetAutoDownloadSettings extends Function
     {
         public AutoDownloadSettings settings;
         public NetworkType type;
@@ -33128,7 +31330,7 @@ public class TdApi
         }
     }
 
-    public static class SetBackground extends Function<Background>
+    public static class SetBackground extends Function
     {
         public InputBackground background;
         public BackgroundType type;
@@ -33154,7 +31356,7 @@ public class TdApi
         }
     }
 
-    public static class SetBio extends Function<Ok>
+    public static class SetBio extends Function
     {
         public String bio;
 
@@ -33176,7 +31378,7 @@ public class TdApi
         }
     }
 
-    public static class SetBotUpdatesStatus extends Function<Ok>
+    public static class SetBotUpdatesStatus extends Function
     {
         public int pendingUpdateCount;
         public String errorMessage;
@@ -33200,31 +31402,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatAvailableReactions extends Function<Ok>
-    {
-        public long chatId;
-        public String[] availableReactions;
-
-        public SetChatAvailableReactions()
-        {
-        }
-
-        public SetChatAvailableReactions(long chatId, String[] availableReactions)
-        {
-            this.chatId = chatId;
-            this.availableReactions = availableReactions;
-        }
-
-        public static final int CONSTRUCTOR = 1497463414;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetChatClientData extends Function<Ok>
+    public static class SetChatClientData extends Function
     {
         public long chatId;
         public String clientData;
@@ -33248,7 +31426,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatDescription extends Function<Ok>
+    public static class SetChatDescription extends Function
     {
         public long chatId;
         public String description;
@@ -33272,7 +31450,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatDiscussionGroup extends Function<Ok>
+    public static class SetChatDiscussionGroup extends Function
     {
         public long chatId;
         public long discussionChatId;
@@ -33296,7 +31474,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatDraftMessage extends Function<Ok>
+    public static class SetChatDraftMessage extends Function
     {
         public long chatId;
         public long messageThreadId;
@@ -33322,7 +31500,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatLocation extends Function<Ok>
+    public static class SetChatLocation extends Function
     {
         public long chatId;
         public ChatLocation location;
@@ -33346,7 +31524,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatMemberStatus extends Function<Ok>
+    public static class SetChatMemberStatus extends Function
     {
         public long chatId;
         public MessageSender memberId;
@@ -33372,7 +31550,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatMessageSender extends Function<Ok>
+    public static class SetChatMessageSender extends Function
     {
         public long chatId;
         public MessageSender messageSenderId;
@@ -33396,7 +31574,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatMessageTtl extends Function<Ok>
+    public static class SetChatMessageTtl extends Function
     {
         public long chatId;
         public int ttl;
@@ -33420,7 +31598,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatNotificationSettings extends Function<Ok>
+    public static class SetChatNotificationSettings extends Function
     {
         public long chatId;
         public ChatNotificationSettings notificationSettings;
@@ -33445,7 +31623,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatPermissions extends Function<Ok>
+    public static class SetChatPermissions extends Function
     {
         public long chatId;
         public ChatPermissions permissions;
@@ -33469,7 +31647,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatPhoto extends Function<Ok>
+    public static class SetChatPhoto extends Function
     {
         public long chatId;
         public InputChatPhoto photo;
@@ -33493,7 +31671,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatSlowModeDelay extends Function<Ok>
+    public static class SetChatSlowModeDelay extends Function
     {
         public long chatId;
         public int slowModeDelay;
@@ -33517,7 +31695,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatTheme extends Function<Ok>
+    public static class SetChatTheme extends Function
     {
         public long chatId;
         public String themeName;
@@ -33541,7 +31719,7 @@ public class TdApi
         }
     }
 
-    public static class SetChatTitle extends Function<Ok>
+    public static class SetChatTitle extends Function
     {
         public long chatId;
         public String title;
@@ -33565,7 +31743,7 @@ public class TdApi
         }
     }
 
-    public static class SetCommands extends Function<Ok>
+    public static class SetCommands extends Function
     {
         public BotCommandScope scope;
         public String languageCode;
@@ -33591,7 +31769,7 @@ public class TdApi
         }
     }
 
-    public static class SetCustomLanguagePack extends Function<Ok>
+    public static class SetCustomLanguagePack extends Function
     {
         public LanguagePackInfo info;
         public LanguagePackString[] strings;
@@ -33615,7 +31793,7 @@ public class TdApi
         }
     }
 
-    public static class SetCustomLanguagePackString extends Function<Ok>
+    public static class SetCustomLanguagePackString extends Function
     {
         public String languagePackId;
         public LanguagePackString newString;
@@ -33639,7 +31817,7 @@ public class TdApi
         }
     }
 
-    public static class SetDatabaseEncryptionKey extends Function<Ok>
+    public static class SetDatabaseEncryptionKey extends Function
     {
         public byte[] newEncryptionKey;
 
@@ -33661,53 +31839,7 @@ public class TdApi
         }
     }
 
-    public static class SetDefaultChannelAdministratorRights extends Function<Ok>
-    {
-        public ChatAdministratorRights defaultChannelAdministratorRights;
-
-        public SetDefaultChannelAdministratorRights()
-        {
-        }
-
-        public SetDefaultChannelAdministratorRights(
-                ChatAdministratorRights defaultChannelAdministratorRights)
-        {
-            this.defaultChannelAdministratorRights = defaultChannelAdministratorRights;
-        }
-
-        public static final int CONSTRUCTOR = -234004967;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetDefaultGroupAdministratorRights extends Function<Ok>
-    {
-        public ChatAdministratorRights defaultGroupAdministratorRights;
-
-        public SetDefaultGroupAdministratorRights()
-        {
-        }
-
-        public SetDefaultGroupAdministratorRights(
-                ChatAdministratorRights defaultGroupAdministratorRights)
-        {
-            this.defaultGroupAdministratorRights = defaultGroupAdministratorRights;
-        }
-
-        public static final int CONSTRUCTOR = 1700231016;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetFileGenerationProgress extends Function<Ok>
+    public static class SetFileGenerationProgress extends Function
     {
         public long generationId;
         public int expectedSize;
@@ -33733,7 +31865,7 @@ public class TdApi
         }
     }
 
-    public static class SetGameScore extends Function<Message>
+    public static class SetGameScore extends Function
     {
         public long chatId;
         public long messageId;
@@ -33766,7 +31898,7 @@ public class TdApi
         }
     }
 
-    public static class SetGroupCallParticipantIsSpeaking extends Function<Ok>
+    public static class SetGroupCallParticipantIsSpeaking extends Function
     {
         public int groupCallId;
         public int audioSource;
@@ -33793,7 +31925,7 @@ public class TdApi
         }
     }
 
-    public static class SetGroupCallParticipantVolumeLevel extends Function<Ok>
+    public static class SetGroupCallParticipantVolumeLevel extends Function
     {
         public int groupCallId;
         public MessageSender participantId;
@@ -33820,7 +31952,7 @@ public class TdApi
         }
     }
 
-    public static class SetGroupCallTitle extends Function<Ok>
+    public static class SetGroupCallTitle extends Function
     {
         public int groupCallId;
         public String title;
@@ -33844,7 +31976,7 @@ public class TdApi
         }
     }
 
-    public static class SetInactiveSessionTtl extends Function<Ok>
+    public static class SetInactiveSessionTtl extends Function
     {
         public int inactiveSessionTtlDays;
 
@@ -33866,7 +31998,7 @@ public class TdApi
         }
     }
 
-    public static class SetInlineGameScore extends Function<Ok>
+    public static class SetInlineGameScore extends Function
     {
         public String inlineMessageId;
         public boolean editMessage;
@@ -33897,7 +32029,7 @@ public class TdApi
         }
     }
 
-    public static class SetLocation extends Function<Ok>
+    public static class SetLocation extends Function
     {
         public Location location;
 
@@ -33919,7 +32051,7 @@ public class TdApi
         }
     }
 
-    public static class SetLogStream extends Function<Ok>
+    public static class SetLogStream extends Function
     {
         public LogStream logStream;
 
@@ -33941,7 +32073,7 @@ public class TdApi
         }
     }
 
-    public static class SetLogTagVerbosityLevel extends Function<Ok>
+    public static class SetLogTagVerbosityLevel extends Function
     {
         public String tag;
         public int newVerbosityLevel;
@@ -33965,7 +32097,7 @@ public class TdApi
         }
     }
 
-    public static class SetLogVerbosityLevel extends Function<Ok>
+    public static class SetLogVerbosityLevel extends Function
     {
         public int newVerbosityLevel;
 
@@ -33987,59 +32119,7 @@ public class TdApi
         }
     }
 
-    public static class SetMenuButton extends Function<Ok>
-    {
-        public long userId;
-        public BotMenuButton menuButton;
-
-        public SetMenuButton()
-        {
-        }
-
-        public SetMenuButton(long userId, BotMenuButton menuButton)
-        {
-            this.userId = userId;
-            this.menuButton = menuButton;
-        }
-
-        public static final int CONSTRUCTOR = -1269841599;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetMessageReaction extends Function<Ok>
-    {
-        public long chatId;
-        public long messageId;
-        public String reaction;
-        public boolean isBig;
-
-        public SetMessageReaction()
-        {
-        }
-
-        public SetMessageReaction(long chatId, long messageId, String reaction, boolean isBig)
-        {
-            this.chatId = chatId;
-            this.messageId = messageId;
-            this.reaction = reaction;
-            this.isBig = isBig;
-        }
-
-        public static final int CONSTRUCTOR = -2024821960;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class SetName extends Function<Ok>
+    public static class SetName extends Function
     {
         public String firstName;
         public String lastName;
@@ -34063,7 +32143,7 @@ public class TdApi
         }
     }
 
-    public static class SetNetworkType extends Function<Ok>
+    public static class SetNetworkType extends Function
     {
         public NetworkType type;
 
@@ -34085,7 +32165,7 @@ public class TdApi
         }
     }
 
-    public static class SetOption extends Function<Ok>
+    public static class SetOption extends Function
     {
         public String name;
         public OptionValue value;
@@ -34109,7 +32189,7 @@ public class TdApi
         }
     }
 
-    public static class SetPassportElement extends Function<PassportElement>
+    public static class SetPassportElement extends Function
     {
         public InputPassportElement element;
         public String password;
@@ -34133,7 +32213,7 @@ public class TdApi
         }
     }
 
-    public static class SetPassportElementErrors extends Function<Ok>
+    public static class SetPassportElementErrors extends Function
     {
         public long userId;
         public InputPassportElementError[] errors;
@@ -34157,7 +32237,7 @@ public class TdApi
         }
     }
 
-    public static class SetPassword extends Function<PasswordState>
+    public static class SetPassword extends Function
     {
         public String oldPassword;
         public String newPassword;
@@ -34188,7 +32268,7 @@ public class TdApi
         }
     }
 
-    public static class SetPinnedChats extends Function<Ok>
+    public static class SetPinnedChats extends Function
     {
         public ChatList chatList;
         public long[] chatIds;
@@ -34212,7 +32292,7 @@ public class TdApi
         }
     }
 
-    public static class SetPollAnswer extends Function<Ok>
+    public static class SetPollAnswer extends Function
     {
         public long chatId;
         public long messageId;
@@ -34238,7 +32318,7 @@ public class TdApi
         }
     }
 
-    public static class SetProfilePhoto extends Function<Ok>
+    public static class SetProfilePhoto extends Function
     {
         public InputChatPhoto photo;
 
@@ -34260,7 +32340,7 @@ public class TdApi
         }
     }
 
-    public static class SetRecoveryEmailAddress extends Function<PasswordState>
+    public static class SetRecoveryEmailAddress extends Function
     {
         public String password;
         public String newRecoveryEmailAddress;
@@ -34284,7 +32364,7 @@ public class TdApi
         }
     }
 
-    public static class SetScopeNotificationSettings extends Function<Ok>
+    public static class SetScopeNotificationSettings extends Function
     {
         public NotificationSettingsScope scope;
         public ScopeNotificationSettings notificationSettings;
@@ -34309,7 +32389,7 @@ public class TdApi
         }
     }
 
-    public static class SetStickerPositionInSet extends Function<Ok>
+    public static class SetStickerPositionInSet extends Function
     {
         public InputFile sticker;
         public int position;
@@ -34333,7 +32413,7 @@ public class TdApi
         }
     }
 
-    public static class SetStickerSetThumbnail extends Function<StickerSet>
+    public static class SetStickerSetThumbnail extends Function
     {
         public long userId;
         public String name;
@@ -34359,7 +32439,7 @@ public class TdApi
         }
     }
 
-    public static class SetSupergroupStickerSet extends Function<Ok>
+    public static class SetSupergroupStickerSet extends Function
     {
         public long supergroupId;
         public long stickerSetId;
@@ -34383,7 +32463,7 @@ public class TdApi
         }
     }
 
-    public static class SetSupergroupUsername extends Function<Ok>
+    public static class SetSupergroupUsername extends Function
     {
         public long supergroupId;
         public String username;
@@ -34407,7 +32487,7 @@ public class TdApi
         }
     }
 
-    public static class SetTdlibParameters extends Function<Ok>
+    public static class SetTdlibParameters extends Function
     {
         public TdlibParameters parameters;
 
@@ -34429,7 +32509,7 @@ public class TdApi
         }
     }
 
-    public static class SetUserPrivacySettingRules extends Function<Ok>
+    public static class SetUserPrivacySettingRules extends Function
     {
         public UserPrivacySetting setting;
         public UserPrivacySettingRules rules;
@@ -34453,7 +32533,7 @@ public class TdApi
         }
     }
 
-    public static class SetUsername extends Function<Ok>
+    public static class SetUsername extends Function
     {
         public String username;
 
@@ -34475,7 +32555,7 @@ public class TdApi
         }
     }
 
-    public static class SetVideoChatDefaultParticipant extends Function<Ok>
+    public static class SetVideoChatDefaultParticipant extends Function
     {
         public long chatId;
         public MessageSender defaultParticipantId;
@@ -34499,7 +32579,7 @@ public class TdApi
         }
     }
 
-    public static class SharePhoneNumber extends Function<Ok>
+    public static class SharePhoneNumber extends Function
     {
         public long userId;
 
@@ -34521,7 +32601,7 @@ public class TdApi
         }
     }
 
-    public static class StartGroupCallRecording extends Function<Ok>
+    public static class StartGroupCallRecording extends Function
     {
         public int groupCallId;
         public String title;
@@ -34550,7 +32630,7 @@ public class TdApi
         }
     }
 
-    public static class StartGroupCallScreenSharing extends Function<Text>
+    public static class StartGroupCallScreenSharing extends Function
     {
         public int groupCallId;
         public int audioSourceId;
@@ -34576,7 +32656,7 @@ public class TdApi
         }
     }
 
-    public static class StartScheduledGroupCall extends Function<Ok>
+    public static class StartScheduledGroupCall extends Function
     {
         public int groupCallId;
 
@@ -34598,7 +32678,7 @@ public class TdApi
         }
     }
 
-    public static class StopPoll extends Function<Ok>
+    public static class StopPoll extends Function
     {
         public long chatId;
         public long messageId;
@@ -34624,7 +32704,7 @@ public class TdApi
         }
     }
 
-    public static class SynchronizeLanguagePack extends Function<Ok>
+    public static class SynchronizeLanguagePack extends Function
     {
         public String languagePackId;
 
@@ -34646,7 +32726,7 @@ public class TdApi
         }
     }
 
-    public static class TerminateAllOtherSessions extends Function<Ok>
+    public static class TerminateAllOtherSessions extends Function
     {
 
         public TerminateAllOtherSessions()
@@ -34662,7 +32742,7 @@ public class TdApi
         }
     }
 
-    public static class TerminateSession extends Function<Ok>
+    public static class TerminateSession extends Function
     {
         public long sessionId;
 
@@ -34684,7 +32764,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallBytes extends Function<TestBytes>
+    public static class TestCallBytes extends Function
     {
         public byte[] x;
 
@@ -34706,7 +32786,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallEmpty extends Function<Ok>
+    public static class TestCallEmpty extends Function
     {
 
         public TestCallEmpty()
@@ -34722,7 +32802,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallString extends Function<TestString>
+    public static class TestCallString extends Function
     {
         public String x;
 
@@ -34744,7 +32824,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallVectorInt extends Function<TestVectorInt>
+    public static class TestCallVectorInt extends Function
     {
         public int[] x;
 
@@ -34766,7 +32846,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallVectorIntObject extends Function<TestVectorIntObject>
+    public static class TestCallVectorIntObject extends Function
     {
         public TestInt[] x;
 
@@ -34788,7 +32868,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallVectorString extends Function<TestVectorString>
+    public static class TestCallVectorString extends Function
     {
         public String[] x;
 
@@ -34810,7 +32890,7 @@ public class TdApi
         }
     }
 
-    public static class TestCallVectorStringObject extends Function<TestVectorStringObject>
+    public static class TestCallVectorStringObject extends Function
     {
         public TestString[] x;
 
@@ -34832,7 +32912,7 @@ public class TdApi
         }
     }
 
-    public static class TestGetDifference extends Function<Ok>
+    public static class TestGetDifference extends Function
     {
 
         public TestGetDifference()
@@ -34848,7 +32928,7 @@ public class TdApi
         }
     }
 
-    public static class TestNetwork extends Function<Ok>
+    public static class TestNetwork extends Function
     {
 
         public TestNetwork()
@@ -34864,7 +32944,7 @@ public class TdApi
         }
     }
 
-    public static class TestProxy extends Function<Ok>
+    public static class TestProxy extends Function
     {
         public String server;
         public int port;
@@ -34894,7 +32974,7 @@ public class TdApi
         }
     }
 
-    public static class TestReturnError extends Function<Error>
+    public static class TestReturnError extends Function
     {
         public Error error;
 
@@ -34916,7 +32996,7 @@ public class TdApi
         }
     }
 
-    public static class TestSquareInt extends Function<TestInt>
+    public static class TestSquareInt extends Function
     {
         public int x;
 
@@ -34938,7 +33018,7 @@ public class TdApi
         }
     }
 
-    public static class TestUseUpdate extends Function<Update>
+    public static class TestUseUpdate extends Function
     {
 
         public TestUseUpdate()
@@ -34954,53 +33034,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleAllDownloadsArePaused extends Function<Ok>
-    {
-        public boolean arePaused;
-
-        public ToggleAllDownloadsArePaused()
-        {
-        }
-
-        public ToggleAllDownloadsArePaused(boolean arePaused)
-        {
-            this.arePaused = arePaused;
-        }
-
-        public static final int CONSTRUCTOR = 1251512322;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ToggleBotIsAddedToAttachmentMenu extends Function<Ok>
-    {
-        public long botUserId;
-        public boolean isAdded;
-
-        public ToggleBotIsAddedToAttachmentMenu()
-        {
-        }
-
-        public ToggleBotIsAddedToAttachmentMenu(long botUserId, boolean isAdded)
-        {
-            this.botUserId = botUserId;
-            this.isAdded = isAdded;
-        }
-
-        public static final int CONSTRUCTOR = -1251515422;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ToggleChatDefaultDisableNotification extends Function<Ok>
+    public static class ToggleChatDefaultDisableNotification extends Function
     {
         public long chatId;
         public boolean defaultDisableNotification;
@@ -35024,7 +33058,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleChatHasProtectedContent extends Function<Ok>
+    public static class ToggleChatHasProtectedContent extends Function
     {
         public long chatId;
         public boolean hasProtectedContent;
@@ -35048,7 +33082,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleChatIsMarkedAsUnread extends Function<Ok>
+    public static class ToggleChatIsMarkedAsUnread extends Function
     {
         public long chatId;
         public boolean isMarkedAsUnread;
@@ -35072,7 +33106,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleChatIsPinned extends Function<Ok>
+    public static class ToggleChatIsPinned extends Function
     {
         public ChatList chatList;
         public long chatId;
@@ -35098,31 +33132,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleDownloadIsPaused extends Function<Ok>
-    {
-        public int fileId;
-        public boolean isPaused;
-
-        public ToggleDownloadIsPaused()
-        {
-        }
-
-        public ToggleDownloadIsPaused(int fileId, boolean isPaused)
-        {
-            this.fileId = fileId;
-            this.isPaused = isPaused;
-        }
-
-        public static final int CONSTRUCTOR = -947493099;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class ToggleGroupCallEnabledStartNotification extends Function<Ok>
+    public static class ToggleGroupCallEnabledStartNotification extends Function
     {
         public int groupCallId;
         public boolean enabledStartNotification;
@@ -35147,7 +33157,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallIsMyVideoEnabled extends Function<Ok>
+    public static class ToggleGroupCallIsMyVideoEnabled extends Function
     {
         public int groupCallId;
         public boolean isMyVideoEnabled;
@@ -35171,7 +33181,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallIsMyVideoPaused extends Function<Ok>
+    public static class ToggleGroupCallIsMyVideoPaused extends Function
     {
         public int groupCallId;
         public boolean isMyVideoPaused;
@@ -35195,7 +33205,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallMuteNewParticipants extends Function<Ok>
+    public static class ToggleGroupCallMuteNewParticipants extends Function
     {
         public int groupCallId;
         public boolean muteNewParticipants;
@@ -35219,7 +33229,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallParticipantIsHandRaised extends Function<Ok>
+    public static class ToggleGroupCallParticipantIsHandRaised extends Function
     {
         public int groupCallId;
         public MessageSender participantId;
@@ -35246,7 +33256,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallParticipantIsMuted extends Function<Ok>
+    public static class ToggleGroupCallParticipantIsMuted extends Function
     {
         public int groupCallId;
         public MessageSender participantId;
@@ -35273,7 +33283,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleGroupCallScreenSharingIsPaused extends Function<Ok>
+    public static class ToggleGroupCallScreenSharingIsPaused extends Function
     {
         public int groupCallId;
         public boolean isPaused;
@@ -35297,7 +33307,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleMessageSenderIsBlocked extends Function<Ok>
+    public static class ToggleMessageSenderIsBlocked extends Function
     {
         public MessageSender senderId;
         public boolean isBlocked;
@@ -35321,7 +33331,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleSessionCanAcceptCalls extends Function<Ok>
+    public static class ToggleSessionCanAcceptCalls extends Function
     {
         public long sessionId;
         public boolean canAcceptCalls;
@@ -35345,7 +33355,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleSessionCanAcceptSecretChats extends Function<Ok>
+    public static class ToggleSessionCanAcceptSecretChats extends Function
     {
         public long sessionId;
         public boolean canAcceptSecretChats;
@@ -35369,7 +33379,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleSupergroupIsAllHistoryAvailable extends Function<Ok>
+    public static class ToggleSupergroupIsAllHistoryAvailable extends Function
     {
         public long supergroupId;
         public boolean isAllHistoryAvailable;
@@ -35394,7 +33404,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleSupergroupIsBroadcastGroup extends Function<Ok>
+    public static class ToggleSupergroupIsBroadcastGroup extends Function
     {
         public long supergroupId;
 
@@ -35416,7 +33426,7 @@ public class TdApi
         }
     }
 
-    public static class ToggleSupergroupSignMessages extends Function<Ok>
+    public static class ToggleSupergroupSignMessages extends Function
     {
         public long supergroupId;
         public boolean signMessages;
@@ -35440,7 +33450,7 @@ public class TdApi
         }
     }
 
-    public static class TransferChatOwnership extends Function<Ok>
+    public static class TransferChatOwnership extends Function
     {
         public long chatId;
         public long userId;
@@ -35466,33 +33476,7 @@ public class TdApi
         }
     }
 
-    public static class TranslateText extends Function<Text>
-    {
-        public String text;
-        public String fromLanguageCode;
-        public String toLanguageCode;
-
-        public TranslateText()
-        {
-        }
-
-        public TranslateText(String text, String fromLanguageCode, String toLanguageCode)
-        {
-            this.text = text;
-            this.fromLanguageCode = fromLanguageCode;
-            this.toLanguageCode = toLanguageCode;
-        }
-
-        public static final int CONSTRUCTOR = -1619686803;
-
-        @Override
-        public int getConstructor()
-        {
-            return CONSTRUCTOR;
-        }
-    }
-
-    public static class UnpinAllChatMessages extends Function<Ok>
+    public static class UnpinAllChatMessages extends Function
     {
         public long chatId;
 
@@ -35514,7 +33498,7 @@ public class TdApi
         }
     }
 
-    public static class UnpinChatMessage extends Function<Ok>
+    public static class UnpinChatMessage extends Function
     {
         public long chatId;
         public long messageId;
@@ -35538,7 +33522,7 @@ public class TdApi
         }
     }
 
-    public static class UpgradeBasicGroupChatToSupergroupChat extends Function<Chat>
+    public static class UpgradeBasicGroupChatToSupergroupChat extends Function
     {
         public long chatId;
 
@@ -35560,7 +33544,7 @@ public class TdApi
         }
     }
 
-    public static class UploadFile extends Function<File>
+    public static class UploadFile extends Function
     {
         public InputFile file;
         public FileType fileType;
@@ -35586,7 +33570,7 @@ public class TdApi
         }
     }
 
-    public static class UploadStickerFile extends Function<File>
+    public static class UploadStickerFile extends Function
     {
         public long userId;
         public InputSticker sticker;
@@ -35601,7 +33585,7 @@ public class TdApi
             this.sticker = sticker;
         }
 
-        public static final int CONSTRUCTOR = 86279066;
+        public static final int CONSTRUCTOR = 597751182;
 
         @Override
         public int getConstructor()
@@ -35610,7 +33594,7 @@ public class TdApi
         }
     }
 
-    public static class ValidateOrderInfo extends Function<ValidatedOrderInfo>
+    public static class ValidateOrderInfo extends Function
     {
         public long chatId;
         public long messageId;
@@ -35639,7 +33623,7 @@ public class TdApi
         }
     }
 
-    public static class ViewMessages extends Function<Ok>
+    public static class ViewMessages extends Function
     {
         public long chatId;
         public long messageThreadId;
@@ -35667,7 +33651,7 @@ public class TdApi
         }
     }
 
-    public static class ViewTrendingStickerSets extends Function<Ok>
+    public static class ViewTrendingStickerSets extends Function
     {
         public long[] stickerSetIds;
 
@@ -35689,7 +33673,7 @@ public class TdApi
         }
     }
 
-    public static class WriteGeneratedFilePart extends Function<Ok>
+    public static class WriteGeneratedFilePart extends Function
     {
         public long generationId;
         public int offset;

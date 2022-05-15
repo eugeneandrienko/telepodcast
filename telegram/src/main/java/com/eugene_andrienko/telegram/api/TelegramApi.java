@@ -2,6 +2,7 @@ package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramChatNotFoundException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
 import com.eugene_andrienko.telegram.impl.Telegram.MessageType;
@@ -113,8 +114,10 @@ public class TelegramApi implements AutoCloseable
      * All these operations performs asynchronously and this method returns <b>immediately</b>!
      * To check what all is completed successfully — use {@code isReady} method like this:
      * {@code if(telegram.isReady().get(30, TimeUnit.SECONDS)) ...}
+     *
+     * @throws TelegramInitException Failed to initialize TDLib.
      */
-    public void login()
+    public void login() throws TelegramInitException
     {
         logger.debug("Logging into Telegram");
         // Initialize TDLib and login to Telegram:

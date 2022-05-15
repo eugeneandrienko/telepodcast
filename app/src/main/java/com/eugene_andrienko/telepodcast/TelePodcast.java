@@ -4,9 +4,12 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eugene_andrienko.telegram.api.TelegramApi;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +60,7 @@ public class TelePodcast
         try (TelegramApi telegram = new TelegramApi(apiId, apiHash, 50, debug))
         {
             telegram.login();
-            if(telegram.isReady().get(30, TimeUnit.SECONDS))
+            if(telegram.isReady().get(60, TimeUnit.SECONDS))
             {
                 logger.info("Telegram ready");
             }
@@ -65,7 +68,46 @@ public class TelePodcast
             {
                 logger.error("Telegram is not ready");
             }
-            telegram.sendMessage("TEST SUCCEED!");
+            telegram.sendMessage("TEST SUCCEED!").thenCompose(result -> {
+                CompletableFuture<Boolean> res = new CompletableFuture<>();
+                if(result)
+                {
+                    try
+                    {
+                        res = telegram.sendAudio(new File("/home/drag0n/downloads/Из передачи - " +
+                                                          "Деревня Дураков.mp3"));
+                    }
+                    catch(TelegramSendMessageException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else
+                {
+                    res.complete(false);
+                }
+                return res;
+            }).thenCompose(result -> {
+                CompletableFuture<Boolean> res = new CompletableFuture<>();
+                if(result)
+                {
+                    try
+                    {
+                        res = telegram.sendVideo(new File("/home/drag0n/pictures/2022-03-14 " +
+                                                          "Северное сияние в Назии/" +
+                                                          "lapse_scaled2.mp4"));
+                    }
+                    catch(TelegramSendMessageException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else
+                {
+                    res.complete(false);
+                }
+                return res;
+            });
             Thread.sleep(15000);
         }
         catch(Exception ex)

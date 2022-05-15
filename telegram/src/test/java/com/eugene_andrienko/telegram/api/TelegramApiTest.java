@@ -1,6 +1,7 @@
 package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.Telegram;
 import com.eugene_andrienko.telegram.impl.Telegram.MessageSenderState;
@@ -48,7 +49,7 @@ public class TelegramApiTest
 
     @Test
     @DisplayName("Test normal behaviour of Telegram login")
-    @SneakyThrows(TelegramAuthException.class)
+    @SneakyThrows({TelegramAuthException.class, TelegramInitException.class})
     void loginNormalTest()
     {
         CompletableFuture<Boolean> completableTrue = new CompletableFuture<>();
@@ -80,7 +81,7 @@ public class TelegramApiTest
 
     @Test
     @DisplayName("Test init fail during login")
-    @SneakyThrows(TelegramAuthException.class)
+    @SneakyThrows({TelegramAuthException.class, TelegramInitException.class})
     void loginInitFailTest()
     {
         CompletableFuture<Boolean> completableFalse = new CompletableFuture<>();
@@ -95,8 +96,28 @@ public class TelegramApiTest
     }
 
     @Test
+    @DisplayName("Test init exception during login")
+    @SneakyThrows({TelegramAuthException.class, TelegramInitException.class})
+    void loginInitExceptionTest()
+    {
+        Telegram mockedTelegram = mock(Telegram.class);
+        when(mockedTelegram.init()).thenThrow(TelegramInitException.class);
+
+        TelegramApi telegramApi = new TelegramApi(mockedTelegram, 1);
+        try
+        {
+            telegramApi.login();
+            fail("TelegramInitException should be thrown");
+        }
+        catch(TelegramInitException e)
+        {
+            // Test passed
+        }
+    }
+
+    @Test
     @DisplayName("Test load  chats fail during login")
-    @SneakyThrows(TelegramAuthException.class)
+    @SneakyThrows({TelegramAuthException.class, TelegramInitException.class})
     void loginLoadChatsFailTest()
     {
         CompletableFuture<Boolean> completableTrue = new CompletableFuture<>();
@@ -116,7 +137,7 @@ public class TelegramApiTest
 
     @Test
     @DisplayName("Test getting chat name fail during login")
-    @SneakyThrows(TelegramAuthException.class)
+    @SneakyThrows({TelegramAuthException.class, TelegramInitException.class})
     void loginGetChatNameFailTest()
     {
         CompletableFuture<Boolean> completableTrue = new CompletableFuture<>();
@@ -140,6 +161,7 @@ public class TelegramApiTest
     @Test
     @DisplayName("Test getting chat ID fail during login")
     @SneakyThrows({TelegramAuthException.class,
+                   TelegramInitException.class,
                    InterruptedException.class,
                    ExecutionException.class})
     void loginGetChatIdFailTest()
