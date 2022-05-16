@@ -24,21 +24,14 @@ public class TelegramApi implements AutoCloseable
     /**
      * Initializes Telegram library.
      *
-     * @param apiId             Telegram API ID
-     * @param apiHash           Telegram API hash
-     * @param loadingChatsLimit Count of chats from chat list, where to search "Saved Messages"
-     *                          chat.
-     * @param resendRetries     Count of resend retries, when sending message fails
-     * @param delaySeconds      Delay in seconds to complete any library call.
-     * @param debug             Enable debug mode
+     * @param options Initialized {@code TelegramOptions} object.
      *
      * @throws TelegramInitException Failed to initialize API.
      */
-    public TelegramApi(int apiId, String apiHash, int loadingChatsLimit,
-            int resendRetries, int delaySeconds, boolean debug) throws TelegramInitException
+    public TelegramApi(TelegramOptions options) throws TelegramInitException
     {
-        telegram = new Telegram(apiId, apiHash, loadingChatsLimit, resendRetries, debug);
-        this.delaySeconds = delaySeconds;
+        telegram = new Telegram(options);
+        this.delaySeconds = options.getDelaySeconds();
     }
 
     /**

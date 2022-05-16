@@ -1,5 +1,6 @@
 package com.eugene_andrienko.telegram.impl;
 
+import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.*;
 import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageType;
 import java.io.File;
@@ -29,31 +30,26 @@ public class Telegram implements AutoCloseable
     /**
      * Initializes Telegram library.
      *
-     * @param apiId             Telegram API ID
-     * @param apiHash           Telegram API hash
-     * @param loadingChatsLimit Limit of chats to load from Telegram chat list
-     * @param resendRetries     Count of resend retries, when sending message fails
-     * @param debug             Debug mode
+     * @param options Initialized {@code TelegramOptions} object.
      *
      * @throws TelegramInitException Got wrong credentials.
      */
-    public Telegram(int apiId, String apiHash, int loadingChatsLimit, int resendRetries,
-            boolean debug) throws TelegramInitException
+    public Telegram(TelegramOptions options) throws TelegramInitException
     {
-        if(loadingChatsLimit < 1)
+        if(options.getLoadingChatsLimit() < 1)
         {
             logger.error("Limit of chats to load is less than 1");
             throw new TelegramInitException("Limit of chats to load < 1");
         }
-        this.loadingChatsLimit = loadingChatsLimit;
-        if(resendRetries < 0)
+        this.loadingChatsLimit = options.getLoadingChatsLimit();
+        if(options.getResendRetries() < 0)
         {
-            logger.error("Wrong count of resend retries: {}!", resendRetries);
+            logger.error("Wrong count of resend retries: {}!", options.getResendRetries());
             throw new TelegramInitException("Resend retries < 0");
         }
-        this.resendRetries = resendRetries;
-        telegramConnector = new TelegramTDLibConnector(apiId, apiHash, debug);
-        //logger.debug("API ID: |{}|, API hash: |{}|", apiId, apiHash);
+        this.resendRetries = options.getResendRetries();
+        telegramConnector = new TelegramTDLibConnector(options);
+        //logger.debug("Telegram options: {}", options);
     }
 
     /**

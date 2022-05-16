@@ -8,6 +8,7 @@
 
 package com.eugene_andrienko.telegram.impl;
 
+import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import java.io.BufferedReader;
@@ -78,17 +79,18 @@ public class TelegramTDLibConnector implements AutoCloseable
         }
     }
 
-    public TelegramTDLibConnector(int apiId, String apiHash, boolean debug) throws TelegramInitException
+    public TelegramTDLibConnector(TelegramOptions options) throws TelegramInitException
     {
-        if(apiId == 0 || apiHash == null || apiHash.isBlank())
+        if(options.getApiId() == 0 ||
+           options.getApiHash() == null || options.getApiHash().isBlank())
         {
             logger.error("Telegram API ID or hash not provided!");
             throw new TelegramInitException("Telegram API ID or hash not provided");
         }
 
-        this.apiId = apiId;
-        this.apiHash = apiHash;
-        this.debug = debug;
+        this.apiId = options.getApiId();
+        this.apiHash = options.getApiHash();
+        this.debug = options.isDebug();
     }
 
     public CompletableFuture<Boolean> init() throws TelegramInitException
