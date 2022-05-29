@@ -6,7 +6,6 @@ import com.beust.jcommander.Parameters;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,6 +22,7 @@ public class TelePodcast
 {
     private Logger logger;
     private static JCommander jCommander;
+    private static final String homeDir = System.getProperty("user.home");
 
     @Parameter(names = {"-h", "--help"}, help = true)
     private boolean help;
@@ -33,6 +33,11 @@ public class TelePodcast
     private int apiId;
     @Parameter(names = "--api-hash", description = "Telegram API hash", password = true, order = 1)
     private String apiHash;
+    @Parameter(names = "--tdlib-log", description = "Path to TDLib log (default ~/tdlib.log)")
+    private String tdlibLog = homeDir + "/tdlib.log";
+    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory (default " +
+                                                    "~/.tdlib")
+    private String tdlibDir = homeDir + "/.tdlib";
 
     private static final String PROGRAM_NAME = "telepodcast";
 
@@ -57,7 +62,9 @@ public class TelePodcast
         setupLogger(debug);
         logger = LoggerFactory.getLogger(TelePodcast.class);
 
-        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 30, debug);
+        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 30,
+                tdlibLog, tdlibDir, debug);
+        logger.debug("TelegramOptions:: {}", telegramOptions);
         try (TelegramApi telegram = new TelegramApi(telegramOptions))
         {
             telegram.login();

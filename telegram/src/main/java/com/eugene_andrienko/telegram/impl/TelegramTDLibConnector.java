@@ -39,6 +39,8 @@ public class TelegramTDLibConnector implements AutoCloseable
     private final int apiId;
     private final String apiHash;
     private final boolean debug;
+    private final String tdlibLog;
+    private final String tdlibDir;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramTDLibConnector.class);
 
@@ -90,6 +92,8 @@ public class TelegramTDLibConnector implements AutoCloseable
 
         this.apiId = options.getApiId();
         this.apiHash = options.getApiHash();
+        this.tdlibLog = options.getTdlibLog();
+        this.tdlibDir = options.getTdlibDir();
         this.debug = options.isDebug();
     }
 
@@ -99,12 +103,11 @@ public class TelegramTDLibConnector implements AutoCloseable
         if(debug)
         {
             Client.execute(new TdApi.SetLogVerbosityLevel(4));
-            // TODO: set path to debug log outside
             TdApi.LogStreamFile logStreamFile = new TdApi.LogStreamFile(
-                    "tdlib.log", 5 * 1024 * 1024 /* 5 Mb */, false);
+                    tdlibLog, 5 * 1024 * 1024 /* 5 Mb */, false);
             if(Client.execute(new TdApi.SetLogStream(logStreamFile)) instanceof TdApi.Error)
             {
-                logger.error("Cannot SetLogStream(LogStreamFile(\"./tdlib.log\"))");
+                logger.error("Cannot SetLogStream(LogStreamFile(\"{}\"))", tdlibLog);
                 throw new TelegramInitException("Failed to start TDLib debug log");
             }
         }
@@ -468,8 +471,7 @@ public class TelegramTDLibConnector implements AutoCloseable
         {
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR:
                 TdApi.TdlibParameters parameters = new TdApi.TdlibParameters();
-                // TODO: set path to directory outside
-                parameters.databaseDirectory = "tdlib";
+                parameters.databaseDirectory = tdlibDir;
                 parameters.useMessageDatabase = true;
                 parameters.useChatInfoDatabase = true;
                 parameters.useSecretChats = false;
