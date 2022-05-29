@@ -3,6 +3,7 @@ package com.eugene_andrienko.telepodcast;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.internal.Console;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
@@ -28,16 +29,16 @@ public class TelePodcast
     private boolean help;
     @Parameter(names = {"-d", "--debug"}, description = "Run application in debug mode")
     private boolean debug = false;
-    // TODO: Store settings in encrypted storage:
-    @Parameter(names = "--api-id", description = "Telegram API ID", password = true, order = 0)
-    private int apiId;
-    @Parameter(names = "--api-hash", description = "Telegram API hash", password = true, order = 1)
-    private String apiHash;
-    @Parameter(names = "--tdlib-log", description = "Path to TDLib log (default ~/tdlib.log)")
+    @Parameter(names = {"-a", "--authorize"}, description = "Authorize in Telegram via API ID " +
+                                                            "and hash")
+    private boolean authorize = false;
+    @Parameter(names = "--tdlib-log", description = "Path to TDLib log")
     private String tdlibLog = homeDir + "/tdlib.log";
-    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory (default " +
-                                                    "~/.tdlib")
+    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory")
     private String tdlibDir = homeDir + "/.tdlib";
+
+    private int apiId = 1;
+    private String apiHash = "-";
 
     private static final String PROGRAM_NAME = "telepodcast";
 
@@ -62,13 +63,39 @@ public class TelePodcast
         setupLogger(debug);
         logger = LoggerFactory.getLogger(TelePodcast.class);
 
+        if(authorize)
+        {
+            Console console = jCommander.getConsole();
+
+            console.print("Telegram API ID: ");
+            String apiIdStr = new String(console.readPassword(false));
+            try
+            {
+                apiId = Integer.parseInt(apiIdStr);
+            }
+            catch(NumberFormatException ex)
+            {
+                logger.error("Failed to parse provided API ID to number!");
+                throw new RuntimeException("Telegram API ID not a number");
+            }
+
+            console.print("Telegram API hash: ");
+            apiHash = new String(console.readPassword(false));
+            if(apiHash.isEmpty())
+            {
+                logger.error("Got empty Telegram API hash!");
+                throw new RuntimeException("Empty Telegram API hash");
+            }
+        }
+
         TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 30,
                 tdlibLog, tdlibDir, debug);
         logger.debug("TelegramOptions:: {}", telegramOptions);
-        try (TelegramApi telegram = new TelegramApi(telegramOptions))
+        try(TelegramApi telegram = new TelegramApi(telegramOptions))
         {
             telegram.login();
             telegram.sendMessage("TEST SUCCEED!");
+            Thread.sleep(10000);
         }
         catch(TelegramException ex)
         {

@@ -83,8 +83,7 @@ public class TelegramTDLibConnector implements AutoCloseable
 
     public TelegramTDLibConnector(TelegramOptions options) throws TelegramInitException
     {
-        if(options.getApiId() == 0 ||
-           options.getApiHash() == null || options.getApiHash().isBlank())
+        if(options.getApiId() == 0 || options.getApiHash().isBlank())
         {
             logger.error("Telegram API ID or hash not provided!");
             throw new TelegramInitException("Telegram API ID or hash not provided");
