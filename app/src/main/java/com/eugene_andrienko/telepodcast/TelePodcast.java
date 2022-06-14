@@ -95,7 +95,6 @@ public class TelePodcast
         {
             telegram.login();
             telegram.sendMessage("TEST SUCCEED!");
-            Thread.sleep(10000);
         }
         catch(TelegramException ex)
         {

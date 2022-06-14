@@ -205,14 +205,14 @@ public class Telegram implements AutoCloseable
             throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = sendMessage(message, MessageType.TEXT, resendRetries);
-        result.whenCompleteAsync((res, ex) -> {
+        return result.handle((res, ex) -> {
             if(ex == null && res)
             {
                 logger.debug("Message |{}| sent", message.substring(0,
                         Math.min(message.length(), 80)));
             }
+            return res;
         });
-        return result;
     }
 
     /**
@@ -227,13 +227,13 @@ public class Telegram implements AutoCloseable
     public CompletableFuture<Boolean> sendAudio(File audio) throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = sendMessage(audio, MessageType.AUDIO, resendRetries);
-        result.whenCompleteAsync((res, ex) -> {
+        return result.handle((res, ex) -> {
             if(ex == null && res)
             {
                 logger.info("Audio {} sent", audio.getName());
             }
+            return res;
         });
-        return result;
     }
 
     /**
@@ -248,13 +248,13 @@ public class Telegram implements AutoCloseable
     public CompletableFuture<Boolean> sendVideo(File video) throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = sendMessage(video, MessageType.VIDEO, resendRetries);
-        result.whenCompleteAsync((res, ex) -> {
+        return result.handle((res, ex) -> {
             if(ex == null && res)
             {
                 logger.info("Video {} sent", video.getName());
             }
+            return res;
         });
-        return result;
     }
 
 
