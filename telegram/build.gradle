@@ -39,6 +39,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
+processResources {
+    from('/usr/local/bin/libtdjni.so') {
+        into 'lib'
+    }
+}
+
 jar {
     archivesBaseName = 'telegram'
 

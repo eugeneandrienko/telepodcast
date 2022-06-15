@@ -12,10 +12,9 @@ import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramReadMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
@@ -68,8 +67,6 @@ public class TelegramTDLibConnector implements AutoCloseable
     public enum MessageSenderState {OK, FAIL, RETRY}
     public enum MessageType {TEXT, AUDIO, VIDEO}
 
-    // TODO: use static library
-    // TODO: load library from JAR
     static
     {
         try
@@ -78,7 +75,57 @@ public class TelegramTDLibConnector implements AutoCloseable
         }
         catch(UnsatisfiedLinkError e)
         {
-            e.printStackTrace();
+            loadTDLibFromJar();
+        }
+    }
+
+    private static void loadTDLibFromJar()
+    {
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        File tempDirectory = new File(tmpDir, "telegram" + System.nanoTime());
+        if(!tempDirectory.mkdir())
+        {
+            throw new IOError(
+                    new IOException(
+                            "Failed to create temporary directory " + tmpDir + " for tdjni!"));
+        }
+        tempDirectory.deleteOnExit();
+
+        final String libraryName = "libtdjni.so";
+        final String libraryJarPath = "/lib/" + libraryName;
+        File tempLibrary = new File(tempDirectory, libraryName);
+        try(InputStream is = TelegramTDLibConnector.class.getResourceAsStream(libraryJarPath))
+        {
+            if(is == null)
+            {
+                //noinspection ResultOfMethodCallIgnored
+                tempLibrary.delete();
+                throw new IOError(new FileNotFoundException("Library " + libraryJarPath +
+                                                            " not found in JAR!"));
+            }
+            Files.copy(is, tempLibrary.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch(NullPointerException npe)
+        {
+            //noinspection ResultOfMethodCallIgnored
+            tempLibrary.delete();
+            throw new IOError(new FileNotFoundException("Library " + libraryJarPath +
+                                                        " not found in JAR!"));
+        }
+        catch(IOException ex)
+        {
+            //noinspection ResultOfMethodCallIgnored
+            tempLibrary.delete();
+            throw new IOError(ex);
+        }
+
+        try
+        {
+            System.load(tempLibrary.getAbsolutePath());
+        }
+        finally
+        {
+            tempLibrary.deleteOnExit();
         }
     }
 
