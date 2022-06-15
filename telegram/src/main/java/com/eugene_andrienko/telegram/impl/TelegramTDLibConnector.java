@@ -10,6 +10,7 @@ package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramReadMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -427,6 +428,41 @@ public class TelegramTDLibConnector implements AutoCloseable
         };
 
         client.send(new TdApi.SendMessage(chatId, 0, 0, null, null, content), messageHandler);
+        return result;
+    }
+
+    public CompletableFuture<TdApi.Messages> getMessages(long chatId, int countOfMessages)
+    {
+        CompletableFuture<TdApi.Messages> result = new CompletableFuture<>();
+
+        if(countOfMessages >= 100)
+        {
+            logger.warn("Count of messages to load = {}! Should be < 100", countOfMessages);
+            countOfMessages = 99;
+        }
+
+        TdApi.Chat chat = chats.get(chatId);
+        long lastMessageId;
+        synchronized(chat)
+        {
+            lastMessageId = chat.lastMessage.id;
+        }
+
+        client.send(new TdApi.GetChatHistory(chatId, lastMessageId, -countOfMessages, countOfMessages, false),
+                answer -> {
+                    if(!(answer instanceof TdApi.Messages))
+                    {
+                        logger.error("Got unknown answer in message handler: {}", answer);
+                        logger.error("Constructor: {}", answer.getConstructor());
+                        result.completeExceptionally(new TelegramReadMessageException(
+                                "Unknown answer type for GetChatHistory"));
+                    }
+                    else
+                    {
+                        TdApi.Messages messages = (TdApi.Messages)answer;
+                        result.complete(messages);
+                    }
+                });
         return result;
     }
 

@@ -8,6 +8,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +77,7 @@ public class TelegramApi implements AutoCloseable
         {
             throw new TelegramSendMessageException("Failed to send message to Telegram");
         }
+        waitForMessageInChat(() -> telegram.isMessageInChat(message));
     }
 
     /**
@@ -91,6 +94,7 @@ public class TelegramApi implements AutoCloseable
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
         }
+        waitForMessageInChat(() -> telegram.isAudioInChat(audio));
     }
 
     /**
@@ -107,6 +111,7 @@ public class TelegramApi implements AutoCloseable
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");
         }
+        waitForMessageInChat(() -> telegram.isVideoInChat(video));
     }
 
     /**
@@ -141,5 +146,40 @@ public class TelegramApi implements AutoCloseable
             logger.debug("CompletableFuture<Boolean>.get() failed", e);
             return true;
         }
+    }
+
+    /**
+     * Waits for the message near {@code delaySeconds} seconds.
+     *
+     * @param supplier {@code Supplier} to check message appears in chat
+     *
+     * @throws TelegramSendMessageException Message not in chat
+     */
+    @SneakyThrows(ExecutionException.class)
+    private void waitForMessageInChat(Supplier<CompletableFuture<Boolean>> supplier)
+            throws TelegramSendMessageException
+    {
+        for(int i = 0; i < delaySeconds; i++)
+        {
+            try
+            {
+                if(supplier.get().get(delaySeconds, TimeUnit.SECONDS))
+                {
+                    return;
+                }
+                Thread.sleep(1000);
+                Thread.yield();
+            }
+            catch(InterruptedException e)
+            {
+                logger.error("Sleep in waitForMessageInChat interrupted!");
+            }
+            catch(TimeoutException e)
+            {
+                logger.error("Timeout when waiting for message");
+                throw new TelegramSendMessageException("Timeout when waiting for message");
+            }
+        }
+        throw new TelegramSendMessageException("Failed to see sent audio in Telegram");
     }
 }

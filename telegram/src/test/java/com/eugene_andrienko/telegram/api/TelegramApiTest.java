@@ -47,12 +47,19 @@ public class TelegramApiTest
     void sendMessageTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendMessage(anyString())).thenReturn(completableTrue)
-                                                     .thenReturn(completableFalse)
-                                                     .thenReturn(completableNever);
+        when(mockedTelegram.sendMessage(anyString())).thenReturn(completableTrue)  // 1
+                                                     .thenReturn(completableFalse) // 2
+                                                     .thenReturn(completableNever) // 3
+                                                     .thenReturn(completableTrue)  // 4
+                                                     .thenReturn(completableTrue); // 5
+        when(mockedTelegram.isMessageInChat(anyString())).thenReturn(completableTrue)   // 1
+                                                         .thenReturn(completableFalse)  // 4
+                                                         .thenReturn(completableNever); // 5
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
         forTest.sendMessage("TEST");
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST"));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST"));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST"));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST"));
     }
@@ -64,12 +71,19 @@ public class TelegramApiTest
     {
         File mockedFile = mock(File.class);
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendAudio(any(File.class))).thenReturn(completableTrue)
-                                                       .thenReturn(completableFalse)
-                                                       .thenReturn(completableNever);
+        when(mockedTelegram.sendAudio(any(File.class))).thenReturn(completableTrue)  // 1
+                                                       .thenReturn(completableFalse) // 2
+                                                       .thenReturn(completableNever) // 3
+                                                       .thenReturn(completableTrue)  // 4
+                                                       .thenReturn(completableTrue); // 5
+        when(mockedTelegram.isAudioInChat(any(File.class))).thenReturn(completableTrue)   // 1
+                                                           .thenReturn(completableFalse)  // 4
+                                                           .thenReturn(completableNever); // 5
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
         forTest.sendAudio(mockedFile);
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(mockedFile));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(mockedFile));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(mockedFile));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(mockedFile));
     }
@@ -81,12 +95,19 @@ public class TelegramApiTest
     {
         File mockedFile = mock(File.class);
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendVideo(any(File.class))).thenReturn(completableTrue)
-                                                       .thenReturn(completableFalse)
-                                                       .thenReturn(completableNever);
+        when(mockedTelegram.sendVideo(any(File.class))).thenReturn(completableTrue)  // 1
+                                                       .thenReturn(completableFalse) // 2
+                                                       .thenReturn(completableNever) // 3
+                                                       .thenReturn(completableTrue)  // 4
+                                                       .thenReturn(completableTrue); // 5
+        when(mockedTelegram.isVideoInChat(any(File.class))).thenReturn(completableTrue)   // 1
+                                                           .thenReturn(completableFalse)  // 4
+                                                           .thenReturn(completableNever); // 5
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
         forTest.sendVideo(mockedFile);
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(mockedFile));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(mockedFile));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(mockedFile));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(mockedFile));
     }

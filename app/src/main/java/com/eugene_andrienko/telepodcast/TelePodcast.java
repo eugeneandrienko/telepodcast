@@ -88,7 +88,7 @@ public class TelePodcast
             }
         }
 
-        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 30,
+        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 50, 30,
                 tdlibLog, tdlibDir, debug);
         logger.debug("TelegramOptions:: {}", telegramOptions);
         try(TelegramApi telegram = new TelegramApi(telegramOptions))

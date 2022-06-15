@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
+import org.drinkless.tdlib.TdApi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -502,6 +503,241 @@ public class TelegramTest
         {
             fail("Telegram.sendMessage() should not throw an exception here");
         }
+    }
+
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
+    @DisplayName("Test is Telegram message in chat")
+    @SneakyThrows({TelegramInitException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void isMessageInChat(MessageType messageType)
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
+        completableOk.complete(MessageSenderState.OK);
+
+        TdApi.Message[] message;
+        TdApi.Messages messages;
+        CompletableFuture<TdApi.Messages> completableMessages;
+
+        final String TEST_MSG = "TEST MSG";
+        final String TEST_NAME = "mocked.name";
+
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+
+        File mockedFile = mock(File.class);
+        when(mockedFile.getName()).thenReturn(TEST_NAME);
+
+        CompletableFuture<Boolean> result;
+        switch(messageType)
+        {
+            case TEXT:
+                TdApi.MessageText content = new TdApi.MessageText();
+                content.text = new TdApi.FormattedText(TEST_MSG, null);
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = content;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+
+                result = telegram.isMessageInChat(TEST_MSG);
+                break;
+            case AUDIO:
+                TdApi.MessageAudio audio = new TdApi.MessageAudio();
+                audio.audio = new TdApi.Audio();
+                audio.audio.fileName = TEST_NAME;
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = audio;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isAudioInChat(mockedFile);
+                break;
+            case VIDEO:
+                TdApi.MessageVideo video = new TdApi.MessageVideo();
+                video.video = new TdApi.Video();
+                video.video.fileName = TEST_NAME;
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = video;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isVideoInChat(mockedFile);
+                break;
+            default:
+                fail("Unknown MessageType");
+                // For the compiler; we fail in previous line:
+                return;
+        }
+        assertTrue(result.get(), "Telegram.isXXXInChat should return true");
+    }
+
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
+    @DisplayName("Test is Telegram message in chat - no messages")
+    @SneakyThrows({TelegramInitException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void isMessageInChatNoMessages(MessageType messageType)
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
+        completableOk.complete(MessageSenderState.OK);
+        CompletableFuture<TdApi.Messages> completableMessages;
+
+        final String TEST_MSG = "TEST MSG";
+        final String TEST_NAME = "mocked.name";
+
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+
+        File mockedFile = mock(File.class);
+        when(mockedFile.getName()).thenReturn(TEST_NAME);
+
+        CompletableFuture<Boolean> result;
+        switch(messageType)
+        {
+            case TEXT:
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(null);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+
+                result = telegram.isMessageInChat(TEST_MSG);
+                break;
+            case AUDIO:
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(null);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isAudioInChat(mockedFile);
+                break;
+            case VIDEO:
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(null);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isVideoInChat(mockedFile);
+                break;
+            default:
+                fail("Unknown MessageType");
+                // For the compiler; we fail in previous line:
+                return;
+        }
+        assertFalse(result.get(), "Telegram.isXXXInChat should return false");
+    }
+
+    @ParameterizedTest
+    @EnumSource(MessageType.class)
+    @DisplayName("Test is Telegram message in chat - but not exists")
+    @SneakyThrows({TelegramInitException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void isMessageInChatNoMessageInChat(MessageType messageType)
+    {
+        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
+        completableRetry.complete(MessageSenderState.RETRY);
+        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
+        completableOk.complete(MessageSenderState.OK);
+
+        TdApi.Message[] message;
+        TdApi.Messages messages;
+        CompletableFuture<TdApi.Messages> completableMessages;
+
+        final String TEST_MSG = "TEST MSG";
+        final String TEST_NAME = "mocked.name";
+
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+
+        File mockedFile = mock(File.class);
+        when(mockedFile.getName()).thenReturn(TEST_NAME);
+
+        CompletableFuture<Boolean> result;
+        switch(messageType)
+        {
+            case TEXT:
+                TdApi.MessageText content = new TdApi.MessageText();
+                content.text = new TdApi.FormattedText(TEST_MSG, null);
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = content;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+
+                result = telegram.isMessageInChat(TEST_MSG + "FAIL");
+                break;
+            case AUDIO:
+                TdApi.MessageAudio audio = new TdApi.MessageAudio();
+                audio.audio = new TdApi.Audio();
+                audio.audio.fileName = TEST_NAME + "FAIL";
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = audio;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isAudioInChat(mockedFile);
+                break;
+            case VIDEO:
+                TdApi.MessageVideo video = new TdApi.MessageVideo();
+                video.video = new TdApi.Video();
+                video.video.fileName = TEST_NAME + "FAIL";
+
+                message = new TdApi.Message[1];
+                message[0] = new TdApi.Message();
+                message[0].content = video;
+
+                messages = new TdApi.Messages(1, message);
+                completableMessages = new CompletableFuture<>();
+                completableMessages.complete(messages);
+
+                when(mockedTelegram.getMessages(anyLong(), anyInt()))
+                        .thenReturn(completableMessages);
+                result = telegram.isVideoInChat(mockedFile);
+                break;
+            default:
+                fail("Unknown MessageType");
+                // For the compiler; we fail in previous line:
+                return;
+        }
+        assertFalse(result.get(), "Telegram.isXXXInChat should return false");
     }
 
 

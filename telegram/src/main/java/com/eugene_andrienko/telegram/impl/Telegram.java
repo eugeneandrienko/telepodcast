@@ -1,13 +1,17 @@
 package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.TelegramOptions;
-import com.eugene_andrienko.telegram.api.exceptions.*;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramAuthException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramChatNotFoundException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageType;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
+import org.drinkless.tdlib.TdApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +30,8 @@ public class Telegram implements AutoCloseable
     private final AtomicLong savedMessagesId = new AtomicLong(0);
     private final static int DEFAULT_RESEND_RETRIES = 2;
     private final int resendRetries;
+    private final static int DEFAULT_COUNT_OF_LOADING_MESSAGES = 50;
+    private final int countOfLoadingMessages;
 
     /**
      * Initializes Telegram library.
@@ -48,6 +54,7 @@ public class Telegram implements AutoCloseable
             throw new TelegramInitException("Resend retries < 0");
         }
         this.resendRetries = options.getResendRetries();
+        this.countOfLoadingMessages = options.getCountOfLoadingMessages();
         telegramConnector = new TelegramTDLibConnector(options);
         //logger.debug("Telegram options: {}", options);
     }
@@ -76,6 +83,7 @@ public class Telegram implements AutoCloseable
             throw new TelegramInitException("Resend retries < 0");
         }
         this.resendRetries = resendRetries;
+        this.countOfLoadingMessages = DEFAULT_COUNT_OF_LOADING_MESSAGES;
         this.telegramConnector = telegramConnector;
     }
 
@@ -97,6 +105,7 @@ public class Telegram implements AutoCloseable
         }
         this.loadingChatsLimit = loadingChatsLimit;
         this.resendRetries = DEFAULT_RESEND_RETRIES;
+        this.countOfLoadingMessages = DEFAULT_COUNT_OF_LOADING_MESSAGES;
         this.telegramConnector = telegramConnector;
     }
 
@@ -216,6 +225,19 @@ public class Telegram implements AutoCloseable
     }
 
     /**
+     * Checks in given message in chat.
+     *
+     * @param message Text of message
+     *
+     * @return {@code CompletableFuture} with {@code true} if message in chat and {@code false} if
+     * not.
+     */
+    public CompletableFuture<Boolean> isMessageInChat(String message)
+    {
+        return isMessageInChat(message, MessageType.TEXT);
+    }
+
+    /**
      * Sends audio to "Saved Messages" chat.
      *
      * @param audio Audio file to send
@@ -237,6 +259,19 @@ public class Telegram implements AutoCloseable
     }
 
     /**
+     * Checks in given audio in chat.
+     *
+     * @param audio Audio file to check
+     *
+     * @return {@code CompletableFuture} with {@code true} if audio in chat and {@code false} if
+     * not.
+     */
+    public CompletableFuture<Boolean> isAudioInChat(File audio)
+    {
+        return isMessageInChat(audio.getName(), MessageType.AUDIO);
+    }
+
+    /**
      * Sends video to "Saved Messages" chat.
      *
      * @param video Video file to send
@@ -255,6 +290,19 @@ public class Telegram implements AutoCloseable
             }
             return res;
         });
+    }
+
+    /**
+     * Checks in given video in chat.
+     *
+     * @param video Video file to check
+     *
+     * @return {@code CompletableFuture} with {@code true} if video in chat and {@code false} if
+     * not.
+     */
+    public CompletableFuture<Boolean> isVideoInChat(File video)
+    {
+        return isMessageInChat(video.getName(), MessageType.VIDEO);
     }
 
 
@@ -304,5 +352,71 @@ public class Telegram implements AutoCloseable
             throw new TelegramSendMessageException(ex);
         }
         return result;
+    }
+
+    /**
+     * Check is given message or file in chat.
+     *
+     * @param textToCompare Text to compare with chat message
+     * @param msgType Type of message
+     * @return {@code CompletableFuture} with {@code true} if message in chat and {@code false} if
+     * not.
+     */
+    private CompletableFuture<Boolean> isMessageInChat(String textToCompare, MessageType msgType)
+    {
+        CompletableFuture<TdApi.Messages> messagesCompletable = telegramConnector.getMessages(
+                savedMessagesId.get(), countOfLoadingMessages);
+
+        return messagesCompletable.handle((messages, ex) -> {
+            if(messages == null)
+            {
+                return false;
+            }
+
+            logger.debug("Readed {} messages from \"Saved messages\" chat", messages.totalCount);
+            // TODO: optimize this proof-of-work code:
+            for(TdApi.Message message : messages.messages)
+            {
+                String fromMessageToCompare;
+                switch(msgType)
+                {
+                    case TEXT:
+                        if(!(message.content instanceof TdApi.MessageText))
+                        {
+                            continue;
+                        }
+                        TdApi.MessageText messageText = (TdApi.MessageText)message.content;
+                        fromMessageToCompare = messageText.text.text;
+                        break;
+                    case AUDIO:
+                        if(!(message.content instanceof TdApi.MessageAudio))
+                        {
+                            continue;
+                        }
+                        TdApi.MessageAudio messageAudio = (TdApi.MessageAudio)message.content;
+                        fromMessageToCompare = messageAudio.audio.fileName;
+                        break;
+                    case VIDEO:
+                        if(!(message.content instanceof TdApi.MessageVideo))
+                        {
+                            continue;
+                        }
+                        TdApi.MessageVideo messageVideo = (TdApi.MessageVideo)message.content;
+                        fromMessageToCompare = messageVideo.video.fileName;
+                        break;
+                    default:
+                        logger.error("Unknown message type: {}", msgType);
+                        return false;
+                }
+                logger.debug("Text to compare: {}, messageFromChat: {}", textToCompare,
+                        fromMessageToCompare);
+                if(textToCompare.equals(fromMessageToCompare))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     }
 }
