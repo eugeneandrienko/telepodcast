@@ -38,12 +38,6 @@ public class TelegramOptions
     private final int resendRetries;
 
     /**
-     * Count of messages to load from "Saved Messages" chat to check is message loaded
-     */
-    @Getter
-    private final int countOfLoadingMessages;
-
-    /**
      * Delay in seconds to complete any library call.
      */
     @Getter

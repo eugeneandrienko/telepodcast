@@ -10,8 +10,8 @@ package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
-import com.eugene_andrienko.telegram.api.exceptions.TelegramReadMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -60,6 +60,11 @@ public class TelegramTDLibConnector implements AutoCloseable
     private static final ConcurrentMap<Long, TdApi.Chat> chats = new ConcurrentHashMap<>();
     private static final NavigableSet<OrderedChat> mainChatList = new TreeSet<>();
     private static boolean haveFullMainChatList = false;
+
+    // key: local file ID
+    // value: upload progress in percents
+    private static final ConcurrentMap<Integer, Float> fileUploadProgress =
+            new ConcurrentHashMap<>();
 
     private static final String TDLIB_VERSION = "1.8.0";
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
@@ -374,6 +379,64 @@ public class TelegramTDLibConnector implements AutoCloseable
         return result;
     }
 
+    public CompletableFuture<Integer> uploadFile(File file, MessageType messageType)
+    {
+        CompletableFuture<Integer> result = new CompletableFuture<>();
+        TdApi.FileType fileType;
+
+        switch(messageType)
+        {
+            case AUDIO:
+                fileType = new TdApi.FileTypeAudio();
+                break;
+            case VIDEO:
+                fileType = new TdApi.FileTypeVideo();
+                break;
+            default:
+                logger.error("Got unknown message type: {}", messageType);
+                result.completeExceptionally(new TelegramUploadFileException(
+                        "Unknown message type"));
+                return result;
+        }
+
+        client.send(
+                new TdApi.UploadFile(new TdApi.InputFileLocal(file.getAbsolutePath()), fileType, 1),
+                object -> {
+                    int constructor = object.getConstructor();
+                    if(constructor == TdApi.File.CONSTRUCTOR)
+                    {
+                        TdApi.File uploadingFile = (TdApi.File)object;
+                        fileUploadProgress.put(uploadingFile.id, 0.0f);
+                        logger.debug("File {} uploading with id = {}", file.getAbsolutePath(),
+                                uploadingFile.id);
+                        result.complete(uploadingFile.id);
+                    }
+                    else
+                    {
+                        logger.error("Got unknown answer when uploading file: {}", constructor);
+                        result.completeExceptionally(new TelegramUploadFileException(
+                                "Unknown answer type"));
+                    }
+                });
+
+        return result;
+    }
+
+    public float getUploadFileProgress(int localFileId) throws TelegramUploadFileException
+    {
+        Float progress = fileUploadProgress.get(localFileId);
+        if(progress == null)
+        {
+            logger.error("No data in upload progress table for file with local ID = {}",
+                    localFileId);
+            throw new TelegramUploadFileException("No progress info about given file");
+        }
+        else
+        {
+            return progress;
+        }
+    }
+
     public CompletableFuture<MessageSenderState> sendMessage(long chatId, MessageType messageType,
             Object message)
     {
@@ -390,35 +453,39 @@ public class TelegramTDLibConnector implements AutoCloseable
                     result.complete(MessageSenderState.FAIL);
                     return result;
                 }
-                content = new TdApi.InputMessageText(
-                        new TdApi.FormattedText((String)message, null),
-                        false, true);
+                String text = (String)message;
+                if(text.isEmpty())
+                {
+                    logger.error("Got empty text to send as message!");
+                    result.complete(MessageSenderState.FAIL);
+                    return result;
+                }
+                content = new TdApi.InputMessageText(new TdApi.FormattedText(text, null), false,
+                        true);
                 break;
             case AUDIO:
-                if(!(message instanceof File))
+                if(!(message instanceof Integer))
                 {
-                    logger.error("Got message type: {} but type of message is not a File: {}",
+                    logger.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
                     result.complete(MessageSenderState.FAIL);
                     return result;
                 }
-                File audio = (File)message;
-                content = new TdApi.InputMessageAudio(
-                        new TdApi.InputFileLocal(audio.getAbsolutePath()),
-                        null, 0, audio.getName(), null, null);
+                Integer audioFileId = (Integer)message;
+                content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null, 0,
+                        null, null, null);
                 break;
             case VIDEO:
-                if(!(message instanceof File))
+                if(!(message instanceof Integer))
                 {
-                    logger.error("Got message type: {} but type of message is not a File: {}",
+                    logger.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
                     result.complete(MessageSenderState.FAIL);
                     return result;
                 }
-                File video = (File)message;
-                content = new TdApi.InputMessageVideo(
-                        new TdApi.InputFileLocal(video.getAbsolutePath()),
-                        null, new int[]{}, 0, 0, 0, true, null, 0);
+                Integer videoFileId = (Integer)message;
+                content = new TdApi.InputMessageVideo(new TdApi.InputFileId(videoFileId), null,
+                        new int[]{}, 0, 0, 0, true, null, 0);
                 break;
             default:
                 logger.error("Got unknown message type: {}", messageType);
@@ -478,41 +545,6 @@ public class TelegramTDLibConnector implements AutoCloseable
         return result;
     }
 
-    public CompletableFuture<TdApi.Messages> getMessages(long chatId, int countOfMessages)
-    {
-        CompletableFuture<TdApi.Messages> result = new CompletableFuture<>();
-
-        if(countOfMessages >= 100)
-        {
-            logger.warn("Count of messages to load = {}! Should be < 100", countOfMessages);
-            countOfMessages = 99;
-        }
-
-        TdApi.Chat chat = chats.get(chatId);
-        long lastMessageId;
-        synchronized(chat)
-        {
-            lastMessageId = chat.lastMessage.id;
-        }
-
-        client.send(new TdApi.GetChatHistory(chatId, lastMessageId, -countOfMessages, countOfMessages, false),
-                answer -> {
-                    if(!(answer instanceof TdApi.Messages))
-                    {
-                        logger.error("Got unknown answer in message handler: {}", answer);
-                        logger.error("Constructor: {}", answer.getConstructor());
-                        result.completeExceptionally(new TelegramReadMessageException(
-                                "Unknown answer type for GetChatHistory"));
-                    }
-                    else
-                    {
-                        TdApi.Messages messages = (TdApi.Messages)answer;
-                        result.complete(messages);
-                    }
-                });
-        return result;
-    }
-
 
     private static void setChatPositions(TdApi.Chat chat, TdApi.ChatPosition[] positions)
     {
@@ -554,7 +586,8 @@ public class TelegramTDLibConnector implements AutoCloseable
             case TdApi.AuthorizationStateWaitTdlibParameters.CONSTRUCTOR:
                 TdApi.TdlibParameters parameters = new TdApi.TdlibParameters();
                 parameters.databaseDirectory = tdlibDir;
-                parameters.useMessageDatabase = true;
+                parameters.useMessageDatabase = false;
+                parameters.useFileDatabase = false;
                 parameters.useChatInfoDatabase = true;
                 parameters.useSecretChats = false;
                 parameters.apiId = this.apiId;
@@ -645,7 +678,8 @@ public class TelegramTDLibConnector implements AutoCloseable
                 }
                 break;
             default:
-                logger.warn("Unsupported authorization state: {}", TelegramTDLibConnector.authorizationState);
+                logger.warn("Unsupported authorization state: {}",
+                        TelegramTDLibConnector.authorizationState);
         }
     }
 
@@ -946,9 +980,17 @@ public class TelegramTDLibConnector implements AutoCloseable
                     }
                     break;
                 }
+                case TdApi.UpdateFile.CONSTRUCTOR:
+                {
+                    TdApi.UpdateFile update = (TdApi.UpdateFile)object;
+                    Float progress = update.file.remote.uploadedSize /
+                                     (float)update.file.expectedSize * 100;
+                    fileUploadProgress.put(update.file.id, progress);
+                    break;
+                }
 
                 default:
-                     //logger.debug("Unsupported update: {}", object);
+                    //logger.debug("Unsupported update: {}", object);
             }
         }
     }

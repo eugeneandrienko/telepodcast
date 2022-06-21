@@ -2,14 +2,13 @@ package com.eugene_andrienko.telegram.api;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
 import com.eugene_andrienko.telegram.impl.Telegram;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class TelegramApi implements AutoCloseable
     }
 
     /**
-     * Send message to "Saved Messages" chat.
+     * Send a message to "Saved Messages" chat.
      *
      * @param message Message to send.
      *
@@ -77,47 +76,106 @@ public class TelegramApi implements AutoCloseable
         {
             throw new TelegramSendMessageException("Failed to send message to Telegram");
         }
-        waitForMessageInChat(() -> telegram.isMessageInChat(message));
+    }
+
+    /**
+     * Uploads audio file to Telegram.
+     *
+     * @param audio Audio file to upload
+     *
+     * @return Local file ID.
+     *
+     * @throws TelegramUploadFileException Upload audio fail.
+     */
+    public int uploadAudio(File audio) throws TelegramUploadFileException
+    {
+        CompletableFuture<Integer> result = telegram.uploadAudio(audio);
+        Integer localId;
+        try
+        {
+            localId = result.get(delaySeconds, TimeUnit.SECONDS);
+        }
+        catch(InterruptedException | ExecutionException | TimeoutException e)
+        {
+            throw new TelegramUploadFileException(e);
+        }
+        return localId;
     }
 
     /**
      * Send audio file to Telegram.
      *
-     * @param audio Audio file to send.
+     * @param localId Local ID of audio file.
      *
-     * @throws TelegramSendMessageException Failed to send audio
+     * @throws TelegramSendMessageException Failed send audio
      */
-    public void sendAudio(File audio) throws TelegramSendMessageException
+    public void sendAudio(int localId) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendAudio(audio);
+        CompletableFuture<Boolean> result = telegram.sendAudio(localId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
         }
-        waitForMessageInChat(() -> telegram.isAudioInChat(audio));
     }
 
     /**
-     * Send video file to Telegram.
+     * Uploads a video file to Telegram.
      *
-     * @param video Video file to send.
+     * @param video The video file to upload
+     *
+     * @return Local file ID.
+     *
+     * @throws TelegramUploadFileException Upload video fail.
+     */
+    public int uploadVideo(File video) throws TelegramUploadFileException
+    {
+        CompletableFuture<Integer> result = telegram.uploadVideo(video);
+        Integer localId;
+        try
+        {
+            localId = result.get(delaySeconds, TimeUnit.SECONDS);
+        }
+        catch(InterruptedException | ExecutionException | TimeoutException e)
+        {
+            throw new TelegramUploadFileException(e);
+        }
+        return localId;
+    }
+
+    /**
+     * Send a video file to Telegram.
+     *
+     * @param localId Local ID of video file.
      *
      * @throws TelegramSendMessageException Failed to send video
      */
-    public void sendVideo(File video) throws TelegramSendMessageException
+    public void sendVideo(int localId) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendVideo(video);
+        CompletableFuture<Boolean> result = telegram.sendVideo(localId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");
         }
-        waitForMessageInChat(() -> telegram.isVideoInChat(video));
+    }
+
+    /**
+     * Returns uploading progress in percents of given file.
+     *
+     * @param localId Local file ID.
+     *
+     * @return Uploading progress in percents.
+     *
+     * @throws TelegramUploadFileException Fail to get uploading progress for given local ID.
+     */
+    public float getUploadingProgress(Integer localId) throws TelegramUploadFileException
+    {
+        return telegram.getUploadingProgress(localId);
     }
 
     /**
      * Logout from Telegram and free acquired resources.
      *
-     * @throws Exception Failed to close Telegram library.
+     * @throws Exception Fail to close Telegram library.
      */
     @Override
     public void close() throws Exception
@@ -146,40 +204,5 @@ public class TelegramApi implements AutoCloseable
             logger.debug("CompletableFuture<Boolean>.get() failed", e);
             return true;
         }
-    }
-
-    /**
-     * Waits for the message near {@code delaySeconds} seconds.
-     *
-     * @param supplier {@code Supplier} to check message appears in chat
-     *
-     * @throws TelegramSendMessageException Message not in chat
-     */
-    @SneakyThrows(ExecutionException.class)
-    private void waitForMessageInChat(Supplier<CompletableFuture<Boolean>> supplier)
-            throws TelegramSendMessageException
-    {
-        for(int i = 0; i < delaySeconds; i++)
-        {
-            try
-            {
-                if(supplier.get().get(delaySeconds, TimeUnit.SECONDS))
-                {
-                    return;
-                }
-                Thread.sleep(1000);
-                Thread.yield();
-            }
-            catch(InterruptedException e)
-            {
-                logger.error("Sleep in waitForMessageInChat interrupted!");
-            }
-            catch(TimeoutException e)
-            {
-                logger.error("Timeout when waiting for message");
-                throw new TelegramSendMessageException("Timeout when waiting for message");
-            }
-        }
-        throw new TelegramSendMessageException("Failed to see sent audio in Telegram");
     }
 }

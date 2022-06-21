@@ -2,6 +2,7 @@ package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
 import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageSenderState;
 import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageType;
 import java.io.File;
@@ -14,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
-import org.drinkless.tdlib.TdApi;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -258,6 +258,57 @@ public class TelegramTest
         }
     }
 
+    @Test
+    @DisplayName("Upload audio test")
+    @SneakyThrows({TelegramInitException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void uploadAudioTest()
+    {
+        CompletableFuture<Integer> forTest = new CompletableFuture<>();
+        forTest.complete(1);
+        File mockedFile = mock(File.class);
+
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+        when(mockedTelegram.uploadFile(any(File.class), eq(MessageType.AUDIO))).thenReturn(forTest);
+
+        CompletableFuture<Integer> result = telegram.uploadAudio(mockedFile);
+        assertEquals(1, result.get(), "Result should be equal to 1");
+    }
+
+    @Test
+    @DisplayName("Upload video test")
+    @SneakyThrows({TelegramInitException.class,
+                   InterruptedException.class,
+                   ExecutionException.class})
+    void uploadVideoTest()
+    {
+        CompletableFuture<Integer> forTest = new CompletableFuture<>();
+        forTest.complete(1);
+        File mockedFile = mock(File.class);
+
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+        when(mockedTelegram.uploadFile(any(File.class), eq(MessageType.VIDEO))).thenReturn(forTest);
+
+        CompletableFuture<Integer> result = telegram.uploadVideo(mockedFile);
+        assertEquals(1, result.get(), "Result should be equal to 1");
+    }
+
+    @Test
+    @DisplayName("Get uploading progress test")
+    @SneakyThrows({TelegramInitException.class, TelegramUploadFileException.class})
+    void getUploadingProgressTest()
+    {
+        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
+        Telegram telegram = new Telegram(mockedTelegram, 1);
+        when(mockedTelegram.getUploadFileProgress(anyInt())).thenReturn(42.42f);
+
+        float result = telegram.getUploadingProgress(2);
+        assertEquals(42.42f, result, "Expected and actual upload file progress differs");
+    }
+
     @ParameterizedTest
     @EnumSource(MessageType.class)
     @DisplayName("Send message test")
@@ -274,9 +325,6 @@ public class TelegramTest
         when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
                 .thenReturn(completableOk);
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
-
         try
         {
             CompletableFuture<Boolean> result;
@@ -286,10 +334,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG");
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(mockedFile);
+                    result = telegram.sendAudio(123);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(mockedFile);
+                    result = telegram.sendVideo(456);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -320,9 +368,6 @@ public class TelegramTest
         when(mockedTelegram.sendMessage(anyLong(), eq(messageType), any()))
                 .thenReturn(completableFail);
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
-
         try
         {
             CompletableFuture<Boolean> result;
@@ -332,10 +377,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG");
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(mockedFile);
+                    result = telegram.sendAudio(123);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(mockedFile);
+                    result = telegram.sendVideo(456);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -370,9 +415,6 @@ public class TelegramTest
                 .thenReturn(completableRetry) // First retry
                 .thenReturn(completableOk); //   Second retry — should be successful
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
-
         try
         {
             CompletableFuture<Boolean> result;
@@ -382,10 +424,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG");
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(mockedFile);
+                    result = telegram.sendAudio(123);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(mockedFile);
+                    result = telegram.sendVideo(456);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -422,9 +464,6 @@ public class TelegramTest
                 .thenReturn(completableRetry) //  First retry
                 .thenReturn(completableRetry); // Second retry — fail
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
-
         try
         {
             CompletableFuture<Boolean> result;
@@ -434,10 +473,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG");
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(mockedFile);
+                    result = telegram.sendAudio(123);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(mockedFile);
+                    result = telegram.sendVideo(456);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -473,9 +512,6 @@ public class TelegramTest
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableFail); // First retry — fail
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getAbsolutePath()).thenReturn("/m/ocked/pat/h");
-
         try
         {
             CompletableFuture<Boolean> result;
@@ -485,10 +521,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG");
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(mockedFile);
+                    result = telegram.sendAudio(123);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(mockedFile);
+                    result = telegram.sendVideo(456);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -507,237 +543,45 @@ public class TelegramTest
 
     @ParameterizedTest
     @EnumSource(MessageType.class)
-    @DisplayName("Test is Telegram message in chat")
+    @DisplayName("Send message null test")
     @SneakyThrows({TelegramInitException.class,
                    InterruptedException.class,
                    ExecutionException.class})
-    void isMessageInChat(MessageType messageType)
+    void sendMessageNullTest(MessageType messageType)
     {
         CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
         completableRetry.complete(MessageSenderState.RETRY);
-        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
-        completableOk.complete(MessageSenderState.OK);
-
-        TdApi.Message[] message;
-        TdApi.Messages messages;
-        CompletableFuture<TdApi.Messages> completableMessages;
-
-        final String TEST_MSG = "TEST MSG";
-        final String TEST_NAME = "mocked.name";
+        CompletableFuture<MessageSenderState> completableFail = new CompletableFuture<>();
+        completableFail.complete(MessageSenderState.FAIL);
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
 
-        File mockedFile = mock(File.class);
-        when(mockedFile.getName()).thenReturn(TEST_NAME);
-
-        CompletableFuture<Boolean> result;
-        switch(messageType)
+        try
         {
-            case TEXT:
-                TdApi.MessageText content = new TdApi.MessageText();
-                content.text = new TdApi.FormattedText(TEST_MSG, null);
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = content;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-
-                result = telegram.isMessageInChat(TEST_MSG);
-                break;
-            case AUDIO:
-                TdApi.MessageAudio audio = new TdApi.MessageAudio();
-                audio.audio = new TdApi.Audio();
-                audio.audio.fileName = TEST_NAME;
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = audio;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isAudioInChat(mockedFile);
-                break;
-            case VIDEO:
-                TdApi.MessageVideo video = new TdApi.MessageVideo();
-                video.video = new TdApi.Video();
-                video.video.fileName = TEST_NAME;
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = video;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isVideoInChat(mockedFile);
-                break;
-            default:
-                fail("Unknown MessageType");
-                // For the compiler; we fail in previous line:
-                return;
+            CompletableFuture<Boolean> result;
+            switch(messageType)
+            {
+                case TEXT:
+                    result = telegram.sendMessage(null);
+                    break;
+                case AUDIO:
+                    result = telegram.sendAudio(null);
+                    break;
+                case VIDEO:
+                    result = telegram.sendVideo(null);
+                    break;
+                default:
+                    fail("Unknown MessageType");
+                    // For the compiler; we fail in previous line:
+                    return;
+            }
+            assertFalse(result.get(), "Telegram.sendMessage should return false");
         }
-        assertTrue(result.get(), "Telegram.isXXXInChat should return true");
-    }
-
-    @ParameterizedTest
-    @EnumSource(MessageType.class)
-    @DisplayName("Test is Telegram message in chat - no messages")
-    @SneakyThrows({TelegramInitException.class,
-                   InterruptedException.class,
-                   ExecutionException.class})
-    void isMessageInChatNoMessages(MessageType messageType)
-    {
-        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
-        completableRetry.complete(MessageSenderState.RETRY);
-        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
-        completableOk.complete(MessageSenderState.OK);
-        CompletableFuture<TdApi.Messages> completableMessages;
-
-        final String TEST_MSG = "TEST MSG";
-        final String TEST_NAME = "mocked.name";
-
-        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
-        Telegram telegram = new Telegram(mockedTelegram, 1);
-
-        File mockedFile = mock(File.class);
-        when(mockedFile.getName()).thenReturn(TEST_NAME);
-
-        CompletableFuture<Boolean> result;
-        switch(messageType)
+        catch(TelegramSendMessageException ex)
         {
-            case TEXT:
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(null);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-
-                result = telegram.isMessageInChat(TEST_MSG);
-                break;
-            case AUDIO:
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(null);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isAudioInChat(mockedFile);
-                break;
-            case VIDEO:
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(null);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isVideoInChat(mockedFile);
-                break;
-            default:
-                fail("Unknown MessageType");
-                // For the compiler; we fail in previous line:
-                return;
+            fail("Telegram.sendMessage() should not throw an exception here");
         }
-        assertFalse(result.get(), "Telegram.isXXXInChat should return false");
-    }
-
-    @ParameterizedTest
-    @EnumSource(MessageType.class)
-    @DisplayName("Test is Telegram message in chat - but not exists")
-    @SneakyThrows({TelegramInitException.class,
-                   InterruptedException.class,
-                   ExecutionException.class})
-    void isMessageInChatNoMessageInChat(MessageType messageType)
-    {
-        CompletableFuture<MessageSenderState> completableRetry = new CompletableFuture<>();
-        completableRetry.complete(MessageSenderState.RETRY);
-        CompletableFuture<MessageSenderState> completableOk = new CompletableFuture<>();
-        completableOk.complete(MessageSenderState.OK);
-
-        TdApi.Message[] message;
-        TdApi.Messages messages;
-        CompletableFuture<TdApi.Messages> completableMessages;
-
-        final String TEST_MSG = "TEST MSG";
-        final String TEST_NAME = "mocked.name";
-
-        TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
-        Telegram telegram = new Telegram(mockedTelegram, 1);
-
-        File mockedFile = mock(File.class);
-        when(mockedFile.getName()).thenReturn(TEST_NAME);
-
-        CompletableFuture<Boolean> result;
-        switch(messageType)
-        {
-            case TEXT:
-                TdApi.MessageText content = new TdApi.MessageText();
-                content.text = new TdApi.FormattedText(TEST_MSG, null);
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = content;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-
-                result = telegram.isMessageInChat(TEST_MSG + "FAIL");
-                break;
-            case AUDIO:
-                TdApi.MessageAudio audio = new TdApi.MessageAudio();
-                audio.audio = new TdApi.Audio();
-                audio.audio.fileName = TEST_NAME + "FAIL";
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = audio;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isAudioInChat(mockedFile);
-                break;
-            case VIDEO:
-                TdApi.MessageVideo video = new TdApi.MessageVideo();
-                video.video = new TdApi.Video();
-                video.video.fileName = TEST_NAME + "FAIL";
-
-                message = new TdApi.Message[1];
-                message[0] = new TdApi.Message();
-                message[0].content = video;
-
-                messages = new TdApi.Messages(1, message);
-                completableMessages = new CompletableFuture<>();
-                completableMessages.complete(messages);
-
-                when(mockedTelegram.getMessages(anyLong(), anyInt()))
-                        .thenReturn(completableMessages);
-                result = telegram.isVideoInChat(mockedFile);
-                break;
-            default:
-                fail("Unknown MessageType");
-                // For the compiler; we fail in previous line:
-                return;
-        }
-        assertFalse(result.get(), "Telegram.isXXXInChat should return false");
     }
 
 
