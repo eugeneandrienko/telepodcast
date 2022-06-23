@@ -244,7 +244,8 @@ public class Telegram implements AutoCloseable
     public CompletableFuture<Boolean> sendMessage(String message)
             throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = sendMessage(message, MessageType.TEXT, resendRetries);
+        CompletableFuture<Boolean> result = sendMessage(message, MessageType.TEXT, resendRetries,
+                null);
         return result.handle((res, ex) -> {
             if(ex == null && res)
             {
@@ -259,16 +260,17 @@ public class Telegram implements AutoCloseable
      * Sends audio to "Saved Messages" chat.
      *
      * @param audioLocalId Local ID of previously uploaded audio file
+     * @param description  Description of audio
      *
      * @return {@code CompletableFuture} with {@code true} if audio sent and {@code false} if not.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the audio.
      */
-    public CompletableFuture<Boolean> sendAudio(Integer audioLocalId)
+    public CompletableFuture<Boolean> sendAudio(Integer audioLocalId, String description)
             throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = sendMessage(audioLocalId, MessageType.AUDIO,
-                resendRetries);
+                resendRetries, description);
         return result.handle((res, ex) -> {
             if(ex == null && res)
             {
@@ -282,16 +284,17 @@ public class Telegram implements AutoCloseable
      * Sends video to "Saved Messages" chat.
      *
      * @param videoLocalId Local ID of previously uploaded video file
+     * @param description  Description of video
      *
      * @return {@code CompletableFuture} with {@code true} if video sent and {@code false} if not.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the video.
      */
-    public CompletableFuture<Boolean> sendVideo(Integer videoLocalId)
+    public CompletableFuture<Boolean> sendVideo(Integer videoLocalId, String description)
             throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = sendMessage(videoLocalId, MessageType.VIDEO,
-                resendRetries);
+                resendRetries, description);
         return result.handle((res, ex) -> {
             if(ex == null && res)
             {
@@ -308,6 +311,7 @@ public class Telegram implements AutoCloseable
      * @param message     Message or local file ID to send
      * @param messageType Message type
      * @param resendTry   Count of resend tries. When count < 0 — all resend tries exhausted.
+     * @param description Description for media to send
      *
      * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
      *
@@ -315,7 +319,7 @@ public class Telegram implements AutoCloseable
      */
     @SneakyThrows(InterruptedException.class)
     private CompletableFuture<Boolean> sendMessage(Object message, MessageType messageType,
-            int resendTry) throws TelegramSendMessageException
+            int resendTry, String description) throws TelegramSendMessageException
     {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         if(resendTry < 0)
@@ -332,7 +336,7 @@ public class Telegram implements AutoCloseable
         }
 
         CompletableFuture<TelegramTDLibConnector.MessageSenderState> sendMessageResult = telegramConnector.sendMessage(
-                savedMessagesId.get(), messageType, message);
+                savedMessagesId.get(), messageType, message, description);
 
         try
         {
@@ -346,7 +350,7 @@ public class Telegram implements AutoCloseable
                     break;
                 case RETRY:
                     logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
-                    return sendMessage(message, messageType, --resendTry);
+                    return sendMessage(message, messageType, --resendTry, description);
             }
         }
         catch(ExecutionException ex)

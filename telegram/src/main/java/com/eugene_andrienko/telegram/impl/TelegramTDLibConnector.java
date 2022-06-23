@@ -256,6 +256,7 @@ public class TelegramTDLibConnector implements AutoCloseable
     {
         needQuit = true;
         haveAuthorization = false;
+        // TODO: Add handler
         client.send(new TdApi.Close(), defaultHandler);
     }
 
@@ -445,7 +446,7 @@ public class TelegramTDLibConnector implements AutoCloseable
     }
 
     public CompletableFuture<MessageSenderState> sendMessage(long chatId, MessageType messageType,
-            Object message)
+            Object message, String description)
     {
         CompletableFuture<MessageSenderState> result = new CompletableFuture<>();
 
@@ -479,8 +480,9 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer audioFileId = (Integer)message;
+                TdApi.FormattedText audioCaption = new TdApi.FormattedText(description, null);
                 content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null, 0,
-                        null, null, null);
+                        null, null, audioCaption);
                 break;
             case VIDEO:
                 if(!(message instanceof Integer))
@@ -491,8 +493,9 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer videoFileId = (Integer)message;
+                TdApi.FormattedText videoCaption = new TdApi.FormattedText(description, null);
                 content = new TdApi.InputMessageVideo(new TdApi.InputFileId(videoFileId), null,
-                        new int[]{}, 0, 0, 0, true, null, 0);
+                        new int[]{}, 0, 0, 0, true, videoCaption, 0);
                 break;
             default:
                 logger.error("Got unknown message type: {}", messageType);

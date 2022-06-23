@@ -81,14 +81,14 @@ public class TelegramApiTest
     void sendAudioTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendAudio(anyInt())).thenReturn(completableTrue)
+        when(mockedTelegram.sendAudio(anyInt(), anyString())).thenReturn(completableTrue)
                                                 .thenReturn(completableFalse)
                                                 .thenReturn(completableNeverBoolean);
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
-        forTest.sendAudio(123);
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123));
+        forTest.sendAudio(123, "TEST");
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST"));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST"));
     }
 
     @Test
@@ -113,14 +113,14 @@ public class TelegramApiTest
     void sendVideoTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendVideo(anyInt())).thenReturn(completableTrue)
+        when(mockedTelegram.sendVideo(anyInt(), anyString())).thenReturn(completableTrue)
                                                 .thenReturn(completableFalse)
                                                 .thenReturn(completableNeverBoolean);
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
-        forTest.sendVideo(123);
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123));
+        forTest.sendVideo(123, "TEST");
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST"));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST"));
     }
 
     @Test

@@ -79,7 +79,6 @@ public class TelegramApi implements AutoCloseable
         }
     }
 
-    // TODO: add description in the same message
     /**
      * Uploads audio file to Telegram.
      *
@@ -108,12 +107,13 @@ public class TelegramApi implements AutoCloseable
      * Send audio file to Telegram.
      *
      * @param localId Local ID of audio file.
+     * @param description Description of audio file or {@code null} if no description.
      *
      * @throws TelegramSendMessageException Failed send audio
      */
-    public void sendAudio(int localId) throws TelegramSendMessageException
+    public void sendAudio(int localId, String description) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendAudio(localId);
+        CompletableFuture<Boolean> result = telegram.sendAudio(localId, description);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
@@ -148,12 +148,13 @@ public class TelegramApi implements AutoCloseable
      * Send a video file to Telegram.
      *
      * @param localId Local ID of video file.
+     * @param description  Description of video file or {@code null} if no description.
      *
-     * @throws TelegramSendMessageException Failed to send video
+     * @throws TelegramSendMessageException Fail send video
      */
-    public void sendVideo(int localId) throws TelegramSendMessageException
+    public void sendVideo(int localId, String description) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendVideo(localId);
+        CompletableFuture<Boolean> result = telegram.sendVideo(localId, description);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");
