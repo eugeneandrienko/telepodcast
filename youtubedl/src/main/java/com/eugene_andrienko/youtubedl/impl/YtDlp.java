@@ -228,7 +228,7 @@ public final class YtDlp extends AbstractYoutubeDl
             StringBuilder description = new StringBuilder();
             while((output = descriptionReader.readLine()) != null)
             {
-                description.append(output);
+                description.append(output).append(System.lineSeparator());
             }
             if(!descriptionFile.delete())
             {
