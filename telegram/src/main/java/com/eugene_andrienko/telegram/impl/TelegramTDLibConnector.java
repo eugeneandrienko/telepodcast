@@ -69,8 +69,15 @@ public class TelegramTDLibConnector implements AutoCloseable
     private static final String TDLIB_VERSION = "1.8.0";
     private static final String SAVED_MESSAGES_CHAT = "Saved Messages";
 
-    public enum MessageSenderState {OK, FAIL, RETRY}
-    public enum MessageType {TEXT, AUDIO, VIDEO}
+    public enum MessageSenderState
+    {
+        OK, FAIL, RETRY
+    }
+
+    public enum MessageType
+    {
+        TEXT, AUDIO, VIDEO
+    }
 
     static
     {

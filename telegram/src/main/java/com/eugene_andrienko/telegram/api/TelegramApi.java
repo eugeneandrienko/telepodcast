@@ -62,6 +62,7 @@ public class TelegramApi implements AutoCloseable
         }
     }
 
+    // TODO: Send as reply to previous message with audio/video
     /**
      * Send a message to "Saved Messages" chat.
      *
@@ -78,6 +79,7 @@ public class TelegramApi implements AutoCloseable
         }
     }
 
+    // TODO: add description in the same message
     /**
      * Uploads audio file to Telegram.
      *

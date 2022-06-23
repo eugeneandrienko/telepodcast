@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class TelegramApiTest
 {
     @Test
-    @DisplayName("TelegramApi init test")
+    @DisplayName("Init test")
     void initTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
@@ -27,7 +27,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi login test")
+    @DisplayName("Login test")
     @SneakyThrows(TelegramInitException.class)
     void loginTest()
     {
@@ -44,7 +44,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi send message test")
+    @DisplayName("Send message test")
     @SneakyThrows(TelegramSendMessageException.class)
     void sendMessageTest()
     {
@@ -60,7 +60,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi upload audio test")
+    @DisplayName("Upload audio test")
     @SneakyThrows(TelegramUploadFileException.class)
     void uploadAudioTest()
     {
@@ -76,7 +76,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi send audio test")
+    @DisplayName("Send audio test")
     @SneakyThrows(TelegramSendMessageException.class)
     void sendAudioTest()
     {
@@ -92,7 +92,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi upload video test")
+    @DisplayName("Upload video test")
     @SneakyThrows(TelegramUploadFileException.class)
     void uploadVideoTest()
     {
@@ -108,7 +108,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi send video test")
+    @DisplayName("Send video test")
     @SneakyThrows(TelegramSendMessageException.class)
     void sendVideoTest()
     {
@@ -124,7 +124,7 @@ public class TelegramApiTest
     }
 
     @Test
-    @DisplayName("TelegramApi get uploading progress test")
+    @DisplayName("Get uploading progress test")
     @SneakyThrows(TelegramUploadFileException.class)
     void getUploadingProgressTest()
     {
