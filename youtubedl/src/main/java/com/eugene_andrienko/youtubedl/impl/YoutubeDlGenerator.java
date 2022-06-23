@@ -26,6 +26,7 @@ public class YoutubeDlGenerator
         return new YtDlp(countOfThreads);
     }
 
+    // For testing purposes:
     IYoutubeDl generate(ExecutorService service)
     {
         return new YtDlp(service);

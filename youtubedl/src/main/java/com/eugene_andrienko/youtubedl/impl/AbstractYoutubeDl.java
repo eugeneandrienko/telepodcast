@@ -23,6 +23,13 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
     final ConcurrentMap<String, DownloadState> downloadStateTable = new ConcurrentHashMap<>();
     ExecutorService executorService;
 
+    /**
+     * Initializes {@code AbstractYoutubeDl} object.
+     *
+     * @param countOfThreads Count of threads to download data from YouTube.
+     *
+     * @throws IOException Fail create a temporary directory for downloaded YouTube data.
+     */
     public AbstractYoutubeDl(int countOfThreads) throws IOException
     {
         createTemporaryDirectory();
@@ -31,11 +38,26 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
         executorService = Executors.newFixedThreadPool(countOfThreads);
     }
 
+    /**
+     * For unit tests.
+     *
+     * @param service Mocked {@code ExecutorService}
+     */
     AbstractYoutubeDl(ExecutorService service)
     {
         this.executorService = service;
     }
 
+    /**
+     * Creates a temporary directory for downloaded YouTube data.
+     *
+     * Creates the temporary directory in the system temp catalog (for example {@code /tmp/} in
+     * Linux). Temporary directory name will start from {@code telepodcast} string and ends with
+     * time of creation in nanoseconds.
+     *
+     * @throws IOException Fail create the temporary directory.
+     */
+    @SuppressWarnings("GrazieInspection")
     void createTemporaryDirectory() throws IOException
     {
         String tmpDir = System.getProperty("java.io.tmpdir");
@@ -49,6 +71,13 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
                 tempDirectory.getAbsolutePath());
     }
 
+    /**
+     * Gracefully stop object's services.
+     *
+     * Stops executor service, removes downloaded files and temporary directory.
+     *
+     * @throws Exception Fail gracefully stop all services.
+     */
     @Override
     public void close() throws Exception
     {
@@ -68,18 +97,43 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
         }
     }
 
+    /**
+     * Returns download progress in percents for given url.
+     *
+     * @param url URL
+     *
+     * @return Download progress in percents. Or {@code 0.0f} if no record about progress for
+     * given {@code url} exists.
+     */
     public float getDownloadProgress(String url)
     {
         Float progress = downloadProgressTable.get(url);
         return Objects.requireNonNullElse(progress, 0.0f);
     }
 
+    /**
+     * Returns download state for given url.
+     *
+     * @param url URL
+     *
+     * @return Download state as
+     * {@link com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState}. Or
+     * {@code DownloadState.NO_DATA} if no record about state exists.
+     */
     public DownloadState getDownloadState(String url)
     {
         DownloadState state = downloadStateTable.get(url);
         return Objects.requireNonNullElse(state, DownloadState.NO_DATA);
     }
 
+    /**
+     * Returns downloaded data for given url.
+     *
+     * @param url URL
+     *
+     * @return Downloaded data as
+     * {@link com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData}. Or null if no data.
+     */
     public YoutubeData getDownloadedData(String url)
     {
         return downloadsTable.get(url);

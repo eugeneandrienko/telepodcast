@@ -25,16 +25,33 @@ public final class YtDlp extends AbstractYoutubeDl
         AUDIO, VIDEO
     }
 
+    /**
+     * Initializes {@code YtDlp} object.
+     *
+     * @param countOfThreads Count of thread to download videos from YouTube.
+     *
+     * @throws IOException Fail initialize object.
+     */
     public YtDlp(int countOfThreads) throws IOException
     {
         super(countOfThreads);
     }
 
+    /**
+     * For unit-tests.
+     *
+     * @param service Mocked {@code ExecutorService} object.
+     */
     YtDlp(ExecutorService service)
     {
         super(service);
     }
 
+    /**
+     * Asynchronously downloads audio from YouTube.
+     *
+     * @param url URL to YouTube video
+     */
     @Override
     public void downloadAudio(final String url)
     {
@@ -62,6 +79,11 @@ public final class YtDlp extends AbstractYoutubeDl
         });
     }
 
+    /**
+     * Asynchronously downloads video from YouTube.
+     *
+     * @param url URL to YouTube video
+     */
     @Override
     public void downloadVideo(final String url)
     {
@@ -88,6 +110,15 @@ public final class YtDlp extends AbstractYoutubeDl
         });
     }
 
+    /**
+     * Returns title for given YouTube video.
+     *
+     * @param url URL to YouTube video
+     *
+     * @return Title for YouTube video
+     *
+     * @throws YouTubeNoTitleException Fail to get title
+     */
     @Override
     public String getTitle(final String url) throws YouTubeNoTitleException
     {
@@ -125,6 +156,13 @@ public final class YtDlp extends AbstractYoutubeDl
         }
     }
 
+    /**
+     * Downloads data from YouTube.
+     *
+     * @param url            URL to YouTube video
+     * @param processBuilder Initialized {@code ProcessBuilder} object.
+     * @param contentType    Result type — see {@see #ContentType} values.
+     */
     private void download(String url, ProcessBuilder processBuilder, ContentType contentType)
     {
         processBuilder.directory(tempDirectory);
@@ -209,6 +247,17 @@ public final class YtDlp extends AbstractYoutubeDl
         }
     }
 
+    /**
+     * Increases volume of downloaded audio.
+     *
+     * Uses lame to increase volume. As a result {@code filename.mp3.mp3} file will be generated.
+     * Then {@code filename.mp3} will be deleted and existing {@code filename.mp3.mp3} will be
+     * renamed to {@code filename.mp3}.
+     *
+     * @param mp3 Path to downloaded MP3 file
+     *
+     * @throws IOException Fail to increase volume.
+     */
     private void increaseVolume(String mp3) throws IOException
     {
         logger.info("Increasing volume of {}", mp3);
