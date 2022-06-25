@@ -2,12 +2,14 @@ package com.eugene_andrienko.telegram.impl;
 
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.*;
+import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageSenderState;
 import com.eugene_andrienko.telegram.impl.TelegramTDLibConnector.MessageType;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,21 +237,24 @@ public class Telegram implements AutoCloseable
     /**
      * Sends message to "Saved Messages" chat.
      *
-     * @param message Message to send
+     * @param message   Message to send
+     * @param replyToId Message ID to reply to. Can be zero to send message not as reply.
      *
-     * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
+     * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
+     * is {@code true} if message sent and {@code false} if not. Second element of {@code Pair} —
+     * local ID of message sent.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the message.
      */
-    public CompletableFuture<Boolean> sendMessage(String message)
+    public CompletableFuture<Pair<Boolean, Long>> sendMessage(String message, long replyToId)
             throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = sendMessage(message, MessageType.TEXT, resendRetries,
-                null);
+        CompletableFuture<Pair<Boolean, Long>> result = sendMessage(message, MessageType.TEXT,
+                replyToId, resendRetries, null);
         return result.handle((res, ex) -> {
-            if(ex == null && res)
+            if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Message |{}| sent", message.substring(0,
+                logger.info("Message |{}| sending", message.substring(0,
                         Math.min(message.length(), 80)));
             }
             return res;
@@ -257,24 +262,39 @@ public class Telegram implements AutoCloseable
     }
 
     /**
+     * Returning {@code CompletableFuture} with server message ID.
+     *
+     * @param localMessageId Local message ID
+     *
+     * @return {@code CompletableFuture} with server message ID.
+     */
+    public CompletableFuture<Long> getServerMessageId(long localMessageId)
+    {
+        return telegramConnector.getServerMessageId(localMessageId);
+    }
+
+    /**
      * Sends audio to "Saved Messages" chat.
      *
      * @param audioLocalId Local ID of previously uploaded audio file
      * @param description  Description of audio
+     * @param replyToId    Message ID to reply to. Can be zero to send message not as reply.
      *
-     * @return {@code CompletableFuture} with {@code true} if audio sent and {@code false} if not.
+     * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
+     * is {@code true} if message sent and {@code false} if not. Second element of {@code Pair} —
+     * local ID of message sent.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the audio.
      */
-    public CompletableFuture<Boolean> sendAudio(Integer audioLocalId, String description)
-            throws TelegramSendMessageException
+    public CompletableFuture<Pair<Boolean, Long>> sendAudio(Integer audioLocalId,
+            String description, long replyToId) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = sendMessage(audioLocalId, MessageType.AUDIO,
-                resendRetries, description);
+        CompletableFuture<Pair<Boolean, Long>> result = sendMessage(audioLocalId, MessageType.AUDIO,
+                replyToId, resendRetries, description);
         return result.handle((res, ex) -> {
-            if(ex == null && res)
+            if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Audio with id = {} sent", audioLocalId);
+                logger.info("Audio with id = {} sending", audioLocalId);
             }
             return res;
         });
@@ -285,20 +305,23 @@ public class Telegram implements AutoCloseable
      *
      * @param videoLocalId Local ID of previously uploaded video file
      * @param description  Description of video
+     * @param replyToId    Message ID to reply to. Can be zero to send message not as reply.
      *
-     * @return {@code CompletableFuture} with {@code true} if video sent and {@code false} if not.
+     * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
+     * is {@code true} if message sent and {@code false} if not. Second element of {@code Pair} —
+     * local ID of message sent.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the video.
      */
-    public CompletableFuture<Boolean> sendVideo(Integer videoLocalId, String description)
-            throws TelegramSendMessageException
+    public CompletableFuture<Pair<Boolean, Long>> sendVideo(Integer videoLocalId,
+            String description, long replyToId) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = sendMessage(videoLocalId, MessageType.VIDEO,
-                resendRetries, description);
+        CompletableFuture<Pair<Boolean, Long>> result = sendMessage(videoLocalId, MessageType.VIDEO,
+                replyToId, resendRetries, description);
         return result.handle((res, ex) -> {
-            if(ex == null && res)
+            if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Video with id = {} sent", videoLocalId);
+                logger.info("Video with id = {} sending", videoLocalId);
             }
             return res;
         });
@@ -310,47 +333,53 @@ public class Telegram implements AutoCloseable
      *
      * @param message     Message or local file ID to send
      * @param messageType Message type
+     * @param replyToId   Message ID to reply to. Can be zero to send message not as reply.
      * @param resendTry   Count of resend tries. When count < 0 — all resend tries exhausted.
      * @param description Description for media to send
      *
-     * @return {@code CompletableFuture} with {@code true} if message sent and {@code false} if not.
+     * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
+     * is {@code true} if message sent and {@code false} if not. Second element of {@code Pair} —
+     * ID of message sent.
      *
      * @throws TelegramSendMessageException Got unexpected error when sending the message.
      */
     @SneakyThrows(InterruptedException.class)
-    private CompletableFuture<Boolean> sendMessage(Object message, MessageType messageType,
-            int resendTry, String description) throws TelegramSendMessageException
+    private CompletableFuture<Pair<Boolean, Long>> sendMessage(Object message,
+            MessageType messageType, long replyToId, int resendTry, String description)
+            throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        CompletableFuture<Pair<Boolean, Long>> result = new CompletableFuture<>();
         if(resendTry < 0)
         {
             logger.error("Exhaust of resend tries - cannot send message!");
-            result.complete(false);
+            result.complete(Pair.with(false, 0L));
             return result;
         }
         if(message == null)
         {
             logger.error("Got null as message to send");
-            result.complete(false);
+            result.complete(Pair.with(false, 0L));
             return result;
         }
 
-        CompletableFuture<TelegramTDLibConnector.MessageSenderState> sendMessageResult = telegramConnector.sendMessage(
-                savedMessagesId.get(), messageType, message, description);
+        CompletableFuture<Pair<MessageSenderState, Long>> sendMessageResult =
+                telegramConnector.sendMessage(savedMessagesId.get(), messageType, message,
+                        replyToId, description);
 
         try
         {
-            switch(sendMessageResult.get())
+            long messageId = sendMessageResult.get().getValue1();
+            switch(sendMessageResult.get().getValue0())
             {
                 case OK:
-                    result.complete(true);
+                    result.complete(Pair.with(true, messageId));
                     break;
                 case FAIL:
-                    result.complete(false);
+                    result.complete(Pair.with(false, messageId));
                     break;
                 case RETRY:
                     logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
-                    return sendMessage(message, messageType, --resendTry, description);
+                    return sendMessage(message, messageType, replyToId, --resendTry, description);
             }
         }
         catch(ExecutionException ex)

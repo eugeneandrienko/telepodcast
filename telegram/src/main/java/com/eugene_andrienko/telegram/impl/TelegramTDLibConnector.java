@@ -26,6 +26,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.drinkless.tdlib.Client;
 import org.drinkless.tdlib.TdApi;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,10 @@ public class TelegramTDLibConnector implements AutoCloseable
     // key: local file ID
     // value: upload progress in percents
     private static final ConcurrentMap<Integer, Float> fileUploadProgress =
+            new ConcurrentHashMap<>();
+    // key: temporary message ID
+    // value: server message ID
+    private static final ConcurrentMap<Long, CompletableFuture<Long>> sentMessageIds =
             new ConcurrentHashMap<>();
 
     private static final String TDLIB_VERSION = "1.8.0";
@@ -411,19 +416,28 @@ public class TelegramTDLibConnector implements AutoCloseable
                 new TdApi.UploadFile(new TdApi.InputFileLocal(file.getAbsolutePath()), fileType, 1),
                 object -> {
                     int constructor = object.getConstructor();
-                    if(constructor == TdApi.File.CONSTRUCTOR)
+                    switch(constructor)
                     {
-                        TdApi.File uploadingFile = (TdApi.File)object;
-                        fileUploadProgress.put(uploadingFile.id, 0.0f);
-                        logger.debug("File {} uploading with id = {}", file.getAbsolutePath(),
-                                uploadingFile.id);
-                        result.complete(uploadingFile.id);
-                    }
-                    else
-                    {
-                        logger.error("Got unknown answer when uploading file: {}", constructor);
-                        result.completeExceptionally(new TelegramUploadFileException(
-                                "Unknown answer type"));
+                        case TdApi.File.CONSTRUCTOR:
+                            TdApi.File uploadingFile = (TdApi.File)object;
+                            fileUploadProgress.put(uploadingFile.id, 0.0f);
+                            logger.debug("File {} uploading with id = {}", file.getAbsolutePath(),
+                                    uploadingFile.id);
+                            result.complete(uploadingFile.id);
+                            break;
+                        case TdApi.Error.CONSTRUCTOR:
+                            TdApi.Error error = (TdApi.Error)object;
+                            logger.error("Failed to upload {}. Exists: {}, can read: {}",
+                                    file.getAbsolutePath(), file.exists(), file.canRead());
+                            logger.error("Error code: {}. Message: {}", error.code, error.message);
+                            result.completeExceptionally(new TelegramUploadFileException(
+                                    "Got error"));
+                            break;
+                        default:
+                            logger.error("Got unknown answer when uploading file: {}", constructor);
+                            result.completeExceptionally(new TelegramUploadFileException(
+                                    "Unknown answer type"));
+                            break;
                     }
                 });
 
@@ -445,10 +459,11 @@ public class TelegramTDLibConnector implements AutoCloseable
         }
     }
 
-    public CompletableFuture<MessageSenderState> sendMessage(long chatId, MessageType messageType,
-            Object message, String description)
+    public CompletableFuture<Pair<MessageSenderState, Long>> sendMessage(
+            long chatId, MessageType messageType, Object message, long replyToId,
+            String description)
     {
-        CompletableFuture<MessageSenderState> result = new CompletableFuture<>();
+        CompletableFuture<Pair<MessageSenderState, Long>> result = new CompletableFuture<>();
 
         TdApi.InputMessageContent content;
         switch(messageType)
@@ -458,17 +473,17 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     logger.error("Got message type: {} but type of message is {}", messageType,
                             message.getClass().getCanonicalName());
-                    result.complete(MessageSenderState.FAIL);
+                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 String text = (String)message;
                 if(text.isEmpty())
                 {
                     logger.error("Got empty text to send as message!");
-                    result.complete(MessageSenderState.FAIL);
+                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
                 }
-                content = new TdApi.InputMessageText(new TdApi.FormattedText(text, null), false,
+                content = new TdApi.InputMessageText(new TdApi.FormattedText(text, null), true,
                         true);
                 break;
             case AUDIO:
@@ -476,7 +491,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     logger.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
-                    result.complete(MessageSenderState.FAIL);
+                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 Integer audioFileId = (Integer)message;
@@ -489,7 +504,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     logger.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
-                    result.complete(MessageSenderState.FAIL);
+                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 Integer videoFileId = (Integer)message;
@@ -499,7 +514,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 break;
             default:
                 logger.error("Got unknown message type: {}", messageType);
-                result.complete(MessageSenderState.FAIL);
+                result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                 return result;
         }
 
@@ -508,16 +523,18 @@ public class TelegramTDLibConnector implements AutoCloseable
             {
                 logger.error("Got unknown answer in message handler: {}", answer);
                 logger.error("Constructor: {}", answer.getConstructor());
-                result.complete(MessageSenderState.FAIL);
+                result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                 return;
             }
 
-            TdApi.MessageSendingState state = ((TdApi.Message)answer).sendingState;
+            TdApi.Message sendingMessage = (TdApi.Message)answer;
+            TdApi.MessageSendingState state = sendingMessage.sendingState;
             switch(state.getConstructor())
             {
                 case TdApi.MessageSendingStatePending.CONSTRUCTOR:
-                    logger.debug("Message sent to server");
-                    result.complete(MessageSenderState.OK);
+                    logger.debug("Message sent pending");
+                    sentMessageIds.put(sendingMessage.id, new CompletableFuture<>());
+                    result.complete(Pair.with(MessageSenderState.OK, sendingMessage.id));
                     break;
                 case TdApi.MessageSendingStateFailed.CONSTRUCTOR:
                     TdApi.MessageSendingStateFailed fail = (TdApi.MessageSendingStateFailed)state;
@@ -532,16 +549,16 @@ public class TelegramTDLibConnector implements AutoCloseable
                             {
                                 logger.error("Failed to wait {} seconds before resending message",
                                         fail.retryAfter);
-                                return MessageSenderState.FAIL;
+                                return Pair.with(MessageSenderState.FAIL, sendingMessage.id);
                             }
-                            return MessageSenderState.RETRY;
+                            return Pair.with(MessageSenderState.RETRY, sendingMessage.id);
                         });
                     }
                     else
                     {
                         logger.error("Failed to send message! Error code: {}. Error message: {}.",
                                 fail.errorCode, fail.errorMessage);
-                        result.complete(MessageSenderState.FAIL);
+                        result.complete(Pair.with(MessageSenderState.FAIL, sendingMessage.id));
                     }
                     break;
                 default:
@@ -551,7 +568,18 @@ public class TelegramTDLibConnector implements AutoCloseable
             }
         };
 
-        client.send(new TdApi.SendMessage(chatId, 0, 0, null, null, content), messageHandler);
+        client.send(new TdApi.SendMessage(chatId, 0, replyToId, null, null, content),
+                messageHandler);
+        return result;
+    }
+
+    public CompletableFuture<Long> getServerMessageId(long localMessageId)
+    {
+        CompletableFuture<Long> result = sentMessageIds.get(localMessageId);
+        if(result == null)
+        {
+            result = new CompletableFuture<>();
+        }
         return result;
     }
 
@@ -751,7 +779,7 @@ public class TelegramTDLibConnector implements AutoCloseable
         @Override
         public void onResult(TdApi.Object object)
         {
-            logger.debug("Default handler: {}", object);
+            logger.debug("Default handler got: {}", object.getConstructor());
         }
     }
 
@@ -990,6 +1018,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                     }
                     break;
                 }
+
                 case TdApi.UpdateFile.CONSTRUCTOR:
                 {
                     TdApi.UpdateFile update = (TdApi.UpdateFile)object;
@@ -998,6 +1027,21 @@ public class TelegramTDLibConnector implements AutoCloseable
                     fileUploadProgress.put(update.file.id, progress);
                     break;
                 }
+                case TdApi.UpdateMessageSendSucceeded.CONSTRUCTOR:
+                    TdApi.UpdateMessageSendSucceeded succeeded =
+                            (TdApi.UpdateMessageSendSucceeded)object;
+                    logger.debug("Message with local ID {} and server ID {} successfully sent",
+                            succeeded.oldMessageId, succeeded.message.id);
+                    CompletableFuture<Long> compl = sentMessageIds.get(succeeded.oldMessageId);
+                    compl.complete(succeeded.message.id);
+                    break;
+                case TdApi.UpdateMessageSendFailed.CONSTRUCTOR:
+                    TdApi.UpdateMessageSendFailed failed = (TdApi.UpdateMessageSendFailed)object;
+                    logger.error("Failed to send message, local ID: {}, message: {}," +
+                                 "error code = {}, error message = {}",
+                            failed.oldMessageId, failed.message.content.toString(),
+                            failed.errorCode, failed.errorMessage);
+                    break;
 
                 default:
                     //logger.debug("Unsupported update: {}", object);

@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,9 @@ public class TelegramApi implements AutoCloseable
     private final Telegram telegram;
     private final int delaySeconds;
     private final Logger logger = LoggerFactory.getLogger(TelegramApi.class);
+
+    public static final int MEDIA_CAPTION_LENGTH = 1024;
+    public static final int MESSAGE_LENGTH = 4096;
 
     /**
      * Initializes Telegram library.
@@ -56,27 +60,39 @@ public class TelegramApi implements AutoCloseable
     {
         telegram.login();
         CompletableFuture<Boolean> result = telegram.isReady();
-        if(isTelegramMethodFailed(result))
+        try
+        {
+            boolean loginState = result.get(delaySeconds, TimeUnit.SECONDS);
+            if(!loginState)
+            {
+                throw new TelegramInitException("Failed to login to Telegram");
+            }
+        }
+        catch(TimeoutException | InterruptedException | ExecutionException e)
         {
             throw new TelegramInitException("Failed to login to Telegram");
         }
     }
 
-    // TODO: Send as reply to previous message with audio/video
     /**
      * Send a message to "Saved Messages" chat.
      *
-     * @param message Message to send.
+     * @param message   Message to send.
+     * @param replyToId Message ID to reply to. Can be 0 to send message not as reply.
+     *
+     * @return Message ID
      *
      * @throws TelegramSendMessageException Failed to send message
      */
-    public void sendMessage(String message) throws TelegramSendMessageException
+    public long sendMessage(String message, long replyToId) throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendMessage(message);
+        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendMessage(message, replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send message to Telegram");
         }
+        long localMessageId = getLocalMessageId(result);
+        return getServerMessageId(telegram.getServerMessageId(localMessageId));
     }
 
     /**
@@ -106,18 +122,25 @@ public class TelegramApi implements AutoCloseable
     /**
      * Send audio file to Telegram.
      *
-     * @param localId Local ID of audio file.
+     * @param localId     Local ID of audio file.
      * @param description Description of audio file or {@code null} if no description.
+     * @param replyToId   Message ID to reply to. Can be 0 to send message not as reply.
+     *
+     * @return Message ID
      *
      * @throws TelegramSendMessageException Failed send audio
      */
-    public void sendAudio(int localId, String description) throws TelegramSendMessageException
+    public long sendAudio(int localId, String description, long replyToId)
+            throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendAudio(localId, description);
+        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendAudio(localId, description,
+                replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
         }
+        long localMessageId =  getLocalMessageId(result);
+        return getServerMessageId(telegram.getServerMessageId(localMessageId));
     }
 
     /**
@@ -147,18 +170,25 @@ public class TelegramApi implements AutoCloseable
     /**
      * Send a video file to Telegram.
      *
-     * @param localId Local ID of video file.
-     * @param description  Description of video file or {@code null} if no description.
+     * @param localId     Local ID of video file.
+     * @param description Description of video file or {@code null} if no description.
+     * @param replyToId   Message ID to reply to. Can be 0 to send message not as reply.
+     *
+     * @return Message ID
      *
      * @throws TelegramSendMessageException Fail send video
      */
-    public void sendVideo(int localId, String description) throws TelegramSendMessageException
+    public long sendVideo(int localId, String description, long replyToId)
+            throws TelegramSendMessageException
     {
-        CompletableFuture<Boolean> result = telegram.sendVideo(localId, description);
+        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendVideo(localId, description,
+                replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");
         }
+        long localMessageId = getLocalMessageId(result);
+        return getServerMessageId(telegram.getServerMessageId(localMessageId));
     }
 
     /**
@@ -196,16 +226,42 @@ public class TelegramApi implements AutoCloseable
      *
      * @return {@code true} if {@code Telegram} method fails, otherwise false.
      */
-    private boolean isTelegramMethodFailed(CompletableFuture<Boolean> completable)
+    private boolean isTelegramMethodFailed(CompletableFuture<Pair<Boolean, Long>> completable)
     {
         try
         {
-            return !completable.get(delaySeconds, TimeUnit.SECONDS);
+            return !completable.get(delaySeconds, TimeUnit.SECONDS).getValue0();
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {
             logger.debug("CompletableFuture<Boolean>.get() failed", e);
             return true;
+        }
+    }
+
+    private long getLocalMessageId(CompletableFuture<Pair<Boolean, Long>> completable)
+    {
+        try
+        {
+            return completable.get(delaySeconds, TimeUnit.SECONDS).getValue1();
+        }
+        catch(InterruptedException | TimeoutException | ExecutionException e)
+        {
+            logger.error("Failed to get message ID");
+            return 0L;
+        }
+    }
+
+    private long getServerMessageId(CompletableFuture<Long> completable)
+    {
+        try
+        {
+            return completable.get(delaySeconds, TimeUnit.SECONDS);
+        }
+        catch(InterruptedException | TimeoutException | ExecutionException e)
+        {
+            logger.error("Failed to get message ID");
+            return 0L;
         }
     }
 }
