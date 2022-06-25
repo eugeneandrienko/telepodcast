@@ -6,13 +6,10 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.internal.Console;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
-import com.eugene_andrienko.telegram.api.exceptions.TelegramException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
+import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.SimpleLogger;
 
 
 /**
@@ -31,11 +28,19 @@ public class TelePodcast
     private boolean debug = false;
     @Parameter(names = {"-a", "--authorize"}, description = "Authorize in Telegram via API ID " +
                                                             "and hash")
+
     private boolean authorize = false;
     @Parameter(names = "--tdlib-log", description = "Path to TDLib log")
     private String tdlibLog = homeDir + "/tdlib.log";
     @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory")
     private String tdlibDir = homeDir + "/.tdlib";
+    @Parameter(names = {"-t", "--downloader-threads"}, description = "Count of threads for " +
+                                                                     "downloading video from " +
+                                                                     "YouTube")
+    private int downloaderThreads = 3;
+
+    @Parameter(names = {"-g", "--gui"}, description = "Launch GUI insted of curses-like interface")
+    private boolean launchGui = false;
 
     private int apiId = 1;
     private String apiHash = "-";
@@ -88,21 +93,25 @@ public class TelePodcast
             }
         }
 
-        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 50, 30,
+        TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 50,
                 tdlibLog, tdlibDir, debug);
         logger.debug("TelegramOptions:: {}", telegramOptions);
-        try(TelegramApi telegram = new TelegramApi(telegramOptions))
+
+        if(authorize)
         {
-            telegram.login();
-            telegram.sendMessage("TEST SUCCEED!");
-        }
-        catch(TelegramException ex)
-        {
-            logger.error("Telegram fail!", ex);
-        }
-        catch(Exception ex)
-        {
-            throw new RuntimeException(ex);
+            try(TelegramApi telegram = new TelegramApi(telegramOptions))
+            {
+                telegram.login();
+            }
+            catch(TelegramInitException ex)
+            {
+                logger.error("Failed to login to Telegram");
+            }
+            catch(Exception ex)
+            {
+                logger.error("Failed to properly logout from Telegram");
+            }
+            return;
         }
     }
 
@@ -119,24 +128,9 @@ public class TelePodcast
      */
     private void setupLogger(boolean isDebug)
     {
-        Map<String, String> slPropsMap = new HashMap<>();
-        slPropsMap.put(SimpleLogger.SHOW_DATE_TIME_KEY, "true");
-        slPropsMap.put(SimpleLogger.DATE_TIME_FORMAT_KEY, "yyyy-MM-dd'T'HH:mm:ssZ");
-        slPropsMap.put(SimpleLogger.LEVEL_IN_BRACKETS_KEY, "true");
-        if(isDebug)
-        {
-            slPropsMap.put(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "debug");
-            slPropsMap.put(SimpleLogger.SHOW_THREAD_NAME_KEY, "true");
-            slPropsMap.put(SimpleLogger.SHOW_LOG_NAME_KEY, "true");
-        }
-        else
-        {
-            slPropsMap.put(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "info");
-            slPropsMap.put(SimpleLogger.SHOW_THREAD_NAME_KEY, "false");
-            slPropsMap.put(SimpleLogger.SHOW_LOG_NAME_KEY, "false");
-        }
-        Properties systemProperties = System.getProperties();
-        systemProperties.putAll(slPropsMap);
-        System.setProperties(systemProperties);
+        final String DEBUG_PROPERTIES = "/log4j-debug.properties";
+        final String NOLOG_PROPERTIES = "/log4j-none.properties";
+        PropertyConfigurator.configure(TelePodcast.class.getResource(
+                isDebug ? DEBUG_PROPERTIES : NOLOG_PROPERTIES));
     }
 }

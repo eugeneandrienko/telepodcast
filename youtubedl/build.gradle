@@ -28,9 +28,6 @@ dependencies {
     implementation('org.slf4j:slf4j-api:1.7.36') {
         because('Need to using logger')
     }
-    implementation('org.slf4j:slf4j-simple:1.7.36') {
-        because('To use Simple logger - logging to console')
-    }
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'

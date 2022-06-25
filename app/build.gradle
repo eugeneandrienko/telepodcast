@@ -16,8 +16,11 @@ dependencies {
     implementation('org.slf4j:slf4j-api:1.7.36') {
         because('Need to using logger')
     }
-    implementation('org.slf4j:slf4j-simple:1.7.36') {
-        because('To use Simple logger - logging to console')
+    implementation('org.slf4j:slf4j-reload4j:1.7.36') {
+        because('To use Reload4J with slf4j')
+    }
+    implementation('ch.qos.reload4j:reload4j:1.2.21') {
+        because('Reload4J logger')
     }
 
     implementation('com.beust:jcommander:1.82') {
@@ -35,6 +38,8 @@ dependencies {
 
 extraJavaModuleInfo {
     automaticModule('jcommander-1.82.jar', 'com.beust.jcommander')
+    automaticModule('slf4j-reload4j-1.7.36.jar', 'org.slf4j.reload4j')
+    automaticModule('reload4j-1.2.21.jar', 'ch.qos.reload4j')
 }
 
 application {
