@@ -1,6 +1,7 @@
 package com.eugene_andrienko.youtubedl.api;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
+import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
 import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +18,10 @@ public class YoutubeDataTest
     {
         final String TEST_DESCRIPTION = "TEST DESCRIPTION";
         File mockedFile = mock(File.class);
+        ContentType contentType = ContentType.AUDIO;
 
         @SuppressWarnings("resource")
-        YoutubeData forTest = new YoutubeData(mockedFile, TEST_DESCRIPTION);
+        YoutubeData forTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType);
         assertEquals(mockedFile, forTest.getFile());
         assertEquals(TEST_DESCRIPTION, forTest.getDescription());
     }
@@ -31,7 +33,7 @@ public class YoutubeDataTest
         File mockedFile = mock(File.class);
         when(mockedFile.delete()).thenReturn(true).thenReturn(false);
 
-        YoutubeData forTest = new YoutubeData(mockedFile, "");
+        YoutubeData forTest = new YoutubeData(mockedFile, "", ContentType.VIDEO);
         try
         {
             forTest.close();

@@ -2,6 +2,7 @@ package com.eugene_andrienko.youtubedl.impl;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
+import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
 import java.io.*;
 import java.util.concurrent.ExecutorService;
@@ -19,11 +20,6 @@ public final class YtDlp extends AbstractYoutubeDl
     private static final String LAME = "lame";
     private static final String RM = "rm";
     private static final String RENAME = "rename";
-
-    private enum ContentType
-    {
-        AUDIO, VIDEO
-    }
 
     /**
      * Initializes {@code YtDlp} object.
@@ -188,11 +184,11 @@ public final class YtDlp extends AbstractYoutubeDl
                     {
                         if(contentType == ContentType.AUDIO)
                         {
-                            downloadStateTable.put(url, DownloadState.RECODING_AUDIO);
+                            downloadStateTable.put(url, DownloadState.AUDIO_ENCODING);
                         }
                         else if(contentType == ContentType.VIDEO)
                         {
-                            downloadStateTable.put(url, DownloadState.RECODING_VIDEO);
+                            downloadStateTable.put(url, DownloadState.VIDEO_ENCODING);
                         }
                         else
                         {
@@ -236,7 +232,7 @@ public final class YtDlp extends AbstractYoutubeDl
                         descriptionFile.getAbsolutePath());
             }
 
-            YoutubeData result = new YoutubeData(file, description.toString());
+            YoutubeData result = new YoutubeData(file, description.toString(), contentType);
             downloadsTable.put(url, result);
             downloadStateTable.put(url, DownloadState.COMPLETE);
         }

@@ -148,9 +148,10 @@ public class YouTubeDlApi implements AutoCloseable
     /**
      * Downloading states
      */
+    // TODO: i18n this for interface
     public enum DownloadState
     {
-        DOWNLOADING, DOWNLOADED, RECODING_AUDIO, RECODING_VIDEO, VOLUME_INCREASE, COMPLETE, FAIL,
+        DOWNLOADING, DOWNLOADED, AUDIO_ENCODING, VIDEO_ENCODING, VOLUME_INCREASE, COMPLETE, FAIL,
         NO_DATA
     }
 
@@ -172,6 +173,15 @@ public class YouTubeDlApi implements AutoCloseable
          */
         @Getter
         private String description;
+
+        public enum ContentType
+        {
+            AUDIO, VIDEO
+        }
+
+        @Getter
+        @NonNull
+        private ContentType contentType;
 
         /**
          * Deletes the file to free disk space

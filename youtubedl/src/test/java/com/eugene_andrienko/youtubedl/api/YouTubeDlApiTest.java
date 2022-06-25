@@ -2,6 +2,7 @@ package com.eugene_andrienko.youtubedl.api;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
+import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeDownloadException;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
 import com.eugene_andrienko.youtubedl.impl.AbstractYoutubeDl;
@@ -120,7 +121,7 @@ public class YouTubeDlApiTest
             YouTubeDlApi forTest = new YouTubeDlApi(mockedYoutube))
         {
             final String TEST_URL = "TEST URL";
-            final DownloadState EXPECTED_STATE = DownloadState.RECODING_AUDIO;
+            final DownloadState EXPECTED_STATE = DownloadState.AUDIO_ENCODING;
             when(mockedYoutube.getDownloadState(eq(TEST_URL))).thenReturn(EXPECTED_STATE);
 
             DownloadState result = forTest.getDownloadState(TEST_URL);
@@ -138,10 +139,11 @@ public class YouTubeDlApiTest
     {
         final String TEST_DESCRIPTION = "TEST DESCRIPTION";
         File mockedFile = mock(File.class);
+        ContentType contentType = ContentType.VIDEO;
 
         try(AbstractYoutubeDl mockedYoutube = mock(AbstractYoutubeDl.class);
             YouTubeDlApi forTest = new YouTubeDlApi(mockedYoutube);
-            YoutubeData mockedData = new YoutubeData(mockedFile, TEST_DESCRIPTION))
+            YoutubeData mockedData = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType))
         {
             final String TEST_URL = "TEST URL";
             when(mockedYoutube.getDownloadedData(eq(TEST_URL))).thenReturn(mockedData)
@@ -149,6 +151,7 @@ public class YouTubeDlApiTest
             YoutubeData result = forTest.getDownloadedData(TEST_URL);
             assertEquals(mockedFile, result.getFile(), "File not expected");
             assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
+            assertEquals(ContentType.VIDEO, result.getContentType(), "Content type not expected");
             assertThrows(YouTubeDownloadException.class, () -> forTest.getDownloadedData(TEST_URL));
 
             when(mockedFile.delete()).thenReturn(true);

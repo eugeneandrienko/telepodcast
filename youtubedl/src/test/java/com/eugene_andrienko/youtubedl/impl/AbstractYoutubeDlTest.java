@@ -2,6 +2,7 @@ package com.eugene_andrienko.youtubedl.impl;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
+import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -59,7 +60,7 @@ public class AbstractYoutubeDlTest
         try(NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService))
         {
             final String TEST_URL = "TEST URL";
-            final DownloadState TEST_STATE = DownloadState.RECODING_VIDEO;
+            final DownloadState TEST_STATE = DownloadState.VIDEO_ENCODING;
             forTest.setDownloadState(TEST_URL, TEST_STATE);
 
             DownloadState result = forTest.getDownloadState(TEST_URL);
@@ -83,12 +84,14 @@ public class AbstractYoutubeDlTest
             final String TEST_URL = "TEST URL";
             File mockedFile = mock(File.class);
             final String TEST_DESCRIPTION = "TEST DESCRIPTION";
-            YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION);
+            YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION,
+                    ContentType.AUDIO);
 
             forTest.setDownloadedData(TEST_URL, dataForTest);
             YoutubeData result = forTest.getDownloadedData(TEST_URL);
             assertEquals(mockedFile, result.getFile(), "File not expected");
             assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
+            assertEquals(ContentType.AUDIO, result.getContentType(), "Content type not expected");
             result = forTest.getDownloadedData("WRONG URL");
             assertNull(result);
 
