@@ -508,7 +508,9 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer audioFileId = (Integer)message;
-                TdApi.FormattedText audioCaption = new TdApi.FormattedText(description, null);
+                TdApi.FormattedText audioCaption = description != null ?
+                                                   new TdApi.FormattedText(description, null) :
+                                                   null;
                 content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null, 0,
                         null, null, audioCaption);
                 break;
@@ -521,7 +523,9 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer videoFileId = (Integer)message;
-                TdApi.FormattedText videoCaption = new TdApi.FormattedText(description, null);
+                TdApi.FormattedText videoCaption = description != null ?
+                                                   new TdApi.FormattedText(description, null) :
+                                                   null;
                 content = new TdApi.InputMessageVideo(new TdApi.InputFileId(videoFileId), null,
                         new int[]{}, 0, 0, 0, true, videoCaption, 0);
                 break;

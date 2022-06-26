@@ -5,6 +5,7 @@ import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
+import com.eugene_andrienko.telepodcast.TextHelper;
 import com.eugene_andrienko.telepodcast.cli.CLIException;
 import com.eugene_andrienko.telepodcast.cli.DownloadOptions;
 import com.eugene_andrienko.telepodcast.cli.DownloadOptions.DownloadType;
@@ -24,7 +25,6 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -269,8 +269,8 @@ public class DownloadWindow extends AbstractWindow
             return;
         }
 
-        List<String> description = splitString4Telegram(
-                data.getDescription(), data.getFile().getName());
+        // TODO: clear description from marketing text, links and hashtags
+        List<String> description = prepareDescription4Telegram(data.getDescription());
         ContentType contentType = data.getContentType();
 
         progressBar.busyWaiting();
@@ -281,21 +281,18 @@ public class DownloadWindow extends AbstractWindow
             switch(contentType)
             {
                 case AUDIO:
-                    messageId = telegram.sendAudio(localFileId, description.get(0), messageId);
+                    messageId = telegram.sendAudio(localFileId, null, messageId);
                     break;
                 case VIDEO:
-                    messageId = telegram.sendVideo(localFileId, description.get(0), messageId);
+                    messageId = telegram.sendVideo(localFileId, null, messageId);
                     break;
             }
             logger.debug("Sent message: {}", messageId);
-            if(description.size() > 1)
+            for(String s : description)
             {
-                for(int i = 1; i < description.size(); i++)
-                {
-                    logger.debug("Send text message in reply to {}", messageId);
-                    messageId = telegram.sendMessage(description.get(i), messageId);
-                    logger.debug("Sent text message {}", messageId);
-                }
+                logger.debug("Send text message in reply to {}", messageId);
+                messageId = telegram.sendMessage(s, messageId);
+                logger.debug("Sent text message {}", messageId);
             }
             status.setForegroundColor(TextColor.ANSI.GREEN).setText("SENT");
             progressBar.hide();
@@ -308,31 +305,15 @@ public class DownloadWindow extends AbstractWindow
         }
     }
 
-    // TODO: split by words
-    // TODO: deal with Telegram text message size limit
-    private List<String> splitString4Telegram(String string, String filename)
+    /**
+     * Prepare YouTube description for Telegram.
+     *
+     * @param string YouTube video description
+     *
+     * @return List of string to send to Telegram.
+     */
+    private List<String> prepareDescription4Telegram(String string)
     {
-        List<String> result = new ArrayList<>();
-        int captionLength = TelegramApi.MEDIA_CAPTION_LENGTH - filename.length();
-        if(string.length() <= captionLength)
-        {
-            result.add(string);
-        }
-        else
-        {
-            int[] symbols = string.codePoints().toArray();
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < symbols.length; i++)
-            {
-                sb.appendCodePoint(symbols[i]);
-                if(i == captionLength)
-                {
-                    result.add(sb.toString());
-                    sb.setLength(0);
-                }
-            }
-            result.add(sb.toString());
-        }
-        return result;
+        return TextHelper.splitByWords(string, TelegramApi.MESSAGE_LENGTH);
     }
 }

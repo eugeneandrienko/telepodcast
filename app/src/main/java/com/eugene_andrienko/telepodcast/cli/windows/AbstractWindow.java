@@ -1,12 +1,12 @@
 package com.eugene_andrienko.telepodcast.cli.windows;
 
+import com.eugene_andrienko.telepodcast.TextHelper;
 import com.eugene_andrienko.telepodcast.cli.CLIException;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Window;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.slf4j.Logger;
 
 
@@ -47,24 +47,15 @@ public class AbstractWindow
         return result;
     }
 
-    // TODO: split by words
+    /**
+     * Format video title — split by newlines if {@code title} is larger than {@code labelSize}.
+     *
+     * @param title Title
+     *
+     * @return Title, formatted with newlines.
+     */
     String formatTitle(String title)
     {
-        if(title.length() <= labelSize)
-        {
-            return title;
-        }
-
-        int[] codePoints = title.codePoints().toArray();
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < codePoints.length; i++)
-        {
-            sb.appendCodePoint(codePoints[i]);
-            if(i != 0 && i % labelSize == 0)
-            {
-                sb.append(System.lineSeparator());
-            }
-        }
-        return sb.toString();
+        return String.join("\n", TextHelper.splitByWords(title, labelSize));
     }
 }

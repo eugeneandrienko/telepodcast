@@ -60,6 +60,9 @@ public class TelegramApiTest
 
         long result = forTest.sendMessage("TEST", 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage(null, 0L));
+        assertThrows(TelegramSendMessageException.class,
+                () -> forTest.sendMessage("x".repeat(TelegramApi.MESSAGE_LENGTH + 1), 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST", 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("TEST", 0L));
         result = forTest.sendMessage("TEST", 0L);
@@ -99,6 +102,8 @@ public class TelegramApiTest
 
         long result = forTest.sendAudio(123, "TEST", 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
+        assertThrows(TelegramSendMessageException.class,
+                () -> forTest.sendAudio(123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST", 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST", 0L));
         result = forTest.sendAudio(123, "TEST", 0L);
@@ -138,6 +143,8 @@ public class TelegramApiTest
 
         long result = forTest.sendVideo(123, "TEST", 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
+        assertThrows(TelegramSendMessageException.class,
+                () -> forTest.sendVideo(123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST", 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST", 0L));
         result = forTest.sendVideo(123, "TEST", 0L);

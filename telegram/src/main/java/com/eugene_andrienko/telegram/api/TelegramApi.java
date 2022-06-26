@@ -86,6 +86,12 @@ public class TelegramApi implements AutoCloseable
      */
     public long sendMessage(String message, long replyToId) throws TelegramSendMessageException
     {
+        if(message == null || message.length() > MESSAGE_LENGTH)
+        {
+            logger.warn("Cannot send message. Message size: {}, limit: {}?",
+                    message != null ? message.length() : 0, MESSAGE_LENGTH);
+            throw new TelegramSendMessageException("Too long message");
+        }
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendMessage(message, replyToId);
         if(isTelegramMethodFailed(result))
         {
@@ -133,6 +139,13 @@ public class TelegramApi implements AutoCloseable
     public long sendAudio(int localId, String description, long replyToId)
             throws TelegramSendMessageException
     {
+        if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
+        {
+            logger.warn("Audio description too long to send. Description size: {}, limit: {}",
+                    description.length(), MEDIA_CAPTION_LENGTH);
+            throw new TelegramSendMessageException("Too long audio description");
+        }
+
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendAudio(localId, description,
                 replyToId);
         if(isTelegramMethodFailed(result))
@@ -181,6 +194,13 @@ public class TelegramApi implements AutoCloseable
     public long sendVideo(int localId, String description, long replyToId)
             throws TelegramSendMessageException
     {
+        if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
+        {
+            logger.warn("Video description too long to send. Description size: {}, limit: {}",
+                    description.length(), MEDIA_CAPTION_LENGTH);
+            throw new TelegramSendMessageException("Too long video description");
+        }
+
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendVideo(localId, description,
                 replyToId);
         if(isTelegramMethodFailed(result))
