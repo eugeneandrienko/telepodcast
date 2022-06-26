@@ -261,8 +261,21 @@ public class TelegramTDLibConnector implements AutoCloseable
     {
         needQuit = true;
         haveAuthorization = false;
-        // TODO: Add handler
-        client.send(new TdApi.Close(), defaultHandler);
+        client.send(new TdApi.Close(), object -> {
+            if(object.getConstructor() == TdApi.Ok.CONSTRUCTOR)
+            {
+                logger.info("Logout completed");
+            }
+            else if(object.getConstructor() == TdApi.Error.CONSTRUCTOR)
+            {
+                TdApi.Error error = (TdApi.Error)object;
+                logger.error("Logout error. Code: {}, message: {}", error.code, error.message);
+            }
+            else
+            {
+                logger.error("Got unknown message ({} code) when logout", object.getConstructor());
+            }
+        });
     }
 
     public void loadChatList(final int limit)
