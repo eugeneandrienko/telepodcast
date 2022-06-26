@@ -27,6 +27,10 @@ dependencies {
         because('Need to parse commandline arguments')
     }
 
+    implementation('com.googlecode.lanterna:lanterna:3.1.1') {
+        because('CLI')
+    }
+
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     testCompileOnly 'org.projectlombok:lombok:1.18.24'
@@ -40,6 +44,7 @@ extraJavaModuleInfo {
     automaticModule('jcommander-1.82.jar', 'com.beust.jcommander')
     automaticModule('slf4j-reload4j-1.7.36.jar', 'org.slf4j.reload4j')
     automaticModule('reload4j-1.2.21.jar', 'ch.qos.reload4j')
+    automaticModule('javatuples-1.2.jar', 'org.javatuples')
 }
 
 application {
@@ -50,6 +55,8 @@ application {
 jar {
     Map<String, Object> attributes = new HashMap<>()
     attributes.put('Main-Class', 'com.eugene_andrienko.telepodcast.TelePodcast')
+    attributes.put('Implementation-Title', 'Telepodcast')
+    attributes.put('Implementation-Version', archiveVersion)
     manifest.attributes(attributes)
     archivesBaseName = 'telepodcast'
 

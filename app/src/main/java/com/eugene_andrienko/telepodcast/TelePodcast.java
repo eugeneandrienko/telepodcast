@@ -7,6 +7,9 @@ import com.beust.jcommander.internal.Console;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
+import com.eugene_andrienko.telepodcast.cli.CLI;
+import com.eugene_andrienko.telepodcast.cli.CLIException;
+import java.io.IOException;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +34,7 @@ public class TelePodcast
 
     private boolean authorize = false;
     @Parameter(names = "--tdlib-log", description = "Path to TDLib log")
-    private String tdlibLog = homeDir + "/tdlib.log";
+    private String tdlibLog = "tdlib.log";
     @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory")
     private String tdlibDir = homeDir + "/.tdlib";
     @Parameter(names = {"-t", "--downloader-threads"}, description = "Count of threads for " +
@@ -113,6 +116,15 @@ public class TelePodcast
             }
             return;
         }
+
+        if(launchGui)
+        {
+            new GUI();
+        }
+        else
+        {
+            startCLI(telegramOptions);
+        }
     }
 
     private void showHelpMessageAndExit()
@@ -132,5 +144,29 @@ public class TelePodcast
         final String NOLOG_PROPERTIES = "/log4j-none.properties";
         PropertyConfigurator.configure(TelePodcast.class.getResource(
                 isDebug ? DEBUG_PROPERTIES : NOLOG_PROPERTIES));
+    }
+
+    private void startCLI(TelegramOptions telegramOptions)
+    {
+        try(CLI cli = new CLI(telegramOptions, downloaderThreads))
+        {
+
+            cli.start();
+        }
+        catch(CLIException ex)
+        {
+            logger.error("Got CLI exception: ", ex);
+            throw new RuntimeException(ex);
+        }
+        catch(IOException ex)
+        {
+            logger.error("Failed to start CLI!");
+            throw new RuntimeException(ex);
+        }
+        catch(Exception ex)
+        {
+            logger.error("Failed to stop CLI!");
+            throw new RuntimeException(ex);
+        }
     }
 }
