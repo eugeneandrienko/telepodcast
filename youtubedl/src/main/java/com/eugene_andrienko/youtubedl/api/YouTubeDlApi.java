@@ -1,7 +1,8 @@
 package com.eugene_andrienko.youtubedl.api;
 
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeDownloadException;
-import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import com.eugene_andrienko.youtubedl.impl.AbstractYoutubeDl;
 import com.eugene_andrienko.youtubedl.impl.IYoutubeDl;
 import com.eugene_andrienko.youtubedl.impl.YoutubeDlGenerator;
@@ -81,7 +82,7 @@ public class YouTubeDlApi implements AutoCloseable
         {
             return youtubeDl.getTitle(url);
         }
-        catch(YouTubeNoTitleException ex)
+        catch(YouTubeNoDataException ex)
         {
             return null;
         }
@@ -182,6 +183,9 @@ public class YouTubeDlApi implements AutoCloseable
         @Getter
         @NonNull
         private ContentType contentType;
+
+        @Getter
+        private int durationSeconds;
 
         /**
          * Deletes the file to free disk space

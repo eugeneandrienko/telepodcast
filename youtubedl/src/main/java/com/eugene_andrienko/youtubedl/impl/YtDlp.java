@@ -3,7 +3,8 @@ package com.eugene_andrienko.youtubedl.impl;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
-import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
@@ -106,6 +107,11 @@ public final class YtDlp extends AbstractYoutubeDl
         });
     }
 
+    private enum DataToGet
+    {
+        TITLE, DURATION
+    }
+
     /**
      * Returns title for given YouTube video.
      *
@@ -113,16 +119,72 @@ public final class YtDlp extends AbstractYoutubeDl
      *
      * @return Title for YouTube video
      *
-     * @throws YouTubeNoTitleException Fail to get title
+     * @throws YouTubeNoDataException Fail to get title
      */
     @Override
-    public String getTitle(final String url) throws YouTubeNoTitleException
+    public String getTitle(final String url) throws YouTubeNoDataException
     {
+        return getData(url, DataToGet.TITLE);
+    }
+
+    /**
+     * Returns duration for given YouTube video in seconds.
+     *
+     * Works synchronously.
+     *
+     * @param url URL to YouTube video
+     *
+     * @return Duration in seconds
+     *
+     * @throws YouTubeNoDataException Fail to get duration
+     */
+    private int getDuration(final String url) throws YouTubeNoDataException
+    {
+        String durationStr = getData(url, DataToGet.DURATION);
+        try
+        {
+            return Integer.parseInt(durationStr);
+        }
+        catch(NumberFormatException ex)
+        {
+            logger.error("Failed to parse duration = {}", durationStr);
+            throw new YouTubeNoDataException(ex);
+        }
+    }
+
+    /**
+     * Returns asked data for given YouTube video.
+     *
+     * Works synchronously.
+     *
+     * @param url       URL to YouTube video
+     * @param dataToGet Data to get from YouTube.
+     *
+     * @return Asked data as string
+     *
+     * @throws YouTubeNoDataException Fail get asked data
+     */
+    private String getData(final String url, DataToGet dataToGet) throws YouTubeNoDataException
+    {
+        String data;
+        switch(dataToGet)
+        {
+            case TITLE:
+                data = "%(title)s";
+                break;
+            case DURATION:
+                data = "%(duration)s";
+                break;
+            default:
+                logger.error("Got unknown request for YouTube data: {}", dataToGet);
+                throw new YouTubeNoDataException("Unknown request");
+        }
+
         ProcessBuilder processBuilder = new ProcessBuilder(YT_DLP,
                 "--no-colors",
                 "--simulate",
                 "--quiet",
-                "--print", "%(title)s",
+                "--print", data,
                 url);
         try
         {
@@ -139,16 +201,16 @@ public final class YtDlp extends AbstractYoutubeDl
             }
             if(title.equals(""))
             {
-                logger.error("Cannot read data from called yt-dlp!");
-                throw new YouTubeNoTitleException("No data from yt-dlp");
+                logger.error("Cannot read data ({}) from called yt-dlp for {}!", dataToGet, url);
+                throw new YouTubeNoDataException("No data from yt-dlp");
             }
 
             return title;
         }
         catch(IOException ex)
         {
-            logger.error("Got {} when obtain YouTube title from {}", ex, url);
-            throw new YouTubeNoTitleException(ex);
+            logger.error("Got {} when obtain YouTube data ({}) from {}", ex, dataToGet, url);
+            throw new YouTubeNoDataException(ex);
         }
     }
 
@@ -231,15 +293,24 @@ public final class YtDlp extends AbstractYoutubeDl
                 logger.error("Failed to delete description file: {}",
                         descriptionFile.getAbsolutePath());
             }
+            int duration = getDuration(url);
 
-            YoutubeData result = new YoutubeData(file, description.toString(), contentType);
+            YoutubeData result = new YoutubeData(file, description.toString(), contentType,
+                    duration);
             downloadsTable.put(url, result);
             downloadStateTable.put(url, DownloadState.COMPLETE);
         }
-        catch(IOException ex)
+        catch(IOException | YouTubeNoDataException ex)
         {
-            logger.error("Failed call yt-dlp to download from: {}!", url);
+            logger.error("Failed to get data from YouTube (URL: {})", url);
             downloadStateTable.put(url, DownloadState.FAIL);
+            if(file != null)
+            {
+                if(!file.delete())
+                {
+                    logger.error("Failed to delete downloaded file: {}", file.getAbsolutePath());
+                }
+            }
         }
     }
 

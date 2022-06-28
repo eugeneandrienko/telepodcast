@@ -80,6 +80,7 @@ public class DownloadWindow extends AbstractWindow
         try(YouTubeDlApi youtube = new YouTubeDlApi(threads);
             TelegramApi telegram = new TelegramApi(options))
         {
+            // Login to Telegram:
             CenteredWaitingDialog waitTelegramLogin = CenteredWaitingDialog
                     .showDialog(cli, "Wait", "Login to Telegram");
             updateScreen(cli, logger);
@@ -118,6 +119,11 @@ public class DownloadWindow extends AbstractWindow
                 }
                 Thread.yield();
             }
+            new MessageDialogBuilder().setTitle("Information")
+                                      .setText("All files processed")
+                                      .addButton(MessageDialogButton.Close)
+                                      .build()
+                                      .showDialog(cli);
         }
         catch(TelegramInitException ex)
         {
@@ -141,11 +147,6 @@ public class DownloadWindow extends AbstractWindow
         }
 
         executorService.shutdown();
-        new MessageDialogBuilder().setTitle("Information")
-                                  .setText("All files processed")
-                                  .addButton(MessageDialogButton.Close)
-                                  .build()
-                                  .showDialog(cli);
         cli.removeWindow(window);
     }
 
@@ -281,10 +282,12 @@ public class DownloadWindow extends AbstractWindow
             switch(contentType)
             {
                 case AUDIO:
-                    messageId = telegram.sendAudio(localFileId, null, messageId);
+                    messageId = telegram.sendAudio(localFileId, null, data.getDurationSeconds(),
+                            messageId);
                     break;
                 case VIDEO:
-                    messageId = telegram.sendVideo(localFileId, null, messageId);
+                    messageId = telegram.sendVideo(localFileId, null, data.getDurationSeconds(),
+                            messageId);
                     break;
             }
             logger.debug("Sent message: {}", messageId);

@@ -130,13 +130,14 @@ public class TelegramApi implements AutoCloseable
      *
      * @param localId     Local ID of audio file.
      * @param description Description of audio file or {@code null} if no description.
+     * @param duration    Duration of audio in seconds or 0 if no duration.
      * @param replyToId   Message ID to reply to. Can be 0 to send message not as reply.
      *
      * @return Message ID
      *
      * @throws TelegramSendMessageException Failed send audio
      */
-    public long sendAudio(int localId, String description, long replyToId)
+    public long sendAudio(int localId, String description, int duration, long replyToId)
             throws TelegramSendMessageException
     {
         if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
@@ -147,12 +148,12 @@ public class TelegramApi implements AutoCloseable
         }
 
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendAudio(localId, description,
-                replyToId);
+                duration, replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
         }
-        long localMessageId =  getLocalMessageId(result);
+        long localMessageId = getLocalMessageId(result);
         return getServerMessageId(telegram.getServerMessageId(localMessageId));
     }
 
@@ -191,7 +192,7 @@ public class TelegramApi implements AutoCloseable
      *
      * @throws TelegramSendMessageException Fail send video
      */
-    public long sendVideo(int localId, String description, long replyToId)
+    public long sendVideo(int localId, String description, int duration, long replyToId)
             throws TelegramSendMessageException
     {
         if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
@@ -202,7 +203,7 @@ public class TelegramApi implements AutoCloseable
         }
 
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendVideo(localId, description,
-                replyToId);
+                duration, replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");

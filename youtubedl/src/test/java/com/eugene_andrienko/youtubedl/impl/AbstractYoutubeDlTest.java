@@ -3,7 +3,7 @@ package com.eugene_andrienko.youtubedl.impl;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
-import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import org.junit.jupiter.api.DisplayName;
@@ -122,7 +122,7 @@ public class AbstractYoutubeDlTest
         }
 
         @Override
-        public String getTitle(final String url) throws YouTubeNoTitleException
+        public String getTitle(final String url) throws YouTubeNoDataException
         {
             return null;
         }

@@ -277,7 +277,8 @@ public class Telegram implements AutoCloseable
      * Sends audio to "Saved Messages" chat.
      *
      * @param audioLocalId Local ID of previously uploaded audio file
-     * @param description  Description of audio
+     * @param description  Description of audio. May be null.
+     * @param duration     Duration of audio in seconds. May be zero.
      * @param replyToId    Message ID to reply to. Can be zero to send message not as reply.
      *
      * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
@@ -287,10 +288,11 @@ public class Telegram implements AutoCloseable
      * @throws TelegramSendMessageException Got unexpected error when sending the audio.
      */
     public CompletableFuture<Pair<Boolean, Long>> sendAudio(Integer audioLocalId,
-            String description, long replyToId) throws TelegramSendMessageException
+            String description, int duration, long replyToId) throws TelegramSendMessageException
     {
+        Pair<String, Integer> additionalData = Pair.with(description, duration);
         CompletableFuture<Pair<Boolean, Long>> result = sendMessage(audioLocalId, MessageType.AUDIO,
-                replyToId, resendRetries, description);
+                replyToId, resendRetries, additionalData);
         return result.handle((res, ex) -> {
             if(ex == null && res != null && res.getValue0())
             {
@@ -304,7 +306,8 @@ public class Telegram implements AutoCloseable
      * Sends video to "Saved Messages" chat.
      *
      * @param videoLocalId Local ID of previously uploaded video file
-     * @param description  Description of video
+     * @param description  Description of video. May be null.
+     * @param duration     Duration of video in seconds. May be zero.
      * @param replyToId    Message ID to reply to. Can be zero to send message not as reply.
      *
      * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
@@ -314,10 +317,11 @@ public class Telegram implements AutoCloseable
      * @throws TelegramSendMessageException Got unexpected error when sending the video.
      */
     public CompletableFuture<Pair<Boolean, Long>> sendVideo(Integer videoLocalId,
-            String description, long replyToId) throws TelegramSendMessageException
+            String description, int duration, long replyToId) throws TelegramSendMessageException
     {
+        Pair<String, Integer> additionalData = Pair.with(description, duration);
         CompletableFuture<Pair<Boolean, Long>> result = sendMessage(videoLocalId, MessageType.VIDEO,
-                replyToId, resendRetries, description);
+                replyToId, resendRetries, additionalData);
         return result.handle((res, ex) -> {
             if(ex == null && res != null && res.getValue0())
             {
@@ -333,9 +337,9 @@ public class Telegram implements AutoCloseable
      *
      * @param message     Message or local file ID to send
      * @param messageType Message type
-     * @param replyToId   Message ID to reply to. Can be zero to send message not as reply.
-     * @param resendTry   Count of resend tries. When count < 0 — all resend tries exhausted.
-     * @param description Description for media to send
+     * @param replyToId   Message ID to reply to. Can be zero to send message not as reply
+     * @param resendTry   Count of resend tries. When count < 0 — all resend tries exhausted
+     * @param additional  Additional data to send with message
      *
      * @return {@code CompletableFuture} with {@code Pair} inside. If first element of {@code Pair}
      * is {@code true} if message sent and {@code false} if not. Second element of {@code Pair} —
@@ -345,7 +349,8 @@ public class Telegram implements AutoCloseable
      */
     @SneakyThrows(InterruptedException.class)
     private CompletableFuture<Pair<Boolean, Long>> sendMessage(Object message,
-            MessageType messageType, long replyToId, int resendTry, String description)
+            MessageType messageType, long replyToId, int resendTry,
+            Pair<String, Integer> additional)
             throws TelegramSendMessageException
     {
         CompletableFuture<Pair<Boolean, Long>> result = new CompletableFuture<>();
@@ -364,7 +369,7 @@ public class Telegram implements AutoCloseable
 
         CompletableFuture<Pair<MessageSenderState, Long>> sendMessageResult =
                 telegramConnector.sendMessage(savedMessagesId.get(), messageType, message,
-                        replyToId, description);
+                        replyToId, additional);
 
         try
         {
@@ -379,7 +384,7 @@ public class Telegram implements AutoCloseable
                     break;
                 case RETRY:
                     logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
-                    return sendMessage(message, messageType, replyToId, --resendTry, description);
+                    return sendMessage(message, messageType, replyToId, --resendTry, additional);
             }
         }
         catch(ExecutionException ex)

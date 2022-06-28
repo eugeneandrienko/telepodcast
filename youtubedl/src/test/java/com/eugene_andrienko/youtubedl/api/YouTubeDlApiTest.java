@@ -4,7 +4,7 @@ import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeDownloadException;
-import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import com.eugene_andrienko.youtubedl.impl.AbstractYoutubeDl;
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class YouTubeDlApiTest
             final String TEST_TITLE = "TEST TITLE";
             final String TEST_URL = "TEST URL";
             when(mockedYoutube.getTitle(eq(TEST_URL))).thenReturn(TEST_TITLE)
-                                                      .thenThrow(YouTubeNoTitleException.class);
+                                                      .thenThrow(YouTubeNoDataException.class);
             String result = forTest.getTitle(TEST_URL);
             assertEquals(TEST_TITLE, result, "Title not expected");
             result = forTest.getTitle(TEST_URL);

@@ -2,7 +2,8 @@ package com.eugene_andrienko.youtubedl.impl;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
-import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoTitleException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 
 
 public interface IYoutubeDl
@@ -30,9 +31,9 @@ public interface IYoutubeDl
      *
      * @return Video title
      *
-     * @throws YouTubeNoTitleException Fail to get title from YouTube
+     * @throws YouTubeNoDataException Fail to get title from YouTube
      */
-    String getTitle(String url) throws YouTubeNoTitleException;
+    String getTitle(String url) throws YouTubeNoDataException;
 
     /**
      * Returns download progress in percents.

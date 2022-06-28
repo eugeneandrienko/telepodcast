@@ -474,7 +474,7 @@ public class TelegramTDLibConnector implements AutoCloseable
 
     public CompletableFuture<Pair<MessageSenderState, Long>> sendMessage(
             long chatId, MessageType messageType, Object message, long replyToId,
-            String description)
+            Pair<String, Integer> additionalData)
     {
         CompletableFuture<Pair<MessageSenderState, Long>> result = new CompletableFuture<>();
 
@@ -508,11 +508,13 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer audioFileId = (Integer)message;
-                TdApi.FormattedText audioCaption = description != null ?
-                                                   new TdApi.FormattedText(description, null) :
-                                                   null;
-                content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null, 0,
-                        null, null, audioCaption);
+                TdApi.FormattedText audioCaption =
+                        additionalData.getValue0() != null ?
+                        new TdApi.FormattedText(additionalData.getValue0(), null) :
+                        null;
+                int audioDuration = additionalData.getValue1();
+                content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null,
+                        audioDuration, null, null, audioCaption);
                 break;
             case VIDEO:
                 if(!(message instanceof Integer))
@@ -523,11 +525,13 @@ public class TelegramTDLibConnector implements AutoCloseable
                     return result;
                 }
                 Integer videoFileId = (Integer)message;
-                TdApi.FormattedText videoCaption = description != null ?
-                                                   new TdApi.FormattedText(description, null) :
-                                                   null;
+                TdApi.FormattedText videoCaption =
+                        additionalData.getValue0() != null ?
+                        new TdApi.FormattedText(additionalData.getValue0(), null) :
+                        null;
+                int videoDuration = additionalData.getValue1();
                 content = new TdApi.InputMessageVideo(new TdApi.InputFileId(videoFileId), null,
-                        new int[]{}, 0, 0, 0, true, videoCaption, 0);
+                        new int[]{}, videoDuration, 0, 0, true, videoCaption, 0);
                 break;
             default:
                 logger.error("Got unknown message type: {}", messageType);
