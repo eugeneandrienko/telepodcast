@@ -2,6 +2,7 @@ package com.eugene_andrienko.telepodcast.cli.windows;
 
 import com.eugene_andrienko.telepodcast.cli.CLIException;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.GridLayout.Alignment;
@@ -47,6 +48,8 @@ public class LoadingTitlesWindow extends AbstractWindow
         Map<String, String> result = new HashMap<>();
         try(YouTubeDlApi youtube = new YouTubeDlApi(numberOfThreads))
         {
+            checkYouTubeDownloader(youtube);
+
             for(String url : urls)
             {
                 String title = youtube.getTitle(url);
@@ -67,6 +70,10 @@ public class LoadingTitlesWindow extends AbstractWindow
                     .showDialog(cli);
             throw new CLIException(ex);
         }
+        catch(CLIException ex)
+        {
+            throw ex;
+        }
         catch(Exception ex)
         {
             logger.error("Failed to properly close youtubedl library", ex);
@@ -82,5 +89,31 @@ public class LoadingTitlesWindow extends AbstractWindow
         cli.removeWindow(loadingTitlesWindow);
         updateScreen(cli, logger);
         return result;
+    }
+
+    /**
+     * Checks what YouTube downloader can be executed on this system.
+     *
+     * @param youtube Initialized {@code YouTubeDlApi} object.
+     *
+     * @throws CLIException Downloader cannot be executed.
+     */
+    private void checkYouTubeDownloader(YouTubeDlApi youtube) throws CLIException
+    {
+        try
+        {
+            youtube.canRun();
+        }
+        catch(YouTubeCannotRunException ex)
+        {
+            new MessageDialogBuilder()
+                    .setTitle("Error!")
+                    .setText(String.format("Program \"%s\" not found in system! Please " +
+                                           "install it first.", ex.getMessage()))
+                    .addButton(MessageDialogButton.OK)
+                    .build()
+                    .showDialog(cli);
+            throw new CLIException(ex);
+        }
     }
 }

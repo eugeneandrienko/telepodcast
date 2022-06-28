@@ -65,5 +65,12 @@ public interface IYoutubeDl
      */
     YoutubeData getDownloadedData(String url);
 
+    /**
+     * Check what selected realization of this interface can be executed.
+     *
+     * @throws YouTubeCannotRunException Selected realization cannot be executed.
+     */
+    void canRun() throws YouTubeCannotRunException;
+
     void close() throws Exception;
 }

@@ -19,8 +19,8 @@ public final class YtDlp extends AbstractYoutubeDl
 
     private static final String YT_DLP = "yt-dlp";
     private static final String LAME = "lame";
-    private static final String RM = "rm";
-    private static final String RENAME = "rename";
+
+    private static final String FFMPEG = "ffmpeg";
 
     /**
      * Initializes {@code YtDlp} object.
@@ -42,6 +42,33 @@ public final class YtDlp extends AbstractYoutubeDl
     YtDlp(ExecutorService service)
     {
         super(service);
+    }
+
+    @Override
+    public void canRun() throws YouTubeCannotRunException
+    {
+        String[] commandsToCheck = new String[]{YT_DLP, LAME, FFMPEG};
+        for(String cmd : commandsToCheck)
+        {
+            try
+            {
+                ProcessBuilder processBuilder = new ProcessBuilder(cmd, "--help");
+                Process process = processBuilder.start();
+                int exitValue = process.waitFor();
+                if(exitValue != 0)
+                {
+                    logger.error("System command \"{}\" not found!", cmd);
+                    logger.debug("Return value of \"{} --help\" is: {}", cmd, exitValue);
+                    throw new YouTubeCannotRunException(cmd);
+                }
+            }
+            catch(IOException | InterruptedException ex)
+            {
+                logger.error("Failed to execute \"{}\" system command", cmd);
+                logger.debug("Got error: ", ex);
+                throw new YouTubeCannotRunException(cmd);
+            }
+        }
     }
 
     /**
@@ -224,12 +251,16 @@ public final class YtDlp extends AbstractYoutubeDl
     private void download(String url, ProcessBuilder processBuilder, ContentType contentType)
     {
         processBuilder.directory(tempDirectory);
+        File file = null;
         try
         {
             Process process = processBuilder.start();
             InputStream is = process.getInputStream();
+            InputStream es = process.getErrorStream();
             InputStreamReader isr = new InputStreamReader(is);
+            InputStreamReader esr = new InputStreamReader(es);
             BufferedReader br = new BufferedReader(isr);
+            BufferedReader errors = new BufferedReader(esr);
             String downloadedFilePath = "";
             String output;
 
@@ -266,6 +297,10 @@ public final class YtDlp extends AbstractYoutubeDl
             if(downloadedFilePath.equals(""))
             {
                 logger.error("Cannot read data from called yt-dlp!");
+                while((output = errors.readLine()) != null)
+                {
+                    logger.error("External error: {}", output);
+                }
                 downloadStateTable.put(url, DownloadState.FAIL);
                 return;
             }
@@ -279,7 +314,8 @@ public final class YtDlp extends AbstractYoutubeDl
                 increaseVolume(downloadedFilePath);
             }
 
-            File file = new File(downloadedFilePath);
+            // Composing data for YoutubeData object:
+            file = new File(downloadedFilePath);
             File descriptionFile = new File(downloadedFilePath.substring(
                     0, downloadedFilePath.length() - 3) + "description");
             BufferedReader descriptionReader = new BufferedReader(new FileReader(descriptionFile));
@@ -321,40 +357,48 @@ public final class YtDlp extends AbstractYoutubeDl
      * Then {@code filename.mp3} will be deleted and existing {@code filename.mp3.mp3} will be
      * renamed to {@code filename.mp3}.
      *
-     * @param mp3 Path to downloaded MP3 file
+     * @param audioPath Path to downloaded MP3 file
      *
      * @throws IOException Fail to increase volume.
      */
-    private void increaseVolume(String mp3) throws IOException
+    private void increaseVolume(String audioPath) throws IOException
     {
-        logger.info("Increasing volume of {}", mp3);
+        logger.info("Increasing volume of {}", audioPath);
 
         ProcessBuilder processBuilder;
         try
         {
-            processBuilder = new ProcessBuilder(LAME, "-S", "--scale", "3", mp3);
+            processBuilder = new ProcessBuilder(LAME, "-S", "--scale", "3", audioPath);
             Process process = processBuilder.start();
             InputStream is = process.getErrorStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             String output;
 
-            logger.debug("Increasing {} volume with {}", mp3, LAME);
+            logger.debug("Increasing {} volume with {}", audioPath, LAME);
             while((output = br.readLine()) != null)
             {
                 logger.debug("LAME: {}", output);
             }
 
-            processBuilder = new ProcessBuilder(RM, mp3);
-            processBuilder.start();
+            File audioFile = new File(audioPath);
+            if(!audioFile.delete())
+            {
+                logger.error("Failed to delete {} file", audioPath);
+                throw new IOException("Cannot delete file");
+            }
 
             // Rename file.mp3.mp3 after lame to file.mp3:
-            processBuilder = new ProcessBuilder(RENAME, ".mp3.mp3", ".mp3", mp3 + ".mp3");
-            processBuilder.start();
+            File afterLame = new File(audioPath + ".mp3");
+            if(!afterLame.renameTo(audioFile))
+            {
+                logger.error("Failed to rename {} to {}", audioPath + ".mp3", audioPath);
+                throw new IOException("Cannot rename file");
+            }
         }
         catch(IOException ex)
         {
-            logger.error("Failed call lame to increase volume");
+            logger.error("Fail increase volume");
             throw ex;
         }
     }

@@ -50,6 +50,16 @@ public class YouTubeDlApi implements AutoCloseable
     }
 
     /**
+     * Checks what YouTube downloader met all requirement to execute.
+     *
+     * @throws YouTubeCannotRunException Some requirement does not met.
+     */
+    public void canRun() throws YouTubeCannotRunException
+    {
+        youtubeDl.canRun();
+    }
+
+    /**
      * Asynchronously download audio
      *
      * @param url URL to download
