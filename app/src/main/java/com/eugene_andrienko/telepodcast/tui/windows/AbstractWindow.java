@@ -56,6 +56,7 @@ public class AbstractWindow
      */
     String formatTitle(String title)
     {
-        return String.join("\n", TextHelper.splitByWords(title, labelSize));
+        List<String> splitted = TextHelper.splitByWords(title, labelSize);
+        return String.join("\n", splitted == null ? new LinkedList<String>() : splitted);
     }
 }
