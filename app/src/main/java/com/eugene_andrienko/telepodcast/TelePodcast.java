@@ -25,25 +25,26 @@ public class TelePodcast
     private static JCommander jCommander;
     private static final String homeDir = System.getProperty("user.home");
 
-    @Parameter(names = {"-h", "--help"}, help = true)
+    @Parameter(names = {"-h", "--help"}, description = "This help message", help = true, order = 0)
     private boolean help;
-    @Parameter(names = {"-d", "--debug"}, description = "Run application in debug mode")
+    @Parameter(names = {"-d", "--debug"}, description = "Run application in debug mode", order = 2)
     private boolean debug = false;
     @Parameter(names = {"-a", "--authorize"}, description = "Authorize in Telegram via API ID " +
-                                                            "and hash")
+                                                            "and hash", order = 1)
 
     private boolean authorize = false;
-    @Parameter(names = "--tdlib-log", description = "Path to TDLib log")
+    @Parameter(names = "--tdlib-log", description = "Path to TDLib log", order = 6)
     private String tdlibLog = "tdlib.log";
-    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory")
+    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory", order = 7)
     private String tdlibDir = homeDir + "/.tdlib";
-    @Parameter(names = {"-t", "--downloader-threads"}, description = "Count of threads for " +
-                                                                     "downloading video from " +
-                                                                     "YouTube")
+    @Parameter(names = "--downloader-threads", description = "Count of threads for downloading " +
+                                                             "video from YouTube", order = 5)
     private int downloaderThreads = 3;
 
-    @Parameter(names = {"-g", "--gui"}, description = "Launch GUI insted of curses-like interface")
+    @Parameter(names = {"-g", "--gui"}, description = "Launch GUI", order = 3)
     private boolean launchGui = false;
+    @Parameter(names = {"-t", "--tui"}, description = "Launch TUI", order = 4)
+    private boolean launchTui = false;
 
     private int apiId = 1;
     private String apiHash = "-";
@@ -121,9 +122,9 @@ public class TelePodcast
         {
             new GUI();
         }
-        else
+        else if(launchTui)
         {
-            startCLI(telegramOptions);
+            startTUI(telegramOptions);
         }
     }
 
@@ -146,12 +147,12 @@ public class TelePodcast
                 isDebug ? DEBUG_PROPERTIES : NOLOG_PROPERTIES));
     }
 
-    private void startCLI(TelegramOptions telegramOptions)
+    private void startTUI(TelegramOptions telegramOptions)
     {
-        try(TUI cli = new TUI(telegramOptions, downloaderThreads))
+        try(TUI tui = new TUI(telegramOptions, downloaderThreads))
         {
 
-            cli.start();
+            tui.start();
         }
         catch(TUIException ex)
         {
