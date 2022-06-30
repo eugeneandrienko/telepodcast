@@ -80,7 +80,7 @@ public class EnterLinksWindow
 
     private void checkUrlsList(Set<String> urls)
     {
-        Pattern pattern = Pattern.compile("https://www.youtube.com/watch\\?v=[-\\w]+");
+        Pattern pattern = Pattern.compile("https://www.youtube.com/watch\\?v=[-\\w_]+");
         urls.removeIf(url -> {
             Matcher matcher = pattern.matcher(url);
             boolean isNotYouTubeLink = !matcher.matches();
