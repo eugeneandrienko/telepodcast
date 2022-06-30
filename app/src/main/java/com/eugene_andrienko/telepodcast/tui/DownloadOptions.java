@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast.cli;
+package com.eugene_andrienko.telepodcast.tui;
 
 import java.util.HashMap;
 import java.util.Map;

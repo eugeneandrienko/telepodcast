@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast.cli.windows;
+package com.eugene_andrienko.telepodcast.tui.windows;
 
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
@@ -6,11 +6,11 @@ import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
 import com.eugene_andrienko.telepodcast.TextHelper;
-import com.eugene_andrienko.telepodcast.cli.CLIException;
-import com.eugene_andrienko.telepodcast.cli.DownloadOptions;
-import com.eugene_andrienko.telepodcast.cli.DownloadOptions.DownloadType;
-import com.eugene_andrienko.telepodcast.cli.components.CenteredWaitingDialog;
-import com.eugene_andrienko.telepodcast.cli.components.ImprovedProgressBar;
+import com.eugene_andrienko.telepodcast.tui.TUIException;
+import com.eugene_andrienko.telepodcast.tui.DownloadOptions;
+import com.eugene_andrienko.telepodcast.tui.DownloadOptions.DownloadType;
+import com.eugene_andrienko.telepodcast.tui.components.CenteredWaitingDialog;
+import com.eugene_andrienko.telepodcast.tui.components.ImprovedProgressBar;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
@@ -38,17 +38,17 @@ public class DownloadWindow extends AbstractWindow
 {
     private final Logger logger = LoggerFactory.getLogger(DownloadWindow.class);
 
-    private final MultiWindowTextGUI cli;
+    private final MultiWindowTextGUI tui;
     private final TelegramOptions options;
     private final int threads;
     private final TextColor LABEL_DEFAULT_COLOR;
     private final AtomicInteger countOfProcessedFiles;
     private final ExecutorService executorService;
 
-    public DownloadWindow(MultiWindowTextGUI cli, TelegramOptions options, int threads)
+    public DownloadWindow(MultiWindowTextGUI tui, TelegramOptions options, int threads)
     {
         super();
-        this.cli = cli;
+        this.tui = tui;
         this.options = options;
         this.threads = threads;
         this.LABEL_DEFAULT_COLOR = new Label("").getForegroundColor();
@@ -56,7 +56,7 @@ public class DownloadWindow extends AbstractWindow
         this.executorService = Executors.newCachedThreadPool();
     }
 
-    public void start(List<DownloadOptions> downloads) throws CLIException
+    public void start(List<DownloadOptions> downloads) throws TUIException
     {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(3).setLeftMarginSize(1).setRightMarginSize(1))
@@ -82,11 +82,11 @@ public class DownloadWindow extends AbstractWindow
         {
             // Login to Telegram:
             CenteredWaitingDialog waitTelegramLogin = CenteredWaitingDialog
-                    .showDialog(cli, "Wait", "Login to Telegram");
-            updateScreen(cli, logger);
+                    .showDialog(tui, "Wait", "Login to Telegram");
+            updateScreen(tui, logger);
             telegram.login();
             waitTelegramLogin.close();
-            updateScreen(cli, logger);
+            updateScreen(tui, logger);
 
             // Add table elements:
             for(DownloadOptions option : downloads)
@@ -103,10 +103,10 @@ public class DownloadWindow extends AbstractWindow
                  .addComponent(new EmptySpace(TerminalSize.ONE))
                  .addComponent(new EmptySpace(TerminalSize.ONE));
 
-            cli.addWindow(window);
+            tui.addWindow(window);
             while(countOfProcessedFiles.get() < downloads.size())
             {
-                updateScreen(cli, logger);
+                updateScreen(tui, logger);
                 try
                 {
                     //noinspection BusyWait
@@ -123,7 +123,7 @@ public class DownloadWindow extends AbstractWindow
                                       .setText("All files processed")
                                       .addButton(MessageDialogButton.Close)
                                       .build()
-                                      .showDialog(cli);
+                                      .showDialog(tui);
         }
         catch(TelegramInitException ex)
         {
@@ -132,22 +132,22 @@ public class DownloadWindow extends AbstractWindow
                     .setText("Failed to login to Telegram!")
                     .addButton(MessageDialogButton.OK)
                     .build()
-                    .showDialog(cli);
-            throw new CLIException(ex);
+                    .showDialog(tui);
+            throw new TUIException(ex);
         }
         catch(IOException ex)
         {
-            logger.error("Unrecoverable CLI exception", ex);
-            throw new CLIException(ex);
+            logger.error("Unrecoverable TUI exception", ex);
+            throw new TUIException(ex);
         }
         catch(Exception ex)
         {
             logger.error("Failed to properly close resources", ex);
-            throw new CLIException(ex);
+            throw new TUIException(ex);
         }
 
         executorService.shutdown();
-        cli.removeWindow(window);
+        tui.removeWindow(window);
     }
 
     private void processData(@NonNull YouTubeDlApi youtube, @NonNull TelegramApi telegram,

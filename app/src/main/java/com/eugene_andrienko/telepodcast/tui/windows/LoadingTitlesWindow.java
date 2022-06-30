@@ -1,6 +1,6 @@
-package com.eugene_andrienko.telepodcast.cli.windows;
+package com.eugene_andrienko.telepodcast.tui.windows;
 
-import com.eugene_andrienko.telepodcast.cli.CLIException;
+import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
 import com.googlecode.lanterna.TerminalSize;
@@ -18,17 +18,17 @@ import org.slf4j.LoggerFactory;
 
 public class LoadingTitlesWindow extends AbstractWindow
 {
-    private final MultiWindowTextGUI cli;
+    private final MultiWindowTextGUI tui;
     private final int numberOfThreads;
     private final Logger logger = LoggerFactory.getLogger(LoadingTitlesWindow.class);
 
-    public LoadingTitlesWindow(MultiWindowTextGUI cli, int numberOfThreads)
+    public LoadingTitlesWindow(MultiWindowTextGUI tui, int numberOfThreads)
     {
-        this.cli = cli;
+        this.tui = tui;
         this.numberOfThreads = numberOfThreads;
     }
 
-    public Map<String, String> start(Set<String> urls) throws CLIException
+    public Map<String, String> start(Set<String> urls) throws TUIException
     {
         ProgressBar progressBar = new ProgressBar(0, urls.size(), 40);
         Panel panel = new Panel();
@@ -42,8 +42,8 @@ public class LoadingTitlesWindow extends AbstractWindow
         BasicWindow loadingTitlesWindow = createCenteredWindow("Loading YouTube video titles");
         loadingTitlesWindow.setComponent(panel);
 
-        cli.addWindow(loadingTitlesWindow);
-        updateScreen(cli, logger);
+        tui.addWindow(loadingTitlesWindow);
+        updateScreen(tui, logger);
 
         Map<String, String> result = new HashMap<>();
         try(YouTubeDlApi youtube = new YouTubeDlApi(numberOfThreads))
@@ -56,7 +56,7 @@ public class LoadingTitlesWindow extends AbstractWindow
                 result.put(url, title);
                 logger.debug("Processing {}, got {} title", url, title);
                 progressBar.setValue(progressBar.getValue() + 1);
-                cli.updateScreen();
+                tui.updateScreen();
             }
         }
         catch(IOException ex)
@@ -67,10 +67,10 @@ public class LoadingTitlesWindow extends AbstractWindow
                     .setText("Failed to get video titles")
                     .addButton(MessageDialogButton.OK)
                     .build()
-                    .showDialog(cli);
-            throw new CLIException(ex);
+                    .showDialog(tui);
+            throw new TUIException(ex);
         }
-        catch(CLIException ex)
+        catch(TUIException ex)
         {
             throw ex;
         }
@@ -82,12 +82,12 @@ public class LoadingTitlesWindow extends AbstractWindow
                     .setText("Failed to properly close resources for YouTube downloader")
                     .addButton(MessageDialogButton.OK)
                     .build()
-                    .showDialog(cli);
-            throw new CLIException(ex);
+                    .showDialog(tui);
+            throw new TUIException(ex);
         }
 
-        cli.removeWindow(loadingTitlesWindow);
-        updateScreen(cli, logger);
+        tui.removeWindow(loadingTitlesWindow);
+        updateScreen(tui, logger);
         return result;
     }
 
@@ -96,9 +96,9 @@ public class LoadingTitlesWindow extends AbstractWindow
      *
      * @param youtube Initialized {@code YouTubeDlApi} object.
      *
-     * @throws CLIException Downloader cannot be executed.
+     * @throws TUIException Downloader cannot be executed.
      */
-    private void checkYouTubeDownloader(YouTubeDlApi youtube) throws CLIException
+    private void checkYouTubeDownloader(YouTubeDlApi youtube) throws TUIException
     {
         try
         {
@@ -112,8 +112,8 @@ public class LoadingTitlesWindow extends AbstractWindow
                                            "install it first.", ex.getMessage()))
                     .addButton(MessageDialogButton.OK)
                     .build()
-                    .showDialog(cli);
-            throw new CLIException(ex);
+                    .showDialog(tui);
+            throw new TUIException(ex);
         }
     }
 }

@@ -7,8 +7,8 @@ import com.beust.jcommander.internal.Console;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
-import com.eugene_andrienko.telepodcast.cli.CLI;
-import com.eugene_andrienko.telepodcast.cli.CLIException;
+import com.eugene_andrienko.telepodcast.tui.TUI;
+import com.eugene_andrienko.telepodcast.tui.TUIException;
 import java.io.IOException;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -148,24 +148,24 @@ public class TelePodcast
 
     private void startCLI(TelegramOptions telegramOptions)
     {
-        try(CLI cli = new CLI(telegramOptions, downloaderThreads))
+        try(TUI cli = new TUI(telegramOptions, downloaderThreads))
         {
 
             cli.start();
         }
-        catch(CLIException ex)
+        catch(TUIException ex)
         {
-            logger.error("Got CLI exception: ", ex);
+            logger.error("Got TUI exception: ", ex);
             throw new RuntimeException(ex);
         }
         catch(IOException ex)
         {
-            logger.error("Failed to start CLI!");
+            logger.error("Failed to start TUI!");
             throw new RuntimeException(ex);
         }
         catch(Exception ex)
         {
-            logger.error("Failed to stop CLI!");
+            logger.error("Failed to stop TUI!");
             throw new RuntimeException(ex);
         }
     }

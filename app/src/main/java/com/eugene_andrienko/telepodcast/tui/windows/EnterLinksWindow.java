@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast.cli.windows;
+package com.eugene_andrienko.telepodcast.tui.windows;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 public class EnterLinksWindow
 {
     private final Logger logger = LoggerFactory.getLogger(EnterLinksWindow.class);
-    private final MultiWindowTextGUI cli;
+    private final MultiWindowTextGUI tui;
 
-    public EnterLinksWindow(MultiWindowTextGUI cli)
+    public EnterLinksWindow(MultiWindowTextGUI tui)
     {
-        this.cli = cli;
+        this.tui = tui;
     }
 
     public Set<String> start()
@@ -32,7 +32,7 @@ public class EnterLinksWindow
                     .setTitle("Enter YouTube links to download:")
                     .setTextBoxSize(new TerminalSize(80, 20))
                     .build()
-                    .showDialog(cli);
+                    .showDialog(tui);
 
             if(input == null || input.isEmpty())
             {
@@ -49,7 +49,7 @@ public class EnterLinksWindow
                         .setText("No URLs provided!")
                         .addButton(MessageDialogButton.OK)
                         .build()
-                        .showDialog(cli);
+                        .showDialog(tui);
             }
 
             checkUrlsList(urls);
@@ -61,7 +61,7 @@ public class EnterLinksWindow
                         .setText("No valid URLs provided!")
                         .addButton(MessageDialogButton.OK)
                         .build()
-                        .showDialog(cli);
+                        .showDialog(tui);
             }
         }
 

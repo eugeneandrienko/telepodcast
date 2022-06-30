@@ -1,7 +1,7 @@
-package com.eugene_andrienko.telepodcast.cli.windows;
+package com.eugene_andrienko.telepodcast.tui.windows;
 
-import com.eugene_andrienko.telepodcast.cli.DownloadOptions;
-import com.eugene_andrienko.telepodcast.cli.DownloadOptions.DownloadType;
+import com.eugene_andrienko.telepodcast.tui.DownloadOptions;
+import com.eugene_andrienko.telepodcast.tui.DownloadOptions.DownloadType;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 public class SelectDownloadsWindow extends AbstractWindow
 {
     private final Logger logger = LoggerFactory.getLogger(SelectDownloadsWindow.class);
-    private final MultiWindowTextGUI cli;
+    private final MultiWindowTextGUI tui;
 
-    public SelectDownloadsWindow(MultiWindowTextGUI cli)
+    public SelectDownloadsWindow(MultiWindowTextGUI tui)
     {
         super();
-        this.cli = cli;
+        this.tui = tui;
     }
 
     public List<DownloadOptions> start(Map<String, String> videoTitles)
@@ -98,7 +98,7 @@ public class SelectDownloadsWindow extends AbstractWindow
                  .addComponent(new EmptySpace(TerminalSize.ZERO));
 
         // Wait while the window not closed by button
-        cli.addWindowAndWait(window);
+        tui.addWindowAndWait(window);
         return result;
     }
 }

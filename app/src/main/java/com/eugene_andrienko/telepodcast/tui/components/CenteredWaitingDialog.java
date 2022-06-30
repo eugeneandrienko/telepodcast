@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast.cli.components;
+package com.eugene_andrienko.telepodcast.tui.components;
 
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;

@@ -1,7 +1,7 @@
-package com.eugene_andrienko.telepodcast.cli.windows;
+package com.eugene_andrienko.telepodcast.tui.windows;
 
 import com.eugene_andrienko.telepodcast.TextHelper;
-import com.eugene_andrienko.telepodcast.cli.CLIException;
+import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Window;
@@ -24,16 +24,16 @@ public class AbstractWindow
         labelSize = labelTextSize;
     }
 
-    void updateScreen(MultiWindowTextGUI cli, Logger logger) throws CLIException
+    void updateScreen(MultiWindowTextGUI tui, Logger logger) throws TUIException
     {
         try
         {
-            cli.updateScreen();
+            tui.updateScreen();
         }
         catch(IOException ex)
         {
             logger.error("Failed to update screen: ", ex);
-            throw new CLIException(ex);
+            throw new TUIException(ex);
         }
     }
 

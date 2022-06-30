@@ -1,10 +1,10 @@
-package com.eugene_andrienko.telepodcast.cli;
+package com.eugene_andrienko.telepodcast.tui;
 
 import com.eugene_andrienko.telegram.api.TelegramOptions;
-import com.eugene_andrienko.telepodcast.cli.windows.DownloadWindow;
-import com.eugene_andrienko.telepodcast.cli.windows.EnterLinksWindow;
-import com.eugene_andrienko.telepodcast.cli.windows.LoadingTitlesWindow;
-import com.eugene_andrienko.telepodcast.cli.windows.SelectDownloadsWindow;
+import com.eugene_andrienko.telepodcast.tui.windows.DownloadWindow;
+import com.eugene_andrienko.telepodcast.tui.windows.EnterLinksWindow;
+import com.eugene_andrienko.telepodcast.tui.windows.LoadingTitlesWindow;
+import com.eugene_andrienko.telepodcast.tui.windows.SelectDownloadsWindow;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
@@ -17,19 +17,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class CLI implements AutoCloseable
+public class TUI implements AutoCloseable
 {
-    private final Logger logger = LoggerFactory.getLogger(CLI.class);
+    private final Logger logger = LoggerFactory.getLogger(TUI.class);
 
     private final TelegramOptions telegramOptions;
     private final int downloaderThreads;
     private final Screen screen;
-    private final MultiWindowTextGUI cli;
+    private final MultiWindowTextGUI tui;
 
-    private final static String title = CLI.class.getPackage().getImplementationTitle();
-    private final static String version = CLI.class.getPackage().getImplementationVersion();
+    private final static String title = TUI.class.getPackage().getImplementationTitle();
+    private final static String version = TUI.class.getPackage().getImplementationVersion();
 
-    public CLI(TelegramOptions telegramOptions, int downloaderThreads) throws IOException
+    public TUI(TelegramOptions telegramOptions, int downloaderThreads) throws IOException
     {
         this.telegramOptions = telegramOptions;
         this.downloaderThreads = downloaderThreads;
@@ -37,7 +37,7 @@ public class CLI implements AutoCloseable
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         screen = new TerminalScreen(terminal);
         screen.startScreen();
-        cli = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
+        tui = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
                 new EmptySpace(TextColor.ANSI.BLUE));
 
         Label titleLabel = new Label(title + " " + version)
@@ -47,24 +47,24 @@ public class CLI implements AutoCloseable
         titleWindow.setHints(Arrays.asList(Window.Hint.NO_DECORATIONS, Window.Hint.NO_FOCUS,
                 Window.Hint.NO_POST_RENDERING));
         titleWindow.setComponent(titleLabel);
-        cli.addWindow(titleWindow)
+        tui.addWindow(titleWindow)
            .updateScreen();
     }
 
-    public void start() throws CLIException
+    public void start() throws TUIException
     {
-        Set<String> urls = new EnterLinksWindow(cli).start();
+        Set<String> urls = new EnterLinksWindow(tui).start();
         if(urls.isEmpty())
         {
             return;
         }
 
-        Map<String, String> urlTitleMap = new LoadingTitlesWindow(cli, downloaderThreads)
+        Map<String, String> urlTitleMap = new LoadingTitlesWindow(tui, downloaderThreads)
                 .start(urls);
-        List<DownloadOptions> downloadOptions = new SelectDownloadsWindow(cli)
+        List<DownloadOptions> downloadOptions = new SelectDownloadsWindow(tui)
                 .start(urlTitleMap);
 
-        new DownloadWindow(cli, telegramOptions, downloaderThreads)
+        new DownloadWindow(tui, telegramOptions, downloaderThreads)
                 .start(downloadOptions);
     }
 
