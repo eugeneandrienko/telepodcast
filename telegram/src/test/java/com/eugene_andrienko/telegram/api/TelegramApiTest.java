@@ -60,6 +60,7 @@ public class TelegramApiTest
 
         long result = forTest.sendMessage("TEST", 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage("", 0L));
         assertThrows(TelegramSendMessageException.class, () -> forTest.sendMessage(null, 0L));
         assertThrows(TelegramSendMessageException.class,
                 () -> forTest.sendMessage("x".repeat(TelegramApi.MESSAGE_LENGTH + 1), 0L));
@@ -91,7 +92,7 @@ public class TelegramApiTest
     void sendAudioTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendAudio(anyInt(), anyString(), anyLong()))
+        when(mockedTelegram.sendAudio(anyInt(), anyString(), anyInt(), anyLong()))
                 .thenReturn(completableTruePair)
                 .thenReturn(completableFalsePair)
                 .thenReturn(completableNeverPair)
@@ -100,13 +101,15 @@ public class TelegramApiTest
                                                    .thenReturn(completableNeverLong);
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
-        long result = forTest.sendAudio(123, "TEST", 0L);
+        long result = forTest.sendAudio(123, "TEST", 1, 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
-        assertThrows(TelegramSendMessageException.class,
-                () -> forTest.sendAudio(123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 0L));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST", 0L));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(123, "TEST", 0L));
-        result = forTest.sendAudio(123, "TEST", 0L);
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(
+                123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 1, 0L));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(
+                123, "TEST", 1, 0L));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendAudio(
+                123, "TEST", 1, 0L));
+        result = forTest.sendAudio(123, "TEST", 1, 0L);
         assertEquals(0L, result, "Should return zero ID");
     }
 
@@ -132,7 +135,7 @@ public class TelegramApiTest
     void sendVideoTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        when(mockedTelegram.sendVideo(anyInt(), anyString(), anyLong()))
+        when(mockedTelegram.sendVideo(anyInt(), anyString(), anyInt(), anyLong()))
                 .thenReturn(completableTruePair)
                 .thenReturn(completableFalsePair)
                 .thenReturn(completableNeverPair)
@@ -141,13 +144,15 @@ public class TelegramApiTest
                                                    .thenReturn(completableNeverLong);
         TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
 
-        long result = forTest.sendVideo(123, "TEST", 0L);
+        long result = forTest.sendVideo(123, "TEST", 1, 0L);
         assertEquals(MOCKED_ID, result, "Should return mocked ID");
-        assertThrows(TelegramSendMessageException.class,
-                () -> forTest.sendVideo(123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 0L));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST", 0L));
-        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(123, "TEST", 0L));
-        result = forTest.sendVideo(123, "TEST", 0L);
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(
+                123, "x".repeat(TelegramApi.MEDIA_CAPTION_LENGTH + 1), 1, 0L));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(
+                123, "TEST", 1, 0L));
+        assertThrows(TelegramSendMessageException.class, () -> forTest.sendVideo(
+                123, "TEST", 1, 0L));
+        result = forTest.sendVideo(123, "TEST", 1, 0L);
         assertEquals(0L, result, "Should return zero ID");
     }
 

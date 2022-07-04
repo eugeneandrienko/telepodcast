@@ -92,6 +92,11 @@ public class TelegramApi implements AutoCloseable
                     message != null ? message.length() : 0, MESSAGE_LENGTH);
             throw new TelegramSendMessageException("Too long message");
         }
+        if(message.isEmpty())
+        {
+            logger.warn("Cannot send message — it's empty");
+            throw new TelegramSendMessageException("Message empty");
+        }
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendMessage(message, replyToId);
         if(isTelegramMethodFailed(result))
         {

@@ -324,8 +324,7 @@ public class TelegramTest
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
         when(mockedTelegram.sendMessage(
-                anyLong(), eq(messageType), any(), anyLong(), nullable(String.class)))
-                .thenReturn(completableOk);
+                anyLong(), eq(messageType), any(), anyLong(), any())).thenReturn(completableOk);
 
         try
         {
@@ -336,10 +335,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG", 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 0L);
+                    result = telegram.sendAudio(123, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 0L);
+                    result = telegram.sendVideo(456, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -371,7 +370,7 @@ public class TelegramTest
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
         when(mockedTelegram.sendMessage(
-                anyLong(), eq(messageType), any(), anyLong(), nullable(String.class)))
+                anyLong(), eq(messageType), any(), anyLong(), any()))
                 .thenReturn(completableFail);
 
         try
@@ -383,10 +382,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG", 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 0L);
+                    result = telegram.sendAudio(123, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 0L);
+                    result = telegram.sendVideo(456, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -421,7 +420,7 @@ public class TelegramTest
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
         when(mockedTelegram.sendMessage(
-                anyLong(), eq(messageType), any(), anyLong(), nullable(String.class)))
+                anyLong(), eq(messageType), any(), anyLong(), any()))
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableRetry) // First retry
                 .thenReturn(completableOk); //   Second retry — should be successful
@@ -435,10 +434,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG", 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 0L);
+                    result = telegram.sendAudio(123, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 0L);
+                    result = telegram.sendVideo(456, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -450,7 +449,7 @@ public class TelegramTest
             assertEquals(43L, result.get().getValue1(), "Telegram.sendMessage should return ID = " +
                                                         "43L after 1 call and 2 retries");
             verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any(),
-                    anyLong(), nullable(String.class));
+                    anyLong(), any());
         }
         catch(TelegramSendMessageException ex)
         {
@@ -476,7 +475,7 @@ public class TelegramTest
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
         when(mockedTelegram.sendMessage(
-                anyLong(), eq(messageType), any(), anyLong(), nullable(String.class)))
+                anyLong(), eq(messageType), any(), anyLong(), any()))
                 .thenReturn(completableRetry) //  First call
                 .thenReturn(completableRetry) //  First retry
                 .thenReturn(completableRetry); // Second retry — fail
@@ -490,10 +489,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG", 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 0L);
+                    result = telegram.sendAudio(123, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 0L);
+                    result = telegram.sendVideo(456, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -503,7 +502,7 @@ public class TelegramTest
             assertFalse(result.get().getValue0(), "Telegram.sendMessage should return false after " +
                                                   "1 call and 2 retries");
             verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any(),
-                    anyLong(), nullable(String.class));
+                    anyLong(), any());
         }
         catch(TelegramSendMessageException ex)
         {
@@ -529,7 +528,7 @@ public class TelegramTest
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
         when(mockedTelegram.sendMessage(
-                anyLong(), eq(messageType), any(), anyLong(), nullable(String.class)))
+                anyLong(), eq(messageType), any(), anyLong(), any()))
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableFail); // First retry — fail
 
@@ -542,10 +541,10 @@ public class TelegramTest
                     result = telegram.sendMessage("TEST MSG", 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 0L);
+                    result = telegram.sendAudio(123, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 0L);
+                    result = telegram.sendVideo(456, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
@@ -555,7 +554,7 @@ public class TelegramTest
             assertFalse(result.get().getValue0(), "Telegram.sendMessage should return false after " +
                                                   "1 call and 1 retry");
             verify(mockedTelegram, times(2)).sendMessage(anyLong(), eq(messageType), any(),
-                    anyLong(), nullable(String.class));
+                    anyLong(), any());
         }
         catch(TelegramSendMessageException ex)
         {
@@ -588,10 +587,10 @@ public class TelegramTest
                     result = telegram.sendMessage(null, 0L);
                     break;
                 case AUDIO:
-                    result = telegram.sendAudio(null, "TEST", 0L);
+                    result = telegram.sendAudio(null, "TEST", 1, 0L);
                     break;
                 case VIDEO:
-                    result = telegram.sendVideo(null, "TEST", 0L);
+                    result = telegram.sendVideo(null, "TEST", 1, 0L);
                     break;
                 default:
                     fail("Unknown MessageType");
