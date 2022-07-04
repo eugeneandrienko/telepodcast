@@ -19,11 +19,13 @@ public class YoutubeDataTest
         final String TEST_DESCRIPTION = "TEST DESCRIPTION";
         File mockedFile = mock(File.class);
         ContentType contentType = ContentType.AUDIO;
+        int duration = 42;
 
         @SuppressWarnings("resource")
-        YoutubeData forTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType);
+        YoutubeData forTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType, duration);
         assertEquals(mockedFile, forTest.getFile());
         assertEquals(TEST_DESCRIPTION, forTest.getDescription());
+        assertEquals(duration, forTest.getDurationSeconds());
     }
 
     @Test
@@ -33,7 +35,7 @@ public class YoutubeDataTest
         File mockedFile = mock(File.class);
         when(mockedFile.delete()).thenReturn(true).thenReturn(false);
 
-        YoutubeData forTest = new YoutubeData(mockedFile, "", ContentType.VIDEO);
+        YoutubeData forTest = new YoutubeData(mockedFile, "", ContentType.VIDEO, 42);
         try
         {
             forTest.close();

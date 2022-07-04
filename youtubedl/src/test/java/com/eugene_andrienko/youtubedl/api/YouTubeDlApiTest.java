@@ -140,10 +140,11 @@ public class YouTubeDlApiTest
         final String TEST_DESCRIPTION = "TEST DESCRIPTION";
         File mockedFile = mock(File.class);
         ContentType contentType = ContentType.VIDEO;
+        int duration = 42;
 
         try(AbstractYoutubeDl mockedYoutube = mock(AbstractYoutubeDl.class);
             YouTubeDlApi forTest = new YouTubeDlApi(mockedYoutube);
-            YoutubeData mockedData = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType))
+            YoutubeData mockedData = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType, duration))
         {
             final String TEST_URL = "TEST URL";
             when(mockedYoutube.getDownloadedData(eq(TEST_URL))).thenReturn(mockedData)
@@ -151,7 +152,8 @@ public class YouTubeDlApiTest
             YoutubeData result = forTest.getDownloadedData(TEST_URL);
             assertEquals(mockedFile, result.getFile(), "File not expected");
             assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
-            assertEquals(ContentType.VIDEO, result.getContentType(), "Content type not expected");
+            assertEquals(contentType, result.getContentType(), "Content type not expected");
+            assertEquals(duration, result.getDurationSeconds(), "Duration not expected");
             assertThrows(YouTubeDownloadException.class, () -> forTest.getDownloadedData(TEST_URL));
 
             when(mockedFile.delete()).thenReturn(true);

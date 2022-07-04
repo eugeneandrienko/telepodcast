@@ -3,6 +3,7 @@ package com.eugene_andrienko.youtubedl.impl;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData.ContentType;
+import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -84,14 +85,17 @@ public class AbstractYoutubeDlTest
             final String TEST_URL = "TEST URL";
             File mockedFile = mock(File.class);
             final String TEST_DESCRIPTION = "TEST DESCRIPTION";
-            YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION,
-                    ContentType.AUDIO);
+            ContentType contentType = ContentType.AUDIO;
+            int duration = 42;
+            YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType,
+                    duration);
 
             forTest.setDownloadedData(TEST_URL, dataForTest);
             YoutubeData result = forTest.getDownloadedData(TEST_URL);
             assertEquals(mockedFile, result.getFile(), "File not expected");
             assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
-            assertEquals(ContentType.AUDIO, result.getContentType(), "Content type not expected");
+            assertEquals(contentType, result.getContentType(), "Content type not expected");
+            assertEquals(duration, result.getDurationSeconds(), "Duration not expected");
             result = forTest.getDownloadedData("WRONG URL");
             assertNull(result);
 
@@ -125,6 +129,11 @@ public class AbstractYoutubeDlTest
         public String getTitle(final String url) throws YouTubeNoDataException
         {
             return null;
+        }
+
+        @Override
+        public void canRun() throws YouTubeCannotRunException
+        {
         }
 
         public void setDownloadProgress(String url, float progress)
