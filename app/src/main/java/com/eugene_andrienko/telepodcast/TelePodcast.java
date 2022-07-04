@@ -10,6 +10,8 @@ import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telepodcast.tui.TUI;
 import com.eugene_andrienko.telepodcast.tui.TUIException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,18 +35,25 @@ public class TelePodcast
                                                             "and hash", order = 1)
 
     private boolean authorize = false;
-    @Parameter(names = "--tdlib-log", description = "Path to TDLib log", order = 6)
+    @Parameter(names = "--tdlib-log", description = "Path to TDLib log", order = 8)
     private String tdlibLog = "tdlib.log";
-    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory", order = 7)
+    @Parameter(names = "--tdlib-dir", description = "Path to TDLib data directory", order = 9)
     private String tdlibDir = homeDir + "/.tdlib";
     @Parameter(names = "--downloader-threads", description = "Count of threads for downloading " +
-                                                             "video from YouTube", order = 5)
+                                                             "video from YouTube", order = 7)
     private int downloaderThreads = 3;
 
     @Parameter(names = {"-g", "--gui"}, description = "Launch GUI", order = 3)
     private boolean launchGui = false;
     @Parameter(names = {"-t", "--tui"}, description = "Launch TUI", order = 4)
     private boolean launchTui = false;
+
+    @Parameter(names = "--audio-urls", description = "List of URLs to download and upload as " +
+                                                     "audio", variableArity = true, order = 5)
+    private List<String> audioUrls = new ArrayList<>();
+    @Parameter(names = "--video-urls", description = "List of URLs to download and upload as " +
+                                                     "video", variableArity = true, order = 6)
+    private List<String> videoUrls = new ArrayList<>();
 
     private int apiId = 1;
     private String apiHash = "-";
@@ -69,7 +78,7 @@ public class TelePodcast
             showHelpMessageAndExit();
         }
 
-        setupLogger(debug);
+        setupLogger();
         logger = LoggerFactory.getLogger(TelePodcast.class);
 
         if(authorize)
@@ -126,6 +135,10 @@ public class TelePodcast
         {
             startTUI(telegramOptions);
         }
+        else
+        {
+            startCLI(telegramOptions);
+        }
     }
 
     private void showHelpMessageAndExit()
@@ -135,18 +148,56 @@ public class TelePodcast
     }
 
     /**
-     * Setups {@code SimpleLogger} via system properties.
-     *
-     * @param isDebug Use debug print settings if true.
+     * Setups {@code reload4j} via system properties.
      */
-    private void setupLogger(boolean isDebug)
+    private void setupLogger()
     {
+        final String CONSOLE_PROPERTIES = "/log4j-console.properties";
+        final String CONSOLE_DEBUG_PROPERTIES = "/log4j-console-debug.properties";
         final String DEBUG_PROPERTIES = "/log4j-debug.properties";
         final String NOLOG_PROPERTIES = "/log4j-none.properties";
-        PropertyConfigurator.configure(TelePodcast.class.getResource(
-                isDebug ? DEBUG_PROPERTIES : NOLOG_PROPERTIES));
+
+        if((launchGui || launchTui) && debug)
+        {
+            PropertyConfigurator.configure(TelePodcast.class.getResource(DEBUG_PROPERTIES));
+        }
+        else if(launchGui || launchTui)
+        {
+            PropertyConfigurator.configure(TelePodcast.class.getResource(NOLOG_PROPERTIES));
+        }
+        else if(debug)
+        {
+            PropertyConfigurator.configure(TelePodcast.class.getResource(CONSOLE_DEBUG_PROPERTIES));
+        }
+        else
+        {
+            PropertyConfigurator.configure(TelePodcast.class.getResource(CONSOLE_PROPERTIES));
+        }
     }
 
+    /**
+     * Starts simple CLI.
+     *
+     * @param telegramOptions Initialized {@code TelegramOptions} class.
+     */
+    private void startCLI(TelegramOptions telegramOptions)
+    {
+        try(CLI cli = new CLI(telegramOptions, audioUrls, videoUrls, downloaderThreads))
+        {
+            cli.start();
+        }
+        catch(Exception ex)
+        {
+            logger.error("Failed to stop CLI!");
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Starts Terminal User Interface.
+     *
+     * @param telegramOptions Initialized {@code TelegramOptions} class.
+     */
     private void startTUI(TelegramOptions telegramOptions)
     {
         try(TUI tui = new TUI(telegramOptions, downloaderThreads))

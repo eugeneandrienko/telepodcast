@@ -5,11 +5,12 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.eugene_andrienko.telepodcast.TextHelper.removeInvalidUrls;
 
 
 public class EnterLinksWindow
@@ -52,7 +53,7 @@ public class EnterLinksWindow
                         .showDialog(tui);
             }
 
-            checkUrlsList(urls);
+            urls = removeInvalidUrls(urls);
             if(urls.isEmpty())
             {
                 logger.error("No one link are for YouTube");
@@ -76,19 +77,5 @@ public class EnterLinksWindow
         Collections.addAll(result, data);
         logger.debug("Got {} unique data elements", result.size());
         return result;
-    }
-
-    private void checkUrlsList(Set<String> urls)
-    {
-        Pattern pattern = Pattern.compile("https://www.youtube.com/watch\\?v=[-\\w_]+");
-        urls.removeIf(url -> {
-            Matcher matcher = pattern.matcher(url);
-            boolean isNotYouTubeLink = !matcher.matches();
-            if(isNotYouTubeLink)
-            {
-                logger.warn("{} is not an YouTube link! Skipping...", url);
-            }
-            return isNotYouTubeLink;
-        });
     }
 }

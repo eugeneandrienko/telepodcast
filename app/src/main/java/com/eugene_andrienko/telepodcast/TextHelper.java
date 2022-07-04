@@ -1,8 +1,8 @@
 package com.eugene_andrienko.telepodcast;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,10 @@ public class TextHelper
         {
             logger.warn("Nothing to split. String length: {}, substring size: {}",
                     string.length(), subStringSize);
-            result.add(string);
+            if(string.length() > 0)
+            {
+                result.add(string);
+            }
             return result;
         }
 
@@ -87,7 +90,10 @@ public class TextHelper
                                  "in string: {}", sb.length(), Character.toChars(codePoint),
                             previousSpaceIndex);
                 }
-                result.add(sb.toString());
+                if(sb.length() > 0)
+                {
+                    result.add(sb.toString());
+                }
                 sb.setLength(0);
             }
         }
@@ -99,5 +105,37 @@ public class TextHelper
         }
 
         return result;
+    }
+
+    /**
+     * Removes invalid URLs from given set
+     *
+     * @param urls Input URLs
+     *
+     * @return Processed set of valid URLs
+     */
+    public static Set<String> removeInvalidUrls(Set<String> urls)
+    {
+        Set<String> result = new HashSet<>();
+
+        if(urls == null)
+        {
+            return result;
+        }
+
+        Pattern pattern = Pattern.compile("https://www.youtube.com/watch\\?v=[-\\w_]+");
+        for(String url : urls)
+        {
+            Matcher matcher = pattern.matcher(url);
+            boolean isNotYouTubeLink = !matcher.matches();
+            if(isNotYouTubeLink)
+            {
+                logger.warn("{} is not an YouTube link! Skipping...", url);
+                continue;
+            }
+            result.add(url);
+        }
+
+        return  result;
     }
 }
