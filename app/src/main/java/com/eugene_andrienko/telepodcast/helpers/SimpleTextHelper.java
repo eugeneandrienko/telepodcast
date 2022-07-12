@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast;
+package com.eugene_andrienko.telepodcast.helpers;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class TextHelper
+public class SimpleTextHelper
 {
-    private static final Logger logger = LoggerFactory.getLogger(TextHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleTextHelper.class);
 
     /**
      * Split given string to {@code subStringSize} sized chunks taking words to account.
@@ -136,6 +136,34 @@ public class TextHelper
             result.add(url);
         }
 
-        return  result;
+        return result;
+    }
+
+    /**
+     * Is given string contains time code.
+     *
+     * @param string String to check for time code.
+     *
+     * @return {@code True} if time code in string, otherwise {@code false}.
+     */
+    public static boolean containsTimeCode(String string)
+    {
+        Pattern wrongPattern = Pattern.compile(".*\\d{3}+:\\d{2} ?[-—]?.*", Pattern.DOTALL);
+        Matcher matcher = wrongPattern.matcher(string);
+        if(matcher.matches())
+        {
+            return false;
+        }
+
+        wrongPattern = Pattern.compile(".*\\d{3}+:\\d{2}:\\d{2} ?[-—]?.*", Pattern.DOTALL);
+        matcher = wrongPattern.matcher(string);
+        if(matcher.matches())
+        {
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile(".*\\d{2}:\\d{2} ?[-—]?.*", Pattern.DOTALL);
+        matcher = pattern.matcher(string);
+        return matcher.matches();
     }
 }

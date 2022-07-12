@@ -7,6 +7,8 @@ import com.beust.jcommander.internal.Console;
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
+import com.eugene_andrienko.telepodcast.cli.CLI;
+import com.eugene_andrienko.telepodcast.gui.GUI;
 import com.eugene_andrienko.telepodcast.tui.TUI;
 import com.eugene_andrienko.telepodcast.tui.TUIException;
 import java.io.IOException;

@@ -513,6 +513,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                         new TdApi.FormattedText(additionalData.getValue0(), null) :
                         null;
                 int audioDuration = additionalData.getValue1();
+                // TODO: send album cover thumbnail
                 content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null,
                         audioDuration, null, null, audioCaption);
                 break;

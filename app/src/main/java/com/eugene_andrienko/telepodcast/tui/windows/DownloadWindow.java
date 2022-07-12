@@ -5,7 +5,8 @@ import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
-import com.eugene_andrienko.telepodcast.TextHelper;
+import com.eugene_andrienko.telepodcast.helpers.GarbageTextRemover;
+import com.eugene_andrienko.telepodcast.helpers.SimpleTextHelper;
 import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.eugene_andrienko.telepodcast.tui.DownloadOptions;
 import com.eugene_andrienko.telepodcast.tui.DownloadOptions.DownloadType;
@@ -270,8 +271,8 @@ public class DownloadWindow extends AbstractWindow
             return;
         }
 
-        // TODO: clear description from marketing text, links and hashtags
-        List<String> description = prepareDescription4Telegram(data.getDescription());
+        String cleanedText = GarbageTextRemover.removeGarbageText(data.getDescription());
+        List<String> description = prepareDescription4Telegram(cleanedText);
         ContentType contentType = data.getContentType();
 
         progressBar.busyWaiting();
@@ -317,6 +318,6 @@ public class DownloadWindow extends AbstractWindow
      */
     private List<String> prepareDescription4Telegram(String string)
     {
-        return TextHelper.splitByWords(string, TelegramApi.MESSAGE_LENGTH);
+        return SimpleTextHelper.splitByWords(string, TelegramApi.MESSAGE_LENGTH);
     }
 }

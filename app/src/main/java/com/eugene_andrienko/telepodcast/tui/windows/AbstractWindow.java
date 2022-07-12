@@ -1,6 +1,6 @@
 package com.eugene_andrienko.telepodcast.tui.windows;
 
-import com.eugene_andrienko.telepodcast.TextHelper;
+import com.eugene_andrienko.telepodcast.helpers.SimpleTextHelper;
 import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
@@ -56,7 +56,7 @@ public class AbstractWindow
      */
     String formatTitle(String title)
     {
-        List<String> splitted = TextHelper.splitByWords(title, labelSize);
+        List<String> splitted = SimpleTextHelper.splitByWords(title, labelSize);
         return String.join("\n", splitted == null ? new LinkedList<String>() : splitted);
     }
 }

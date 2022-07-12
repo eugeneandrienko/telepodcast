@@ -1,10 +1,12 @@
-package com.eugene_andrienko.telepodcast;
+package com.eugene_andrienko.telepodcast.cli;
 
 import com.eugene_andrienko.telegram.api.TelegramApi;
 import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
+import com.eugene_andrienko.telepodcast.helpers.GarbageTextRemover;
+import com.eugene_andrienko.telepodcast.helpers.SimpleTextHelper;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.YoutubeData;
@@ -61,8 +63,8 @@ public class CLI implements AutoCloseable
     {
         Set<String> audioUrls = new HashSet<>(this.audioUrls);
         Set<String> videoUrls = new HashSet<>(this.videoUrls);
-        audioUrls = TextHelper.removeInvalidUrls(audioUrls);
-        videoUrls = TextHelper.removeInvalidUrls(videoUrls);
+        audioUrls = SimpleTextHelper.removeInvalidUrls(audioUrls);
+        videoUrls = SimpleTextHelper.removeInvalidUrls(videoUrls);
         if(audioUrls.isEmpty() && videoUrls.isEmpty())
         {
             logger.error("No one valid YouTube URL is provided");
@@ -78,7 +80,7 @@ public class CLI implements AutoCloseable
     {
         for(String url : urls)
         {
-            List<String> splittedTitle = TextHelper.splitByWords(youtube.getTitle(url), 70);
+            List<String> splittedTitle = SimpleTextHelper.splitByWords(youtube.getTitle(url), 70);
             String title;
             if(splittedTitle != null)
             {
@@ -180,7 +182,8 @@ public class CLI implements AutoCloseable
             logger.info("Uploaded {} to Telegram", title);
 
             // Sending messages to Telegram:
-            List<String> description = TextHelper.splitByWords(youtubeData.getDescription(),
+            String cleanedText = GarbageTextRemover.removeGarbageText(youtubeData.getDescription());
+            List<String> description = SimpleTextHelper.splitByWords(cleanedText,
                     TelegramApi.MESSAGE_LENGTH);
             long messageId = 0;
 

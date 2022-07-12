@@ -1,4 +1,4 @@
-package com.eugene_andrienko.telepodcast;
+package com.eugene_andrienko.telepodcast.gui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
