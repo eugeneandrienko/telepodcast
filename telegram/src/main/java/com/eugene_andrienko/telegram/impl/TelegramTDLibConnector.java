@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import lombok.Cleanup;
 import org.drinkless.tdlib.Client;
 import org.drinkless.tdlib.TdApi;
 import org.javatuples.Pair;
@@ -111,8 +112,10 @@ public class TelegramTDLibConnector implements AutoCloseable
         final String libraryName = "libtdjni.so";
         final String libraryJarPath = "/lib/" + libraryName;
         File tempLibrary = new File(tempDirectory, libraryName);
-        try(InputStream is = TelegramTDLibConnector.class.getResourceAsStream(libraryJarPath))
+        try
         {
+            @Cleanup
+            InputStream is = TelegramTDLibConnector.class.getResourceAsStream(libraryJarPath);
             if(is == null)
             {
                 //noinspection ResultOfMethodCallIgnored

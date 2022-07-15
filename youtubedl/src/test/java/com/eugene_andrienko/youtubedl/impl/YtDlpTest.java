@@ -2,6 +2,7 @@ package com.eugene_andrienko.youtubedl.impl;
 
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi.DownloadState;
 import java.util.concurrent.ExecutorService;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,11 +20,16 @@ public class YtDlpTest
     @SneakyThrows
     void constructorTest()
     {
-        try(YtDlp forTest = new YtDlp(mockedService))
+        try
         {
+            @Cleanup
+            YtDlp forTest = new YtDlp(mockedService);
             assertEquals(YtDlp.class, forTest.getClass());
         }
-        verify(mockedService, times(1)).shutdown();
+        finally
+        {
+            verify(mockedService, times(1)).shutdown();
+        }
     }
 
     @Test
@@ -31,13 +37,12 @@ public class YtDlpTest
     @SneakyThrows
     void downloadAudioTest()
     {
-        try(YtDlp forTest = new YtDlp(mockedService))
-        {
-            final String TEST_URL = "TEST";
-            forTest.downloadAudio(TEST_URL);
-            assertEquals(0.0f, forTest.getDownloadProgress(TEST_URL));
-            assertEquals(DownloadState.DOWNLOADING, forTest.getDownloadState(TEST_URL));
-        }
+        @Cleanup
+        YtDlp forTest = new YtDlp(mockedService);
+        final String TEST_URL = "TEST";
+        forTest.downloadAudio(TEST_URL);
+        assertEquals(0.0f, forTest.getDownloadProgress(TEST_URL));
+        assertEquals(DownloadState.DOWNLOADING, forTest.getDownloadState(TEST_URL));
     }
 
     @Test
@@ -45,13 +50,12 @@ public class YtDlpTest
     @SneakyThrows
     void downloadVideoTest()
     {
-        try(YtDlp forTest = new YtDlp(mockedService))
-        {
-            final String TEST_URL = "TEST";
-            forTest.downloadVideo(TEST_URL);
-            assertEquals(0.0f, forTest.getDownloadProgress(TEST_URL));
-            assertEquals(DownloadState.DOWNLOADING, forTest.getDownloadState(TEST_URL));
-        }
+        @Cleanup
+        YtDlp forTest = new YtDlp(mockedService);
+        final String TEST_URL = "TEST";
+        forTest.downloadVideo(TEST_URL);
+        assertEquals(0.0f, forTest.getDownloadProgress(TEST_URL));
+        assertEquals(DownloadState.DOWNLOADING, forTest.getDownloadState(TEST_URL));
     }
 
     @BeforeEach

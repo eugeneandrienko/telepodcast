@@ -7,9 +7,12 @@ import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeCannotRunException;
 import com.eugene_andrienko.youtubedl.api.exceptions.YouTubeNoDataException;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 
@@ -17,94 +20,87 @@ public class AbstractYoutubeDlTest
 {
     @Test
     @DisplayName("Close test")
+    @SneakyThrows
     void createTemporaryDirectoryTest()
     {
         ExecutorService mockedService = mock(ExecutorService.class);
-        try(NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService))
+        doNothing().when(mockedService).shutdown();
+        try
         {
-            doNothing().when(mockedService).shutdown();
+            @SuppressWarnings("unused") @Cleanup
+            NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService);
         }
-        catch(Exception ex)
+        finally
         {
-            fail(ex);
+            verify(mockedService, times(1)).shutdown();
         }
-        verify(mockedService, times(1)).shutdown();
     }
 
     @Test
     @DisplayName("Get download progress test")
+    @SneakyThrows
     void getDownloadProgressTest()
     {
         ExecutorService mockedService = mock(ExecutorService.class);
-        try(NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService))
-        {
-            final String TEST_URL = "TEST URL";
-            final float TEST_PROGRESS = 42.42f;
-            forTest.setDownloadProgress(TEST_URL, TEST_PROGRESS);
+        @Cleanup
+        NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService);
 
-            float result = forTest.getDownloadProgress(TEST_URL);
-            assertEquals(TEST_PROGRESS, result, "Progress value not expected");
-            result = forTest.getDownloadProgress("WRONG URL");
-            assertEquals(0.0f, result, "Progress value is not 0.0");
-        }
-        catch(Exception ex)
-        {
-            fail(ex);
-        }
+        final String TEST_URL = "TEST URL";
+        final float TEST_PROGRESS = 42.42f;
+        forTest.setDownloadProgress(TEST_URL, TEST_PROGRESS);
+
+        float result = forTest.getDownloadProgress(TEST_URL);
+        assertEquals(TEST_PROGRESS, result, "Progress value not expected");
+        result = forTest.getDownloadProgress("WRONG URL");
+        assertEquals(0.0f, result, "Progress value is not 0.0");
     }
 
     @Test
     @DisplayName("Get download state test")
+    @SneakyThrows
     void getDownloadStateTest()
     {
         ExecutorService mockedService = mock(ExecutorService.class);
-        try(NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService))
-        {
-            final String TEST_URL = "TEST URL";
-            final DownloadState TEST_STATE = DownloadState.VIDEO_ENCODING;
-            forTest.setDownloadState(TEST_URL, TEST_STATE);
+        @Cleanup
+        NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService);
 
-            DownloadState result = forTest.getDownloadState(TEST_URL);
-            assertEquals(TEST_STATE, result, "State value not expected");
-            result = forTest.getDownloadState("WRONG URL");
-            assertEquals(DownloadState.NO_DATA, result, "State value is not NO_DATA");
-        }
-        catch(Exception ex)
-        {
-            fail(ex);
-        }
+        final String TEST_URL = "TEST URL";
+        final DownloadState TEST_STATE = DownloadState.VIDEO_ENCODING;
+        forTest.setDownloadState(TEST_URL, TEST_STATE);
+
+        DownloadState result = forTest.getDownloadState(TEST_URL);
+        assertEquals(TEST_STATE, result, "State value not expected");
+        result = forTest.getDownloadState("WRONG URL");
+        assertEquals(DownloadState.NO_DATA, result, "State value is not NO_DATA");
     }
 
     @Test
     @DisplayName("Get downloaded data test")
+    @SneakyThrows
     void getDownloadedDataTest()
     {
         ExecutorService mockedService = mock(ExecutorService.class);
-        try(NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService))
-        {
-            final String TEST_URL = "TEST URL";
-            File mockedFile = mock(File.class);
-            final String TEST_DESCRIPTION = "TEST DESCRIPTION";
-            ContentType contentType = ContentType.AUDIO;
-            int duration = 42;
-            YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType,
-                    duration);
+        @Cleanup
+        NonAbstractYoutubeDl forTest = new NonAbstractYoutubeDl(mockedService);
 
-            forTest.setDownloadedData(TEST_URL, dataForTest);
-            YoutubeData result = forTest.getDownloadedData(TEST_URL);
-            assertEquals(mockedFile, result.getFile(), "File not expected");
-            assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
-            assertEquals(contentType, result.getContentType(), "Content type not expected");
-            assertEquals(duration, result.getDurationSeconds(), "Duration not expected");
-            result = forTest.getDownloadedData("WRONG URL");
-            assertNull(result);
+        final String TEST_URL = "TEST URL";
+        File mockedFile = mock(File.class);
+        final String TEST_DESCRIPTION = "TEST DESCRIPTION";
+        ContentType contentType = ContentType.AUDIO;
+        int duration = 42;
+        YoutubeData dataForTest = new YoutubeData(mockedFile, TEST_DESCRIPTION, contentType,
+                duration);
 
-            when(mockedFile.delete()).thenReturn(true);
-        }
-        catch(Exception ex)
-        {
-            fail(ex);
-        }
+        forTest.setDownloadedData(TEST_URL, dataForTest);
+        YoutubeData result = forTest.getDownloadedData(TEST_URL);
+        assertEquals(mockedFile, result.getFile(), "File not expected");
+        assertEquals(TEST_DESCRIPTION, result.getDescription(), "Description not expected");
+        assertEquals(contentType, result.getContentType(), "Content type not expected");
+        assertEquals(duration, result.getDurationSeconds(), "Duration not expected");
+        result = forTest.getDownloadedData("WRONG URL");
+        assertNull(result);
+
+        when(mockedFile.delete()).thenReturn(true);
     }
 
 

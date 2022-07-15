@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import lombok.Cleanup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,10 @@ public class LoadingTitlesWindow extends AbstractWindow
         updateScreen(tui, logger);
 
         Map<String, String> result = new HashMap<>();
-        try(YouTubeDlApi youtube = new YouTubeDlApi(numberOfThreads))
+        try
         {
+            @Cleanup
+            YouTubeDlApi youtube = new YouTubeDlApi(numberOfThreads);
             checkYouTubeDownloader(youtube);
 
             for(String url : urls)

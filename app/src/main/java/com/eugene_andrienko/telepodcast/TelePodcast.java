@@ -14,6 +14,7 @@ import com.eugene_andrienko.telepodcast.tui.TUIException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Cleanup;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,8 +115,10 @@ public class TelePodcast
 
         if(authorize)
         {
-            try(TelegramApi telegram = new TelegramApi(telegramOptions))
+            try
             {
+                @Cleanup
+                TelegramApi telegram = new TelegramApi(telegramOptions);
                 telegram.login();
             }
             catch(TelegramInitException ex)
@@ -184,8 +187,10 @@ public class TelePodcast
      */
     private void startCLI(TelegramOptions telegramOptions)
     {
-        try(CLI cli = new CLI(telegramOptions, audioUrls, videoUrls, downloaderThreads))
+        try
         {
+            @Cleanup
+            CLI cli = new CLI(telegramOptions, audioUrls, videoUrls, downloaderThreads);
             cli.start();
         }
         catch(Exception ex)
@@ -202,9 +207,10 @@ public class TelePodcast
      */
     private void startTUI(TelegramOptions telegramOptions)
     {
-        try(TUI tui = new TUI(telegramOptions, downloaderThreads))
+        try
         {
-
+            @Cleanup
+            TUI tui = new TUI(telegramOptions, downloaderThreads);
             tui.start();
         }
         catch(TUIException ex)

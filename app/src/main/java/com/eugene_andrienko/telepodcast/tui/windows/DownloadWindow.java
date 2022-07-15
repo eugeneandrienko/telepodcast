@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.Cleanup;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,9 +79,13 @@ public class DownloadWindow extends AbstractWindow
              .addComponent(new EmptySpace(TerminalSize.ONE))
              .addComponent(new EmptySpace(TerminalSize.ONE));
 
-        try(YouTubeDlApi youtube = new YouTubeDlApi(threads);
-            TelegramApi telegram = new TelegramApi(options))
+        try
         {
+            @Cleanup
+            YouTubeDlApi youtube = new YouTubeDlApi(threads);
+            @Cleanup
+            TelegramApi telegram = new TelegramApi(options);
+
             // Login to Telegram:
             CenteredWaitingDialog waitTelegramLogin = CenteredWaitingDialog
                     .showDialog(tui, "Wait", "Login to Telegram");
