@@ -9,9 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -19,10 +18,10 @@ import org.slf4j.LoggerFactory;
  *
  * Also hides complexity of TDLib inside itself.
  */
+@Slf4j
 public class Telegram implements AutoCloseable
 {
     private final TelegramTDLibConnector telegramConnector;
-    private final Logger logger = LoggerFactory.getLogger(Telegram.class);
 
     private final int loadingChatsLimit;
     private final AtomicLong savedMessagesId = new AtomicLong(0);
@@ -40,13 +39,13 @@ public class Telegram implements AutoCloseable
     {
         if(options.getLoadingChatsLimit() < 1)
         {
-            logger.error("Limit of chats to load is less than 1");
+            log.error("Limit of chats to load is less than 1");
             throw new TelegramInitException("Limit of chats to load < 1");
         }
         this.loadingChatsLimit = options.getLoadingChatsLimit();
         if(options.getResendRetries() < 0)
         {
-            logger.error("Wrong count of resend retries: {}!", options.getResendRetries());
+            log.error("Wrong count of resend retries: {}!", options.getResendRetries());
             throw new TelegramInitException("Resend retries < 0");
         }
         this.resendRetries = options.getResendRetries();
@@ -68,13 +67,13 @@ public class Telegram implements AutoCloseable
     {
         if(loadingChatsLimit < 1)
         {
-            logger.error("Limit of chats to load is less than 1");
+            log.error("Limit of chats to load is less than 1");
             throw new TelegramInitException("Limit of chats to load < 1");
         }
         this.loadingChatsLimit = loadingChatsLimit;
         if(resendRetries < 0)
         {
-            logger.error("Wrong count of resend retries: {}!", resendRetries);
+            log.error("Wrong count of resend retries: {}!", resendRetries);
             throw new TelegramInitException("Resend retries < 0");
         }
         this.resendRetries = resendRetries;
@@ -94,7 +93,7 @@ public class Telegram implements AutoCloseable
     {
         if(loadingChatsLimit < 1)
         {
-            logger.error("Limit of chats to load is less than 1");
+            log.error("Limit of chats to load is less than 1");
             throw new TelegramInitException("Limit of chats to load < 1");
         }
         this.loadingChatsLimit = loadingChatsLimit;
@@ -120,22 +119,22 @@ public class Telegram implements AutoCloseable
      */
     public void login() throws TelegramInitException
     {
-        logger.debug("Logging into Telegram");
+        log.debug("Logging into Telegram");
         // Initialize TDLib and login to Telegram:
         telegramConnector.init().thenCompose(initComplete -> {
             CompletableFuture<Boolean> result = new CompletableFuture<>();
             if(initComplete)
             {
-                logger.info("Logged into Telegram account");
+                log.info("Logged into Telegram account");
 
-                logger.info("Loading chat list (limit {})...", loadingChatsLimit);
+                log.info("Loading chat list (limit {})...", loadingChatsLimit);
                 // Loading chat lists:
                 telegramConnector.loadChatList(loadingChatsLimit);
                 result = telegramConnector.isChatListLoaded(loadingChatsLimit);
             }
             else
             {
-                logger.error("Cannot login to Telegram");
+                log.error("Cannot login to Telegram");
                 result.completeExceptionally(new TelegramAuthException("Cannot login"));
             }
             return result;
@@ -143,13 +142,13 @@ public class Telegram implements AutoCloseable
             CompletableFuture<String> result = new CompletableFuture<>();
             if(chatsLoaded)
             {
-                logger.info("Loaded chat list");
+                log.info("Loaded chat list");
                 // Getting username to get "Saved Messages" chat id:
                 result = telegramConnector.getSavedMessagesChatName();
             }
             else
             {
-                logger.error("Cannot load chat list");
+                log.error("Cannot load chat list");
                 result.completeExceptionally(
                         new TelegramChatNotFoundException("Cannot load chat list"));
             }
@@ -160,7 +159,7 @@ public class Telegram implements AutoCloseable
             return telegramConnector.getSavedMessagesChatId(chatName);
         }).thenAccept(id -> {
             this.savedMessagesId.set(id);
-            logger.info("Loaded \"Saved Messages\" chat: {}", this.savedMessagesId);
+            log.info("Loaded \"Saved Messages\" chat: {}", this.savedMessagesId);
         });
     }
 
@@ -189,9 +188,9 @@ public class Telegram implements AutoCloseable
     @Override
     public void close() throws Exception
     {
-        logger.debug("Logging out from Telegram");
+        log.debug("Logging out from Telegram");
         telegramConnector.close();
-        logger.info("Logout from Telegram");
+        log.info("Logout from Telegram");
     }
 
     /**
@@ -203,7 +202,7 @@ public class Telegram implements AutoCloseable
      */
     public CompletableFuture<Integer> uploadAudio(File file)
     {
-        logger.info("Uploading audio: {}", file.getAbsolutePath());
+        log.info("Uploading audio: {}", file.getAbsolutePath());
         return telegramConnector.uploadFile(file, MessageType.AUDIO);
     }
 
@@ -216,7 +215,7 @@ public class Telegram implements AutoCloseable
      */
     public CompletableFuture<Integer> uploadVideo(File file)
     {
-        logger.info("Uploading video: {}", file.getAbsolutePath());
+        log.info("Uploading video: {}", file.getAbsolutePath());
         return telegramConnector.uploadFile(file, MessageType.VIDEO);
     }
 
@@ -254,7 +253,7 @@ public class Telegram implements AutoCloseable
         return result.handle((res, ex) -> {
             if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Message |{}| sending", message.substring(0,
+                log.info("Message |{}| sending", message.substring(0,
                         Math.min(message.length(), 80)));
             }
             return res;
@@ -296,7 +295,7 @@ public class Telegram implements AutoCloseable
         return result.handle((res, ex) -> {
             if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Audio with id = {} sending", audioLocalId);
+                log.info("Audio with id = {} sending", audioLocalId);
             }
             return res;
         });
@@ -325,7 +324,7 @@ public class Telegram implements AutoCloseable
         return result.handle((res, ex) -> {
             if(ex == null && res != null && res.getValue0())
             {
-                logger.info("Video with id = {} sending", videoLocalId);
+                log.info("Video with id = {} sending", videoLocalId);
             }
             return res;
         });
@@ -356,13 +355,13 @@ public class Telegram implements AutoCloseable
         CompletableFuture<Pair<Boolean, Long>> result = new CompletableFuture<>();
         if(resendTry < 0)
         {
-            logger.error("Exhaust of resend tries - cannot send message!");
+            log.error("Exhaust of resend tries - cannot send message!");
             result.complete(Pair.with(false, 0L));
             return result;
         }
         if(message == null)
         {
-            logger.error("Got null as message to send");
+            log.error("Got null as message to send");
             result.complete(Pair.with(false, 0L));
             return result;
         }
@@ -383,7 +382,7 @@ public class Telegram implements AutoCloseable
                     result.complete(Pair.with(false, messageId));
                     break;
                 case RETRY:
-                    logger.debug("Resending message: try #{}", resendRetries - resendTry + 1);
+                    log.debug("Resending message: try #{}", resendRetries - resendTry + 1);
                     return sendMessage(message, messageType, replyToId, --resendTry, additional);
             }
         }

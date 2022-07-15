@@ -9,14 +9,12 @@ import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public final class YtDlp extends AbstractYoutubeDl
 {
-    private final Logger logger = LoggerFactory.getLogger(YtDlp.class);
-
     private static final String YT_DLP = "yt-dlp";
     private static final String LAME = "lame";
 
@@ -57,15 +55,15 @@ public final class YtDlp extends AbstractYoutubeDl
                 int exitValue = process.waitFor();
                 if(exitValue != 0)
                 {
-                    logger.error("System command \"{}\" not found!", cmd);
-                    logger.debug("Return value of \"{} --help\" is: {}", cmd, exitValue);
+                    log.error("System command \"{}\" not found!", cmd);
+                    log.debug("Return value of \"{} --help\" is: {}", cmd, exitValue);
                     throw new YouTubeCannotRunException(cmd);
                 }
             }
             catch(IOException | InterruptedException ex)
             {
-                logger.error("Failed to execute \"{}\" system command", cmd);
-                logger.debug("Got error: ", ex);
+                log.error("Failed to execute \"{}\" system command", cmd);
+                log.debug("Got error: ", ex);
                 throw new YouTubeCannotRunException(cmd);
             }
         }
@@ -83,7 +81,7 @@ public final class YtDlp extends AbstractYoutubeDl
         downloadStateTable.put(url, DownloadState.DOWNLOADING);
 
         executorService.execute(() -> {
-            logger.info("Downloading {}", url);
+            log.info("Downloading {}", url);
 
             ProcessBuilder processBuilder = new ProcessBuilder(YT_DLP,
                     "--write-description",
@@ -115,7 +113,7 @@ public final class YtDlp extends AbstractYoutubeDl
         downloadStateTable.put(url, DownloadState.DOWNLOADING);
 
         executorService.execute(() -> {
-            logger.info("Downloading {}", url);
+            log.info("Downloading {}", url);
 
             ProcessBuilder processBuilder = new ProcessBuilder(YT_DLP,
                     "--write-description",
@@ -174,7 +172,7 @@ public final class YtDlp extends AbstractYoutubeDl
         }
         catch(NumberFormatException ex)
         {
-            logger.error("Failed to parse duration = {}", durationStr);
+            log.error("Failed to parse duration = {}", durationStr);
             throw new YouTubeNoDataException(ex);
         }
     }
@@ -203,7 +201,7 @@ public final class YtDlp extends AbstractYoutubeDl
                 data = "%(duration)s";
                 break;
             default:
-                logger.error("Got unknown request for YouTube data: {}", dataToGet);
+                log.error("Got unknown request for YouTube data: {}", dataToGet);
                 throw new YouTubeNoDataException("Unknown request");
         }
 
@@ -228,7 +226,7 @@ public final class YtDlp extends AbstractYoutubeDl
             }
             if(title.equals(""))
             {
-                logger.error("Cannot read data ({}) from called yt-dlp for {}!", dataToGet, url);
+                log.error("Cannot read data ({}) from called yt-dlp for {}!", dataToGet, url);
                 throw new YouTubeNoDataException("No data from yt-dlp");
             }
 
@@ -236,7 +234,7 @@ public final class YtDlp extends AbstractYoutubeDl
         }
         catch(IOException ex)
         {
-            logger.error("Got {} when obtain YouTube data ({}) from {}", ex, dataToGet, url);
+            log.error("Got {} when obtain YouTube data ({}) from {}", ex, dataToGet, url);
             throw new YouTubeNoDataException(ex);
         }
     }
@@ -285,7 +283,7 @@ public final class YtDlp extends AbstractYoutubeDl
                         }
                         else
                         {
-                            logger.error("Unknown content type: {}", contentType);
+                            log.error("Unknown content type: {}", contentType);
                         }
                     }
                 }
@@ -296,16 +294,16 @@ public final class YtDlp extends AbstractYoutubeDl
             }
             if(downloadedFilePath.equals(""))
             {
-                logger.error("Cannot read data from called yt-dlp!");
+                log.error("Cannot read data from called yt-dlp!");
                 while((output = errors.readLine()) != null)
                 {
-                    logger.error("External error: {}", output);
+                    log.error("External error: {}", output);
                 }
                 downloadStateTable.put(url, DownloadState.FAIL);
                 return;
             }
 
-            logger.debug("Downloaded file: {}", downloadedFilePath);
+            log.debug("Downloaded file: {}", downloadedFilePath);
             downloadStateTable.put(url, DownloadState.DOWNLOADED);
 
             if(contentType == ContentType.AUDIO)
@@ -326,7 +324,7 @@ public final class YtDlp extends AbstractYoutubeDl
             }
             if(!descriptionFile.delete())
             {
-                logger.error("Failed to delete description file: {}",
+                log.error("Failed to delete description file: {}",
                         descriptionFile.getAbsolutePath());
             }
             int duration = getDuration(url);
@@ -338,13 +336,13 @@ public final class YtDlp extends AbstractYoutubeDl
         }
         catch(IOException | YouTubeNoDataException ex)
         {
-            logger.error("Failed to get data from YouTube (URL: {})", url);
+            log.error("Failed to get data from YouTube (URL: {})", url);
             downloadStateTable.put(url, DownloadState.FAIL);
             if(file != null)
             {
                 if(!file.delete())
                 {
-                    logger.error("Failed to delete downloaded file: {}", file.getAbsolutePath());
+                    log.error("Failed to delete downloaded file: {}", file.getAbsolutePath());
                 }
             }
         }
@@ -363,7 +361,7 @@ public final class YtDlp extends AbstractYoutubeDl
      */
     private void increaseVolume(String audioPath) throws IOException
     {
-        logger.info("Increasing volume of {}", audioPath);
+        log.info("Increasing volume of {}", audioPath);
 
         ProcessBuilder processBuilder;
         try
@@ -375,16 +373,16 @@ public final class YtDlp extends AbstractYoutubeDl
             BufferedReader br = new BufferedReader(isr);
             String output;
 
-            logger.debug("Increasing {} volume with {}", audioPath, LAME);
+            log.debug("Increasing {} volume with {}", audioPath, LAME);
             while((output = br.readLine()) != null)
             {
-                logger.debug("LAME: {}", output);
+                log.debug("LAME: {}", output);
             }
 
             File audioFile = new File(audioPath);
             if(!audioFile.delete())
             {
-                logger.error("Failed to delete {} file", audioPath);
+                log.error("Failed to delete {} file", audioPath);
                 throw new IOException("Cannot delete file");
             }
 
@@ -392,13 +390,13 @@ public final class YtDlp extends AbstractYoutubeDl
             File afterLame = new File(audioPath + ".mp3");
             if(!afterLame.renameTo(audioFile))
             {
-                logger.error("Failed to rename {} to {}", audioPath + ".mp3", audioPath);
+                log.error("Failed to rename {} to {}", audioPath + ".mp3", audioPath);
                 throw new IOException("Cannot rename file");
             }
         }
         catch(IOException ex)
         {
-            logger.error("Fail increase volume");
+            log.error("Fail increase volume");
             throw ex;
         }
     }

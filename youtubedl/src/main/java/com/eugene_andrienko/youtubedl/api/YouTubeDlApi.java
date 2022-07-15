@@ -11,8 +11,7 @@ import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 // TODO: download comment with timecodes (if no in video description).
@@ -22,9 +21,9 @@ import org.slf4j.LoggerFactory;
  *
  * Library downloads data from YouTube asynchronously.
  */
+@Slf4j
 public class YouTubeDlApi implements AutoCloseable
 {
-    private static final Logger logger = LoggerFactory.getLogger(YouTubeDlApi.class);
     private final IYoutubeDl youtubeDl;
 
     /**
@@ -140,7 +139,7 @@ public class YouTubeDlApi implements AutoCloseable
         }
         else
         {
-            logger.error("No downloaded data for {} url", url);
+            log.error("No downloaded data for {} url", url);
             throw new YouTubeDownloadException();
         }
     }
@@ -207,10 +206,10 @@ public class YouTubeDlApi implements AutoCloseable
         {
             if(!file.delete())
             {
-                logger.error("Cannot delete {} file!", file.getAbsolutePath());
+                log.error("Cannot delete {} file!", file.getAbsolutePath());
                 throw new IOException("Cannot delete file");
             }
-            logger.debug("{} deleted", file.getAbsolutePath());
+            log.debug("{} deleted", file.getAbsolutePath());
         }
     }
 }

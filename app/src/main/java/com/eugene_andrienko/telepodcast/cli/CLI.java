@@ -16,17 +16,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * CLI realization.
  */
+@Slf4j
 public class CLI implements AutoCloseable
 {
-    private final Logger logger = LoggerFactory.getLogger(CLI.class);
-
     private TelegramApi telegram;
     private YouTubeDlApi youtube;
     private List<String> audioUrls;
@@ -37,7 +35,7 @@ public class CLI implements AutoCloseable
     {
         if(audioUrls.isEmpty() && videoUrls.isEmpty())
         {
-            logger.error("No one URL is provided!");
+            log.error("No one URL is provided!");
             return;
         }
         this.audioUrls = audioUrls;
@@ -51,11 +49,11 @@ public class CLI implements AutoCloseable
         }
         catch(TelegramInitException ex)
         {
-            logger.error("Failed to login to Telegram");
+            log.error("Failed to login to Telegram");
         }
         catch(IOException ex)
         {
-            logger.error("Failed to initialize YouTube downloader");
+            log.error("Failed to initialize YouTube downloader");
         }
     }
 
@@ -67,9 +65,9 @@ public class CLI implements AutoCloseable
         videoUrls = SimpleTextHelper.removeInvalidUrls(videoUrls);
         if(audioUrls.isEmpty() && videoUrls.isEmpty())
         {
-            logger.error("No one valid YouTube URL is provided");
+            log.error("No one valid YouTube URL is provided");
         }
-        logger.info("Got {} audio URLs and {} video URLs to download", audioUrls.size(),
+        log.info("Got {} audio URLs and {} video URLs to download", audioUrls.size(),
                 videoUrls.size());
 
         processUrls(audioUrls, ContentType.AUDIO);
@@ -88,12 +86,12 @@ public class CLI implements AutoCloseable
             }
             else
             {
-                logger.error("Failed to get title for {}", url);
+                log.error("Failed to get title for {}", url);
                 continue;
             }
 
             // Downloading:
-            logger.info("Downloading {}", title);
+            log.info("Downloading {}", title);
             if(contentType == ContentType.AUDIO)
             {
                 youtube.downloadAudio(url);
@@ -107,19 +105,19 @@ public class CLI implements AutoCloseable
             while(downloadState != DownloadState.COMPLETE && downloadState != DownloadState.FAIL)
             {
                 downloadState = youtube.getDownloadState(url);
-                logger.debug("Downloading {}, progress: {}", url, youtube.getDownloadProgress(url));
+                log.debug("Downloading {}, progress: {}", url, youtube.getDownloadProgress(url));
                 try
                 {
                     Thread.sleep(100);
                 }
                 catch(InterruptedException e)
                 {
-                    logger.debug("Failed to sleep when getting download state");
+                    log.debug("Failed to sleep when getting download state");
                 }
             }
             if(downloadState == DownloadState.FAIL)
             {
-                logger.error("Failed to download {}", title);
+                log.error("Failed to download {}", title);
                 continue;
             }
             YoutubeData youtubeData;
@@ -129,14 +127,14 @@ public class CLI implements AutoCloseable
             }
             catch(YouTubeDownloadException e)
             {
-                logger.error("Failed to download {}", url);
+                log.error("Failed to download {}", url);
                 continue;
             }
-            logger.info("Downloaded {}", title);
+            log.info("Downloaded {}", title);
 
             // Uploading to Telegram:
             int localFileId;
-            logger.info("Uploading {} to Telegram", title);
+            log.info("Uploading {} to Telegram", title);
             try
             {
                 if(contentType == ContentType.AUDIO)
@@ -149,13 +147,13 @@ public class CLI implements AutoCloseable
                 }
                 else
                 {
-                    logger.error("Provided unknown content type: {}", contentType.toString());
+                    log.error("Provided unknown content type: {}", contentType.toString());
                     continue;
                 }
             }
             catch(TelegramUploadFileException e)
             {
-                logger.error("Failed to upload {} file", youtubeData.getFile().getAbsolutePath());
+                log.error("Failed to upload {} file", youtubeData.getFile().getAbsolutePath());
                 continue;
             }
             try
@@ -170,16 +168,16 @@ public class CLI implements AutoCloseable
                     }
                     catch(InterruptedException e)
                     {
-                        logger.error("Failed to sleep when uploading to Telegram");
+                        log.error("Failed to sleep when uploading to Telegram");
                     }
                 }
             }
             catch(TelegramUploadFileException ex)
             {
-                logger.error("Failed to upload {} to Telegram", title);
+                log.error("Failed to upload {} to Telegram", title);
                 continue;
             }
-            logger.info("Uploaded {} to Telegram", title);
+            log.info("Uploaded {} to Telegram", title);
 
             // Sending messages to Telegram:
             String cleanedText = GarbageTextRemover.removeGarbageText(youtubeData.getDescription());
@@ -189,7 +187,7 @@ public class CLI implements AutoCloseable
 
             if(description == null)
             {
-                logger.error("Failed to prepare description for Telegram");
+                log.error("Failed to prepare description for Telegram");
                 continue;
             }
             try
@@ -217,8 +215,8 @@ public class CLI implements AutoCloseable
             }
             catch(TelegramSendMessageException ex)
             {
-                logger.error("Failed to send message to Telegram!");
-                logger.debug("Previous message ID = {}", messageId);
+                log.error("Failed to send message to Telegram!");
+                log.debug("Previous message ID = {}", messageId);
             }
         }
     }

@@ -9,14 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
 {
-    private final Logger logger = LoggerFactory.getLogger(AbstractYoutubeDl.class);
-
     File tempDirectory;
     final ConcurrentMap<String, YoutubeData> downloadsTable = new ConcurrentHashMap<>();
     final ConcurrentMap<String, Float> downloadProgressTable = new ConcurrentHashMap<>();
@@ -33,7 +31,7 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
     public AbstractYoutubeDl(int countOfThreads) throws IOException
     {
         createTemporaryDirectory();
-        logger.debug("Starting new fixed thread pool ({} threads) for YouTube downloader",
+        log.debug("Starting new fixed thread pool ({} threads) for YouTube downloader",
                 countOfThreads);
         executorService = Executors.newFixedThreadPool(countOfThreads);
     }
@@ -64,10 +62,10 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
         tempDirectory = new File(tmpDir, "telepodcast" + System.nanoTime());
         if(!tempDirectory.mkdir())
         {
-            logger.error("Failed to create {} temp directory!", tempDirectory.getAbsolutePath());
+            log.error("Failed to create {} temp directory!", tempDirectory.getAbsolutePath());
             throw new IOException("Failed to create temporary directory");
         }
-        logger.debug("Created temporary directory {} for YouTube files",
+        log.debug("Created temporary directory {} for YouTube files",
                 tempDirectory.getAbsolutePath());
     }
 
@@ -90,10 +88,10 @@ public abstract class AbstractYoutubeDl implements AutoCloseable, IYoutubeDl
         {
             if(!tempDirectory.delete())
             {
-                logger.error("Failed to delete {} directory!", tempDirectory.getAbsolutePath());
+                log.error("Failed to delete {} directory!", tempDirectory.getAbsolutePath());
                 throw new IOException("Failed to delete temporary directory");
             }
-            logger.debug("{} deleted", tempDirectory.getAbsolutePath());
+            log.debug("{} deleted", tempDirectory.getAbsolutePath());
         }
     }
 

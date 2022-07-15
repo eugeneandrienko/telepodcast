@@ -13,15 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import lombok.Cleanup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class LoadingTitlesWindow extends AbstractWindow
 {
     private final MultiWindowTextGUI tui;
     private final int numberOfThreads;
-    private final Logger logger = LoggerFactory.getLogger(LoadingTitlesWindow.class);
 
     public LoadingTitlesWindow(MultiWindowTextGUI tui, int numberOfThreads)
     {
@@ -44,7 +43,7 @@ public class LoadingTitlesWindow extends AbstractWindow
         loadingTitlesWindow.setComponent(panel);
 
         tui.addWindow(loadingTitlesWindow);
-        updateScreen(tui, logger);
+        updateScreen(tui, log);
 
         Map<String, String> result = new HashMap<>();
         try
@@ -57,14 +56,14 @@ public class LoadingTitlesWindow extends AbstractWindow
             {
                 String title = youtube.getTitle(url);
                 result.put(url, title);
-                logger.debug("Processing {}, got {} title", url, title);
+                log.debug("Processing {}, got {} title", url, title);
                 progressBar.setValue(progressBar.getValue() + 1);
                 tui.updateScreen();
             }
         }
         catch(IOException ex)
         {
-            logger.error("Failed to instantiate youtubedl library", ex);
+            log.error("Failed to instantiate youtubedl library", ex);
             new MessageDialogBuilder()
                     .setTitle("YouTube downloader error")
                     .setText("Failed to get video titles")
@@ -79,7 +78,7 @@ public class LoadingTitlesWindow extends AbstractWindow
         }
         catch(Exception ex)
         {
-            logger.error("Failed to properly close youtubedl library", ex);
+            log.error("Failed to properly close youtubedl library", ex);
             new MessageDialogBuilder()
                     .setTitle("YouTube downloader error")
                     .setText("Failed to properly close resources for YouTube downloader")
@@ -90,7 +89,7 @@ public class LoadingTitlesWindow extends AbstractWindow
         }
 
         tui.removeWindow(loadingTitlesWindow);
-        updateScreen(tui, logger);
+        updateScreen(tui, log);
         return result;
     }
 

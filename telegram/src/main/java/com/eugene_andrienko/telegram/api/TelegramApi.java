@@ -9,19 +9,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * Synchronous API for Telegram. Based on the TDLib.
  */
+@Slf4j
 public class TelegramApi implements AutoCloseable
 {
     private final Telegram telegram;
     private final int delaySeconds;
-    private final Logger logger = LoggerFactory.getLogger(TelegramApi.class);
 
     public static final int MEDIA_CAPTION_LENGTH = 1024;
     public static final int MESSAGE_LENGTH = 4096;
@@ -88,13 +87,13 @@ public class TelegramApi implements AutoCloseable
     {
         if(message == null || message.length() > MESSAGE_LENGTH)
         {
-            logger.warn("Cannot send message. Message size: {}, limit: {}?",
+            log.warn("Cannot send message. Message size: {}, limit: {}?",
                     message != null ? message.length() : 0, MESSAGE_LENGTH);
             throw new TelegramSendMessageException("Too long message");
         }
         if(message.isEmpty())
         {
-            logger.warn("Cannot send message — it's empty");
+            log.warn("Cannot send message — it's empty");
             throw new TelegramSendMessageException("Message empty");
         }
         CompletableFuture<Pair<Boolean, Long>> result = telegram.sendMessage(message, replyToId);
@@ -147,7 +146,7 @@ public class TelegramApi implements AutoCloseable
     {
         if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
         {
-            logger.warn("Audio description too long to send. Description size: {}, limit: {}",
+            log.warn("Audio description too long to send. Description size: {}, limit: {}",
                     description.length(), MEDIA_CAPTION_LENGTH);
             throw new TelegramSendMessageException("Too long audio description");
         }
@@ -202,7 +201,7 @@ public class TelegramApi implements AutoCloseable
     {
         if(description != null && description.length() > MEDIA_CAPTION_LENGTH)
         {
-            logger.warn("Video description too long to send. Description size: {}, limit: {}",
+            log.warn("Video description too long to send. Description size: {}, limit: {}",
                     description.length(), MEDIA_CAPTION_LENGTH);
             throw new TelegramSendMessageException("Too long video description");
         }
@@ -260,7 +259,7 @@ public class TelegramApi implements AutoCloseable
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {
-            logger.debug("CompletableFuture<Boolean>.get() failed", e);
+            log.debug("CompletableFuture<Boolean>.get() failed", e);
             return true;
         }
     }
@@ -273,7 +272,7 @@ public class TelegramApi implements AutoCloseable
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {
-            logger.error("Failed to get message ID");
+            log.error("Failed to get message ID");
             return 0L;
         }
     }
@@ -286,7 +285,7 @@ public class TelegramApi implements AutoCloseable
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {
-            logger.error("Failed to get message ID");
+            log.error("Failed to get message ID");
             return 0L;
         }
     }

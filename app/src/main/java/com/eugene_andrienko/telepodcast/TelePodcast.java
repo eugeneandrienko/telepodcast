@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 @Parameters(separators = "=")
 public class TelePodcast
 {
-    private Logger logger;
+    private Logger log;
     private static JCommander jCommander;
     private static final String homeDir = System.getProperty("user.home");
 
@@ -82,7 +82,7 @@ public class TelePodcast
         }
 
         setupLogger();
-        logger = LoggerFactory.getLogger(TelePodcast.class);
+        log = LoggerFactory.getLogger(TelePodcast.class);
 
         if(authorize)
         {
@@ -96,7 +96,7 @@ public class TelePodcast
             }
             catch(NumberFormatException ex)
             {
-                logger.error("Failed to parse provided API ID to number!");
+                log.error("Failed to parse provided API ID to number!");
                 throw new RuntimeException("Telegram API ID not a number");
             }
 
@@ -104,14 +104,14 @@ public class TelePodcast
             apiHash = new String(console.readPassword(false));
             if(apiHash.isEmpty())
             {
-                logger.error("Got empty Telegram API hash!");
+                log.error("Got empty Telegram API hash!");
                 throw new RuntimeException("Empty Telegram API hash");
             }
         }
 
         TelegramOptions telegramOptions = new TelegramOptions(apiId, apiHash, 50, 2, 50,
                 tdlibLog, tdlibDir, debug);
-        logger.debug("TelegramOptions:: {}", telegramOptions);
+        log.debug("TelegramOptions:: {}", telegramOptions);
 
         if(authorize)
         {
@@ -123,11 +123,11 @@ public class TelePodcast
             }
             catch(TelegramInitException ex)
             {
-                logger.error("Failed to login to Telegram");
+                log.error("Failed to login to Telegram");
             }
             catch(Exception ex)
             {
-                logger.error("Failed to properly logout from Telegram");
+                log.error("Failed to properly logout from Telegram");
             }
             return;
         }
@@ -195,7 +195,7 @@ public class TelePodcast
         }
         catch(Exception ex)
         {
-            logger.error("Failed to stop CLI!");
+            log.error("CLI fail!");
             throw new RuntimeException(ex);
         }
     }
@@ -215,17 +215,17 @@ public class TelePodcast
         }
         catch(TUIException ex)
         {
-            logger.error("Got TUI exception: ", ex);
+            log.error("Got TUI exception: ", ex);
             throw new RuntimeException(ex);
         }
         catch(IOException ex)
         {
-            logger.error("Failed to start TUI!");
+            log.error("Failed to start TUI!");
             throw new RuntimeException(ex);
         }
         catch(Exception ex)
         {
-            logger.error("Failed to stop TUI!");
+            log.error("Failed to stop TUI!");
             throw new RuntimeException(ex);
         }
     }

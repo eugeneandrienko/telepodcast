@@ -25,17 +25,17 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 import org.drinkless.tdlib.Client;
 import org.drinkless.tdlib.TdApi;
 import org.javatuples.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * Example class for TDLib usage from Java.
  */
 @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
+@Slf4j
 public class TelegramTDLibConnector implements AutoCloseable
 {
     private final int apiId;
@@ -43,8 +43,6 @@ public class TelegramTDLibConnector implements AutoCloseable
     private final boolean debug;
     private final String tdlibLog;
     private final String tdlibDir;
-
-    private final Logger logger = LoggerFactory.getLogger(TelegramTDLibConnector.class);
 
     private static Client client = null;
 
@@ -153,7 +151,7 @@ public class TelegramTDLibConnector implements AutoCloseable
     {
         if(options.getApiId() == 0 || options.getApiHash().isBlank())
         {
-            logger.error("Telegram API ID or hash not provided!");
+            log.error("Telegram API ID or hash not provided!");
             throw new TelegramInitException("Telegram API ID or hash not provided");
         }
 
@@ -174,7 +172,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                     tdlibLog, 5 * 1024 * 1024 /* 5 Mb */, false);
             if(Client.execute(new TdApi.SetLogStream(logStreamFile)) instanceof TdApi.Error)
             {
-                logger.error("Cannot SetLogStream(LogStreamFile(\"{}\"))", tdlibLog);
+                log.error("Cannot SetLogStream(LogStreamFile(\"{}\"))", tdlibLog);
                 throw new TelegramInitException("Failed to start TDLib debug log");
             }
         }
@@ -184,14 +182,14 @@ public class TelegramTDLibConnector implements AutoCloseable
             if(Client.execute(
                     new TdApi.SetLogStream(new TdApi.LogStreamEmpty())) instanceof TdApi.Error)
             {
-                logger.error("Cannot SetLogStream(LogStreamEmpty)");
+                log.error("Cannot SetLogStream(LogStreamEmpty)");
                 throw new TelegramInitException("Failed to setup TDLib logging");
             }
         }
 
         // Authorization:
         client = Client.create(new UpdateHandler(), null, null);
-        logger.debug("Created client");
+        log.debug("Created client");
 
         CompletableFuture<Boolean> versionCheck = new CompletableFuture<>();
         client.send(new TdApi.GetOption("version"), answer -> {
@@ -200,18 +198,18 @@ public class TelegramTDLibConnector implements AutoCloseable
                 String version = ((TdApi.OptionValueString)answer).value;
                 if(!TDLIB_VERSION.equals(version))
                 {
-                    logger.error("Wrong TDLib version! Got: {}, need: {}", version, TDLIB_VERSION);
+                    log.error("Wrong TDLib version! Got: {}, need: {}", version, TDLIB_VERSION);
                     versionCheck.complete(false);
                 }
                 else
                 {
-                    logger.debug("Got TDLib version: {}", version);
+                    log.debug("Got TDLib version: {}", version);
                 }
                 versionCheck.complete(true);
             }
             else
             {
-                logger.error("Wrong type of answer to version request: {}",
+                log.error("Wrong type of answer to version request: {}",
                         answer.getClass().getCanonicalName());
                 versionCheck.complete(false);
             }
@@ -230,7 +228,7 @@ public class TelegramTDLibConnector implements AutoCloseable
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            logger.debug("Waiting for authorization...");
+            log.debug("Waiting for authorization...");
             while(!haveAuthorization)
             {
                 // await authorization
@@ -254,7 +252,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                     authorizationLock.unlock();
                 }
             }
-            logger.debug("Got authorization!");
+            log.debug("Got authorization!");
             return true;
         });
     }
@@ -267,16 +265,16 @@ public class TelegramTDLibConnector implements AutoCloseable
         client.send(new TdApi.Close(), object -> {
             if(object.getConstructor() == TdApi.Ok.CONSTRUCTOR)
             {
-                logger.info("Logout completed");
+                log.info("Logout completed");
             }
             else if(object.getConstructor() == TdApi.Error.CONSTRUCTOR)
             {
                 TdApi.Error error = (TdApi.Error)object;
-                logger.error("Logout error. Code: {}, message: {}", error.code, error.message);
+                log.error("Logout error. Code: {}, message: {}", error.code, error.message);
             }
             else
             {
-                logger.error("Got unknown message ({} code) when logout", object.getConstructor());
+                log.error("Got unknown message ({} code) when logout", object.getConstructor());
             }
         });
     }
@@ -289,35 +287,35 @@ public class TelegramTDLibConnector implements AutoCloseable
             {
                 // Send LoadChats request if there are some unknown chats and have not enough
                 // known chats:
-                logger.debug("Send TdApi.LoadChats message");
+                log.debug("Send TdApi.LoadChats message");
                 client.send(
                         new TdApi.LoadChats(new TdApi.ChatListMain(), limit - mainChatList.size()),
                         object -> {
                             switch(object.getConstructor())
                             {
                                 case TdApi.Error.CONSTRUCTOR:
-                                    logger.debug("TdApi.LoadChats error");
+                                    log.debug("TdApi.LoadChats error");
                                     if(((TdApi.Error)object).code == 404)
                                     {
                                         synchronized(mainChatList)
                                         {
-                                            logger.debug("Have full main chat list");
+                                            log.debug("Have full main chat list");
                                             haveFullMainChatList = true;
                                         }
                                     }
                                     else
                                     {
-                                        logger.error("Receive an error for LoadChats: {}", object);
+                                        log.error("Receive an error for LoadChats: {}", object);
                                     }
                                     break;
                                 case TdApi.Ok.CONSTRUCTOR:
-                                    logger.debug("TdApi.LoadChats Ok");
+                                    log.debug("TdApi.LoadChats Ok");
                                     // Chats had already been received through updates,
                                     // let's retry request:
                                     loadChatList(limit);
                                     break;
                                 default:
-                                    logger.error("Receive wrong response from TDLib: {}", object);
+                                    log.error("Receive wrong response from TDLib: {}", object);
                             }
                         });
             }
@@ -365,7 +363,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     if(chat.title.equals(chatName) || chat.title.equals(SAVED_MESSAGES_CHAT))
                     {
-                        logger.debug("Found chat: id={}, name={}", chatId, chat.title);
+                        log.debug("Found chat: id={}, name={}", chatId, chat.title);
                         result.complete(chatId);
                         break;
                     }
@@ -380,12 +378,12 @@ public class TelegramTDLibConnector implements AutoCloseable
     {
         CompletableFuture<String> result = new CompletableFuture<>();
 
-        logger.debug("Computing \"Saved messages\" chat name");
+        log.debug("Computing \"Saved messages\" chat name");
         client.send(new TdApi.GetMe(), object -> {
             switch(object.getConstructor())
             {
                 case TdApi.Error.CONSTRUCTOR:
-                    logger.error("Failed to load user metadata");
+                    log.error("Failed to load user metadata");
                     break;
                 case TdApi.User.CONSTRUCTOR:
                     TdApi.User user = (TdApi.User)object;
@@ -398,11 +396,11 @@ public class TelegramTDLibConnector implements AutoCloseable
                     {
                         savedMessagesName = user.firstName + " " + user.lastName;
                     }
-                    logger.debug("Got chat name: \"{}\"", savedMessagesName);
+                    log.debug("Got chat name: \"{}\"", savedMessagesName);
                     result.complete(savedMessagesName);
                     break;
                 default:
-                    logger.error("Receive wrong response from TDLib: {}", object);
+                    log.error("Receive wrong response from TDLib: {}", object);
             }
         });
         return result;
@@ -422,7 +420,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 fileType = new TdApi.FileTypeVideo();
                 break;
             default:
-                logger.error("Got unknown message type: {}", messageType);
+                log.error("Got unknown message type: {}", messageType);
                 result.completeExceptionally(new TelegramUploadFileException(
                         "Unknown message type"));
                 return result;
@@ -437,20 +435,20 @@ public class TelegramTDLibConnector implements AutoCloseable
                         case TdApi.File.CONSTRUCTOR:
                             TdApi.File uploadingFile = (TdApi.File)object;
                             fileUploadProgress.put(uploadingFile.id, 0.0f);
-                            logger.debug("File {} uploading with id = {}", file.getAbsolutePath(),
+                            log.debug("File {} uploading with id = {}", file.getAbsolutePath(),
                                     uploadingFile.id);
                             result.complete(uploadingFile.id);
                             break;
                         case TdApi.Error.CONSTRUCTOR:
                             TdApi.Error error = (TdApi.Error)object;
-                            logger.error("Failed to upload {}. Exists: {}, can read: {}",
+                            log.error("Failed to upload {}. Exists: {}, can read: {}",
                                     file.getAbsolutePath(), file.exists(), file.canRead());
-                            logger.error("Error code: {}. Message: {}", error.code, error.message);
+                            log.error("Error code: {}. Message: {}", error.code, error.message);
                             result.completeExceptionally(new TelegramUploadFileException(
                                     "Got error"));
                             break;
                         default:
-                            logger.error("Got unknown answer when uploading file: {}", constructor);
+                            log.error("Got unknown answer when uploading file: {}", constructor);
                             result.completeExceptionally(new TelegramUploadFileException(
                                     "Unknown answer type"));
                             break;
@@ -465,7 +463,7 @@ public class TelegramTDLibConnector implements AutoCloseable
         Float progress = fileUploadProgress.get(localFileId);
         if(progress == null)
         {
-            logger.error("No data in upload progress table for file with local ID = {}",
+            log.error("No data in upload progress table for file with local ID = {}",
                     localFileId);
             throw new TelegramUploadFileException("No progress info about given file");
         }
@@ -487,7 +485,7 @@ public class TelegramTDLibConnector implements AutoCloseable
             case TEXT:
                 if(!(message instanceof String))
                 {
-                    logger.error("Got message type: {} but type of message is {}", messageType,
+                    log.error("Got message type: {} but type of message is {}", messageType,
                             message.getClass().getCanonicalName());
                     result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
@@ -495,7 +493,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 String text = (String)message;
                 if(text.isEmpty())
                 {
-                    logger.error("Got empty text to send as message!");
+                    log.error("Got empty text to send as message!");
                     result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
                 }
@@ -505,7 +503,7 @@ public class TelegramTDLibConnector implements AutoCloseable
             case AUDIO:
                 if(!(message instanceof Integer))
                 {
-                    logger.error("Got message type: {} but type of message is not an Integer: {}",
+                    log.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
                     result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
@@ -523,7 +521,7 @@ public class TelegramTDLibConnector implements AutoCloseable
             case VIDEO:
                 if(!(message instanceof Integer))
                 {
-                    logger.error("Got message type: {} but type of message is not an Integer: {}",
+                    log.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
                     result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                     return result;
@@ -538,7 +536,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                         new int[]{}, videoDuration, 0, 0, true, videoCaption, 0);
                 break;
             default:
-                logger.error("Got unknown message type: {}", messageType);
+                log.error("Got unknown message type: {}", messageType);
                 result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                 return result;
         }
@@ -546,8 +544,8 @@ public class TelegramTDLibConnector implements AutoCloseable
         Client.ResultHandler messageHandler = answer -> {
             if(!(answer instanceof TdApi.Message))
             {
-                logger.error("Got unknown answer in message handler: {}", answer);
-                logger.error("Constructor: {}", answer.getConstructor());
+                log.error("Got unknown answer in message handler: {}", answer);
+                log.error("Constructor: {}", answer.getConstructor());
                 result.complete(Pair.with(MessageSenderState.FAIL, 0L));
                 return;
             }
@@ -557,7 +555,7 @@ public class TelegramTDLibConnector implements AutoCloseable
             switch(state.getConstructor())
             {
                 case TdApi.MessageSendingStatePending.CONSTRUCTOR:
-                    logger.debug("Message sent pending");
+                    log.debug("Message sent pending");
                     sentMessageIds.put(sendingMessage.id, new CompletableFuture<>());
                     result.complete(Pair.with(MessageSenderState.OK, sendingMessage.id));
                     break;
@@ -572,7 +570,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                             }
                             catch(InterruptedException e)
                             {
-                                logger.error("Failed to wait {} seconds before resending message",
+                                log.error("Failed to wait {} seconds before resending message",
                                         fail.retryAfter);
                                 return Pair.with(MessageSenderState.FAIL, sendingMessage.id);
                             }
@@ -581,14 +579,14 @@ public class TelegramTDLibConnector implements AutoCloseable
                     }
                     else
                     {
-                        logger.error("Failed to send message! Error code: {}. Error message: {}.",
+                        log.error("Failed to send message! Error code: {}. Error message: {}.",
                                 fail.errorCode, fail.errorMessage);
                         result.complete(Pair.with(MessageSenderState.FAIL, sendingMessage.id));
                     }
                     break;
                 default:
-                    logger.error("Got unknown message state when sending message: {}", state);
-                    logger.error("Constructor: {}", state.getConstructor());
+                    log.error("Got unknown message state when sending message: {}", state);
+                    log.error("Constructor: {}", state.getConstructor());
                     result.completeExceptionally(new TelegramSendMessageException());
             }
         };
@@ -716,7 +714,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 break;
             case TdApi.AuthorizationStateLoggingOut.CONSTRUCTOR:
                 haveAuthorization = false;
-                logger.info("Logging out from Telegram");
+                log.info("Logging out from Telegram");
                 break;
             case TdApi.AuthorizationStateClosing.CONSTRUCTOR:
                 haveAuthorization = false;
@@ -735,13 +733,13 @@ public class TelegramTDLibConnector implements AutoCloseable
                     }
                     catch(Exception e)
                     {
-                        logger.error("Failed to clean TDLib Client resources!");
+                        log.error("Failed to clean TDLib Client resources!");
                         throw new RuntimeException(e);
                     }
                 }
                 break;
             default:
-                logger.warn("Unsupported authorization state: {}",
+                log.warn("Unsupported authorization state: {}",
                         TelegramTDLibConnector.authorizationState);
         }
     }
@@ -804,7 +802,7 @@ public class TelegramTDLibConnector implements AutoCloseable
         @Override
         public void onResult(TdApi.Object object)
         {
-            logger.debug("Default handler got: {}", object.getConstructor());
+            log.debug("Default handler got: {}", object.getConstructor());
         }
     }
 
@@ -1055,15 +1053,15 @@ public class TelegramTDLibConnector implements AutoCloseable
                 case TdApi.UpdateMessageSendSucceeded.CONSTRUCTOR:
                     TdApi.UpdateMessageSendSucceeded succeeded =
                             (TdApi.UpdateMessageSendSucceeded)object;
-                    logger.debug("Message with local ID {} and server ID {} successfully sent",
+                    log.debug("Message with local ID {} and server ID {} successfully sent",
                             succeeded.oldMessageId, succeeded.message.id);
                     CompletableFuture<Long> compl = sentMessageIds.get(succeeded.oldMessageId);
                     compl.complete(succeeded.message.id);
                     break;
                 case TdApi.UpdateMessageSendFailed.CONSTRUCTOR:
                     TdApi.UpdateMessageSendFailed failed = (TdApi.UpdateMessageSendFailed)object;
-                    logger.error("Failed to send message, local ID: {}, message: {}," +
-                                 "error code = {}, error message = {}",
+                    log.error("Failed to send message, local ID: {}, message: {}," +
+                              "error code = {}, error message = {}",
                             failed.oldMessageId, failed.message.content.toString(),
                             failed.errorCode, failed.errorMessage);
                     break;
@@ -1082,14 +1080,14 @@ public class TelegramTDLibConnector implements AutoCloseable
             switch(object.getConstructor())
             {
                 case TdApi.Error.CONSTRUCTOR:
-                    logger.warn("Receive an error: {}", object);
+                    log.warn("Receive an error: {}", object);
                     onAuthorizationStateUpdated(null); // repeat last action
                     break;
                 case TdApi.Ok.CONSTRUCTOR:
                     // result already received through UpdateAuthorizationState, nothing to do
                     break;
                 default:
-                    logger.warn("Receive wrong response from TDLib: {}", object);
+                    log.warn("Receive wrong response from TDLib: {}", object);
             }
         }
     }

@@ -12,15 +12,14 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
-import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class TUI implements AutoCloseable
 {
-    private final Logger logger = LoggerFactory.getLogger(TUI.class);
-
     private final TelegramOptions telegramOptions;
     private final int downloaderThreads;
     private final Screen screen;

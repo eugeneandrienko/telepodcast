@@ -3,14 +3,12 @@ package com.eugene_andrienko.telepodcast.helpers;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class SimpleTextHelper
 {
-    private static final Logger logger = LoggerFactory.getLogger(SimpleTextHelper.class);
-
     /**
      * Split given string to {@code subStringSize} sized chunks taking words to account.
      *
@@ -25,7 +23,7 @@ public class SimpleTextHelper
     {
         if(string == null)
         {
-            logger.error("Got null as string to split — returning null");
+            log.error("Got null as string to split — returning null");
             return null;
         }
 
@@ -33,13 +31,13 @@ public class SimpleTextHelper
 
         if(subStringSize <= 0)
         {
-            logger.error("Got {} as substring size - returning empty list", subStringSize);
+            log.error("Got {} as substring size - returning empty list", subStringSize);
             return result;
         }
 
         if(string.length() <= subStringSize)
         {
-            logger.warn("Nothing to split. String length: {}, substring size: {}",
+            log.warn("Nothing to split. String length: {}, substring size: {}",
                     string.length(), subStringSize);
             if(string.length() > 0)
             {
@@ -84,10 +82,10 @@ public class SimpleTextHelper
                 }
                 else
                 {
-                    logger.warn("Fail to split string by words — no previous space character in " +
-                                "buffer — splitting by size");
-                    logger.debug("Substring size: {}, last character: {}, previous space index " +
-                                 "in string: {}", sb.length(), Character.toChars(codePoint),
+                    log.warn("Fail to split string by words — no previous space character in " +
+                             "buffer — splitting by size");
+                    log.debug("Substring size: {}, last character: {}, previous space index " +
+                              "in string: {}", sb.length(), Character.toChars(codePoint),
                             previousSpaceIndex);
                 }
                 if(sb.length() > 0)
@@ -130,7 +128,7 @@ public class SimpleTextHelper
             boolean isNotYouTubeLink = !matcher.matches();
             if(isNotYouTubeLink)
             {
-                logger.warn("{} is not an YouTube link! Skipping...", url);
+                log.warn("{} is not an YouTube link! Skipping...", url);
                 continue;
             }
             result.add(url);

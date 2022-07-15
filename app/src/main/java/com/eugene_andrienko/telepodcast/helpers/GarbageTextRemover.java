@@ -5,17 +5,15 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * Removes garbage text from YouTube video description.
  */
+@Slf4j
 public class GarbageTextRemover
 {
-    public static final Logger logger = LoggerFactory.getLogger(GarbageTextRemover.class);
-
     /**
      * Removes garbage text from given string with description from YouTube.
      *
@@ -39,7 +37,7 @@ public class GarbageTextRemover
     {
         if(text == null)
         {
-            logger.error("Got null text for splitting to paragraphs");
+            log.error("Got null text for splitting to paragraphs");
             return Collections.emptyList();
         }
         String[] result = text.split("\n");

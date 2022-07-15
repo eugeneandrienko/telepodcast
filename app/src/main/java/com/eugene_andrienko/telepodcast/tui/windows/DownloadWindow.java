@@ -7,9 +7,9 @@ import com.eugene_andrienko.telegram.api.exceptions.TelegramSendMessageException
 import com.eugene_andrienko.telegram.api.exceptions.TelegramUploadFileException;
 import com.eugene_andrienko.telepodcast.helpers.GarbageTextRemover;
 import com.eugene_andrienko.telepodcast.helpers.SimpleTextHelper;
-import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.eugene_andrienko.telepodcast.tui.DownloadOptions;
 import com.eugene_andrienko.telepodcast.tui.DownloadOptions.DownloadType;
+import com.eugene_andrienko.telepodcast.tui.TUIException;
 import com.eugene_andrienko.telepodcast.tui.components.CenteredWaitingDialog;
 import com.eugene_andrienko.telepodcast.tui.components.ImprovedProgressBar;
 import com.eugene_andrienko.youtubedl.api.YouTubeDlApi;
@@ -32,14 +32,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Cleanup;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class DownloadWindow extends AbstractWindow
 {
-    private final Logger logger = LoggerFactory.getLogger(DownloadWindow.class);
-
     private final MultiWindowTextGUI tui;
     private final TelegramOptions options;
     private final int threads;
@@ -89,10 +87,10 @@ public class DownloadWindow extends AbstractWindow
             // Login to Telegram:
             CenteredWaitingDialog waitTelegramLogin = CenteredWaitingDialog
                     .showDialog(tui, "Wait", "Login to Telegram");
-            updateScreen(tui, logger);
+            updateScreen(tui, log);
             telegram.login();
             waitTelegramLogin.close();
-            updateScreen(tui, logger);
+            updateScreen(tui, log);
 
             // Add table elements:
             for(DownloadOptions option : downloads)
@@ -112,7 +110,7 @@ public class DownloadWindow extends AbstractWindow
             tui.addWindow(window);
             while(countOfProcessedFiles.get() < downloads.size())
             {
-                updateScreen(tui, logger);
+                updateScreen(tui, log);
                 try
                 {
                     //noinspection BusyWait
@@ -120,7 +118,7 @@ public class DownloadWindow extends AbstractWindow
                 }
                 catch(InterruptedException ex)
                 {
-                    logger.error("Sleep interrupted");
+                    log.error("Sleep interrupted");
                     continue;
                 }
                 Thread.yield();
@@ -143,12 +141,12 @@ public class DownloadWindow extends AbstractWindow
         }
         catch(IOException ex)
         {
-            logger.error("Unrecoverable TUI exception", ex);
+            log.error("Unrecoverable TUI exception", ex);
             throw new TUIException(ex);
         }
         catch(Exception ex)
         {
-            logger.error("Failed to properly close resources", ex);
+            log.error("Failed to properly close resources", ex);
             throw new TUIException(ex);
         }
 
@@ -165,7 +163,7 @@ public class DownloadWindow extends AbstractWindow
             int localFileId = uploadFileStage(telegram, youtubeData, progressBar, status);
             sendMessageStage(telegram, youtubeData, localFileId, progressBar, status);
             int countOfProcessed = countOfProcessedFiles.incrementAndGet();
-            logger.debug("{} links processed", countOfProcessed);
+            log.debug("{} links processed", countOfProcessed);
         });
     }
 
@@ -210,13 +208,13 @@ public class DownloadWindow extends AbstractWindow
                     {
                         status.setForegroundColor(TextColor.ANSI.RED)
                               .setText(DownloadState.FAIL.toString());
-                        logger.error("Failed to download {}", url);
+                        log.error("Failed to download {}", url);
                         return null;
                     }
                 case FAIL:
                     status.setForegroundColor(TextColor.ANSI.RED);
                     progressBar.hide();
-                    logger.error("Fail when downloading {}", url);
+                    log.error("Fail when downloading {}", url);
                     return null;
             }
         }
@@ -261,7 +259,7 @@ public class DownloadWindow extends AbstractWindow
         }
         catch(TelegramUploadFileException ex)
         {
-            logger.error("Failed to upload file {}", file.getAbsolutePath());
+            log.error("Failed to upload file {}", file.getAbsolutePath());
             progressBar.hide();
             status.setForegroundColor(TextColor.ANSI.RED).setText("UPLOAD FAIL");
         }
@@ -296,19 +294,19 @@ public class DownloadWindow extends AbstractWindow
                             messageId);
                     break;
             }
-            logger.debug("Sent message: {}", messageId);
+            log.debug("Sent message: {}", messageId);
             for(String s : description)
             {
-                logger.debug("Send text message in reply to {}", messageId);
+                log.debug("Send text message in reply to {}", messageId);
                 messageId = telegram.sendMessage(s, messageId);
-                logger.debug("Sent text message {}", messageId);
+                log.debug("Sent text message {}", messageId);
             }
             status.setForegroundColor(TextColor.ANSI.GREEN).setText("SENT");
             progressBar.hide();
         }
         catch(TelegramSendMessageException ex)
         {
-            logger.error("Failed to send telegram message", ex);
+            log.error("Failed to send telegram message", ex);
             status.setForegroundColor(TextColor.ANSI.RED).setText("FAIL");
             progressBar.hide();
         }

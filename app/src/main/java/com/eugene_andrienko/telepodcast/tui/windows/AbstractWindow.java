@@ -24,7 +24,7 @@ public class AbstractWindow
         labelSize = labelTextSize;
     }
 
-    void updateScreen(MultiWindowTextGUI tui, Logger logger) throws TUIException
+    void updateScreen(MultiWindowTextGUI tui, Logger log) throws TUIException
     {
         try
         {
@@ -32,7 +32,7 @@ public class AbstractWindow
         }
         catch(IOException ex)
         {
-            logger.error("Failed to update screen: ", ex);
+            log.error("Failed to update screen: ", ex);
             throw new TUIException(ex);
         }
     }

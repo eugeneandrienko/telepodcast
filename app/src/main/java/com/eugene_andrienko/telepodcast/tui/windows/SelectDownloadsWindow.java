@@ -9,13 +9,12 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class SelectDownloadsWindow extends AbstractWindow
 {
-    private final Logger logger = LoggerFactory.getLogger(SelectDownloadsWindow.class);
     private final MultiWindowTextGUI tui;
 
     public SelectDownloadsWindow(MultiWindowTextGUI tui)
@@ -87,7 +86,7 @@ public class SelectDownloadsWindow extends AbstractWindow
                        result.removeIf(element -> {
                            if(!element.isDownload())
                            {
-                               logger.debug("User selected not to download {}", element.getUrl());
+                               log.debug("User selected not to download {}", element.getUrl());
                            }
                            return !element.isDownload();
                        });
