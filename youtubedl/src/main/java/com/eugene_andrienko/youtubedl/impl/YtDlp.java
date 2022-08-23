@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 
 
+// TODO: recoding audio takes too much CPU power on my laptop
 @Slf4j
 public final class YtDlp extends AbstractYoutubeDl
 {
