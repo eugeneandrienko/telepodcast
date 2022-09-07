@@ -1,9 +1,19 @@
-.gradle
 .idea
-app/build
-gradle
-gradlew
-gradlew.bat
-telegram/build
-youtubedl/build
+.project
+.settings/
+app/.classpath
+app/.factorypath
+app/.project
+app/.settings/
+app/target/
+telegram/.classpath
+telegram/.factorypath
+telegram/.project
+telegram/.settings/
+telegram/target/
+youtubedl/.classpath
+youtubedl/.factorypath
+youtubedl/.project
+youtubedl/.settings/
+youtubedl/target/
 

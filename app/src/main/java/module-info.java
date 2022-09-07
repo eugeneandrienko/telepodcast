@@ -1,9 +1,9 @@
 module telepodcast.app {
     requires org.slf4j;
-    requires ch.qos.reload4j;
-    requires com.beust.jcommander;
+    requires reload4j;
+    requires jcommander;
     requires com.googlecode.lanterna;
-    requires com.vdurmont.emoji;
+    requires emoji.java;
     requires lombok;
     requires transitive telepodcast.telegram;
     requires transitive telepodcast.youtubedl;
