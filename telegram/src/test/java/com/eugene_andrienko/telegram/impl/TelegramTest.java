@@ -332,19 +332,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage("TEST MSG", 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage("TEST MSG", 0L);
+                case AUDIO -> result = telegram.sendAudio(123, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(456, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertTrue(result.get().getLeft(), "Should get true value after sending message");
             assertEquals(42L, result.get().getRight(), "Should get ID = 42L after sending " +
@@ -379,19 +375,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage("TEST MSG", 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage("TEST MSG", 0L);
+                case AUDIO -> result = telegram.sendAudio(123, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(456, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertFalse(result.get().getLeft(), "Should get false value after sending message " +
                                                 "with fail");
@@ -432,19 +424,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage("TEST MSG", 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage("TEST MSG", 0L);
+                case AUDIO -> result = telegram.sendAudio(123, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(456, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertTrue(result.get().getLeft(), "Telegram.sendMessage should return true after " +
                                                "1 call and 2 retries");
@@ -487,19 +475,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage("TEST MSG", 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage("TEST MSG", 0L);
+                case AUDIO -> result = telegram.sendAudio(123, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(456, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false after " +
                                                 "1 call and 2 retries");
@@ -539,19 +523,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage("TEST MSG", 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(123, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(456, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage("TEST MSG", 0L);
+                case AUDIO -> result = telegram.sendAudio(123, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(456, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false after " +
                                                 "1 call and 1 retry");
@@ -585,19 +565,15 @@ public class TelegramTest
             CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
-                case TEXT:
-                    result = telegram.sendMessage(null, 0L);
-                    break;
-                case AUDIO:
-                    result = telegram.sendAudio(null, "TEST", 1, 0L);
-                    break;
-                case VIDEO:
-                    result = telegram.sendVideo(null, "TEST", 1, 0L);
-                    break;
-                default:
+                case TEXT -> result = telegram.sendMessage(null, 0L);
+                case AUDIO -> result = telegram.sendAudio(null, "TEST", 1, 0L);
+                case VIDEO -> result = telegram.sendVideo(null, "TEST", 1, 0L);
+                default ->
+                {
                     fail("Unknown MessageType");
                     // For the compiler; we fail in previous line:
                     return;
+                }
             }
             assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false");
         }

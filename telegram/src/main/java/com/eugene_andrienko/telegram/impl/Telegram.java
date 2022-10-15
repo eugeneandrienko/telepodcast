@@ -375,15 +375,13 @@ public class Telegram implements AutoCloseable
             long messageId = sendMessageResult.get().getRight();
             switch(sendMessageResult.get().getLeft())
             {
-                case OK:
-                    result.complete(Pair.with(true, messageId));
-                    break;
-                case FAIL:
-                    result.complete(Pair.with(false, messageId));
-                    break;
-                case RETRY:
+                case OK -> result.complete(ImmutablePair.of(true, messageId));
+                case FAIL -> result.complete(ImmutablePair.of(false, messageId));
+                case RETRY ->
+                {
                     log.debug("Resending message: try #{}", resendRetries - resendTry + 1);
                     return sendMessage(message, messageType, replyToId, --resendTry, additional);
+                }
             }
         }
         catch(ExecutionException ex)
