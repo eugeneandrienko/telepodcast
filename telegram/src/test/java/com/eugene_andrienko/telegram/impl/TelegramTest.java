@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
-import org.javatuples.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -318,8 +318,9 @@ public class TelegramTest
                    ExecutionException.class})
     void sendMessageTest(MessageType messageType)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> completableOk = new CompletableFuture<>();
-        completableOk.complete(Pair.with(MessageSenderState.OK, 42L));
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableOk =
+                new CompletableFuture<>();
+        completableOk.complete(ImmutablePair.of(MessageSenderState.OK, 42L));
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
@@ -328,7 +329,7 @@ public class TelegramTest
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -345,9 +346,9 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertTrue(result.get().getValue0(), "Should get true value after sending message");
-            assertEquals(42L, result.get().getValue1(), "Should get ID = 42L after sending " +
-                                                        "message");
+            assertTrue(result.get().getLeft(), "Should get true value after sending message");
+            assertEquals(42L, result.get().getRight(), "Should get ID = 42L after sending " +
+                                                       "message");
         }
         catch(TelegramSendMessageException ex)
         {
@@ -363,9 +364,9 @@ public class TelegramTest
                    ExecutionException.class})
     void sendMessageFailTest(MessageType messageType)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> completableFail =
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableFail =
                 new CompletableFuture<>();
-        completableFail.complete(Pair.with(MessageSenderState.FAIL, 42L));
+        completableFail.complete(ImmutablePair.of(MessageSenderState.FAIL, 42L));
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
@@ -375,7 +376,7 @@ public class TelegramTest
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -392,10 +393,10 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertFalse(result.get().getValue0(), "Should get false value after sending message " +
-                                                  "with fail");
-            assertEquals(42L, result.get().getValue1(), "Should get ID = 42L after sending " +
-                                                        "message with fail");
+            assertFalse(result.get().getLeft(), "Should get false value after sending message " +
+                                                "with fail");
+            assertEquals(42L, result.get().getRight(), "Should get ID = 42L after sending " +
+                                                       "message with fail");
         }
         catch(TelegramSendMessageException ex)
         {
@@ -411,11 +412,12 @@ public class TelegramTest
                    ExecutionException.class})
     void sendMessageRetryTest(MessageType messageType)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> completableRetry =
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableRetry =
                 new CompletableFuture<>();
-        completableRetry.complete(Pair.with(MessageSenderState.RETRY, 42L));
-        CompletableFuture<Pair<MessageSenderState, Long>> completableOk = new CompletableFuture<>();
-        completableOk.complete(Pair.with(MessageSenderState.OK, 43L));
+        completableRetry.complete(ImmutablePair.of(MessageSenderState.RETRY, 42L));
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableOk =
+                new CompletableFuture<>();
+        completableOk.complete(ImmutablePair.of(MessageSenderState.OK, 43L));
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
@@ -423,11 +425,11 @@ public class TelegramTest
                 anyLong(), eq(messageType), any(), anyLong(), any()))
                 .thenReturn(completableRetry) // First call
                 .thenReturn(completableRetry) // First retry
-                .thenReturn(completableOk); //   Second retry — should be successful
+                .thenReturn(completableOk); //   Second retry — should successful
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -444,10 +446,10 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertTrue(result.get().getValue0(), "Telegram.sendMessage should return true after " +
-                                                 "1 call and 2 retries");
-            assertEquals(43L, result.get().getValue1(), "Telegram.sendMessage should return ID = " +
-                                                        "43L after 1 call and 2 retries");
+            assertTrue(result.get().getLeft(), "Telegram.sendMessage should return true after " +
+                                               "1 call and 2 retries");
+            assertEquals(43L, result.get().getRight(), "Telegram.sendMessage should return ID = " +
+                                                       "43L after 1 call and 2 retries");
             verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any(),
                     anyLong(), any());
         }
@@ -465,12 +467,12 @@ public class TelegramTest
                    ExecutionException.class})
     void sendMessageRetryFailTest(MessageType messageType)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> completableRetry =
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableRetry =
                 new CompletableFuture<>();
-        completableRetry.complete(Pair.with(MessageSenderState.RETRY, 42L));
-        CompletableFuture<Pair<MessageSenderState, Long>> completableFail =
+        completableRetry.complete(ImmutablePair.of(MessageSenderState.RETRY, 42L));
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableFail =
                 new CompletableFuture<>();
-        completableFail.complete(Pair.with(MessageSenderState.FAIL, 43L));
+        completableFail.complete(ImmutablePair.of(MessageSenderState.FAIL, 43L));
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
@@ -482,7 +484,7 @@ public class TelegramTest
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -499,8 +501,8 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertFalse(result.get().getValue0(), "Telegram.sendMessage should return false after " +
-                                                  "1 call and 2 retries");
+            assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false after " +
+                                                "1 call and 2 retries");
             verify(mockedTelegram, times(3)).sendMessage(anyLong(), eq(messageType), any(),
                     anyLong(), any());
         }
@@ -518,12 +520,12 @@ public class TelegramTest
                    ExecutionException.class})
     void sendMessageRetryCompleteFailTest(MessageType messageType)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> completableRetry =
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableRetry =
                 new CompletableFuture<>();
-        completableRetry.complete(Pair.with(MessageSenderState.RETRY, 0L));
-        CompletableFuture<Pair<MessageSenderState, Long>> completableFail =
+        completableRetry.complete(ImmutablePair.of(MessageSenderState.RETRY, 0L));
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> completableFail =
                 new CompletableFuture<>();
-        completableFail.complete(Pair.with(MessageSenderState.FAIL, 0L));
+        completableFail.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
 
         TelegramTDLibConnector mockedTelegram = mock(TelegramTDLibConnector.class);
         Telegram telegram = new Telegram(mockedTelegram, 1);
@@ -534,7 +536,7 @@ public class TelegramTest
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -551,8 +553,8 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertFalse(result.get().getValue0(), "Telegram.sendMessage should return false after " +
-                                                  "1 call and 1 retry");
+            assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false after " +
+                                                "1 call and 1 retry");
             verify(mockedTelegram, times(2)).sendMessage(anyLong(), eq(messageType), any(),
                     anyLong(), any());
         }
@@ -580,7 +582,7 @@ public class TelegramTest
 
         try
         {
-            CompletableFuture<Pair<Boolean, Long>> result;
+            CompletableFuture<ImmutablePair<Boolean, Long>> result;
             switch(messageType)
             {
                 case TEXT:
@@ -597,7 +599,7 @@ public class TelegramTest
                     // For the compiler; we fail in previous line:
                     return;
             }
-            assertFalse(result.get().getValue0(), "Telegram.sendMessage should return false");
+            assertFalse(result.get().getLeft(), "Telegram.sendMessage should return false");
         }
         catch(TelegramSendMessageException ex)
         {
@@ -639,7 +641,7 @@ public class TelegramTest
         else
         {
             fail(String.format("%s is not an AtomicLong", SAVED_MESSAGES_ID_FIELD));
-            // For the compiler. Next line never be executed:
+            // For the compiler. Next line never executed:
             return null;
         }
     }

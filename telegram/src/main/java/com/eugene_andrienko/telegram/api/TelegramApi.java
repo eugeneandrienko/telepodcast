@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
-import org.javatuples.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 
 /**
@@ -96,7 +96,8 @@ public class TelegramApi implements AutoCloseable
             log.warn("Cannot send message — it's empty");
             throw new TelegramSendMessageException("Message empty");
         }
-        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendMessage(message, replyToId);
+        CompletableFuture<ImmutablePair<Boolean, Long>> result = telegram.sendMessage(message,
+                replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send message to Telegram");
@@ -151,8 +152,8 @@ public class TelegramApi implements AutoCloseable
             throw new TelegramSendMessageException("Too long audio description");
         }
 
-        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendAudio(localId, description,
-                duration, replyToId);
+        CompletableFuture<ImmutablePair<Boolean, Long>> result = telegram.sendAudio(localId,
+                description, duration, replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send audio to Telegram");
@@ -206,8 +207,8 @@ public class TelegramApi implements AutoCloseable
             throw new TelegramSendMessageException("Too long video description");
         }
 
-        CompletableFuture<Pair<Boolean, Long>> result = telegram.sendVideo(localId, description,
-                duration, replyToId);
+        CompletableFuture<ImmutablePair<Boolean, Long>> result = telegram.sendVideo(localId,
+                description, duration, replyToId);
         if(isTelegramMethodFailed(result))
         {
             throw new TelegramSendMessageException("Failed to send video to Telegram");
@@ -243,7 +244,6 @@ public class TelegramApi implements AutoCloseable
 
     /**
      * Check result of {@code Telegram} methods.
-     *
      * If result of method is false or method failed with exception — returns {@code true}. If
      * method completed successfully — returns {@code false}.
      *
@@ -251,11 +251,12 @@ public class TelegramApi implements AutoCloseable
      *
      * @return {@code true} if {@code Telegram} method fails, otherwise false.
      */
-    private boolean isTelegramMethodFailed(CompletableFuture<Pair<Boolean, Long>> completable)
+    private boolean isTelegramMethodFailed(
+            CompletableFuture<ImmutablePair<Boolean, Long>> completable)
     {
         try
         {
-            return !completable.get(delaySeconds, TimeUnit.SECONDS).getValue0();
+            return !completable.get(delaySeconds, TimeUnit.SECONDS).getLeft();
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {
@@ -264,11 +265,11 @@ public class TelegramApi implements AutoCloseable
         }
     }
 
-    private long getLocalMessageId(CompletableFuture<Pair<Boolean, Long>> completable)
+    private long getLocalMessageId(CompletableFuture<ImmutablePair<Boolean, Long>> completable)
     {
         try
         {
-            return completable.get(delaySeconds, TimeUnit.SECONDS).getValue1();
+            return completable.get(delaySeconds, TimeUnit.SECONDS).getRight();
         }
         catch(InterruptedException | TimeoutException | ExecutionException e)
         {

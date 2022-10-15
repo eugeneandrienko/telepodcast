@@ -3,5 +3,5 @@ module telepodcast.telegram {
     exports com.eugene_andrienko.telegram.api.exceptions;
     requires org.slf4j;
     requires lombok;
-    requires javatuples;
+    requires org.apache.commons.lang3;
 }

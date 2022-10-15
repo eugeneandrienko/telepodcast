@@ -7,7 +7,7 @@ import com.eugene_andrienko.telegram.impl.Telegram;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import lombok.SneakyThrows;
-import org.javatuples.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class TelegramApiTest
     void initTest()
     {
         Telegram mockedTelegram = mock(Telegram.class);
-        TelegramApi forTest = new TelegramApi(mockedTelegram, 1);
+        new TelegramApi(mockedTelegram, 1);
         // Should not throw any exceptions here
     }
 
@@ -180,9 +180,9 @@ public class TelegramApiTest
     private CompletableFuture<Long> completableLong;
     private CompletableFuture<Integer> completableNeverInteger;
     private CompletableFuture<Long> completableNeverLong;
-    private CompletableFuture<Pair<Boolean, Long>> completableTruePair;
-    private CompletableFuture<Pair<Boolean, Long>> completableFalsePair;
-    private CompletableFuture<Pair<Boolean, Long>> completableNeverPair;
+    private CompletableFuture<ImmutablePair<Boolean, Long>> completableTruePair;
+    private CompletableFuture<ImmutablePair<Boolean, Long>> completableFalsePair;
+    private CompletableFuture<ImmutablePair<Boolean, Long>> completableNeverPair;
 
     private static final int MOCKED_ID = 123;
 
@@ -208,7 +208,7 @@ public class TelegramApiTest
         completableInteger.complete(MOCKED_ID);
         completableLong.complete((long)MOCKED_ID);
 
-        completableTruePair.complete(Pair.with(true, 0L));
-        completableFalsePair.complete(Pair.with(false, 0L));
+        completableTruePair.complete(ImmutablePair.of(true, 0L));
+        completableFalsePair.complete(ImmutablePair.of(false, 0L));
     }
 }

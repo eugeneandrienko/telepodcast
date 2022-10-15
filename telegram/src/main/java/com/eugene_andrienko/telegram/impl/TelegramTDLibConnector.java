@@ -26,9 +26,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.drinkless.tdlib.Client;
 import org.drinkless.tdlib.TdApi;
-import org.javatuples.Pair;
 
 
 /**
@@ -473,11 +473,12 @@ public class TelegramTDLibConnector implements AutoCloseable
         }
     }
 
-    public CompletableFuture<Pair<MessageSenderState, Long>> sendMessage(
+    public CompletableFuture<ImmutablePair<MessageSenderState, Long>> sendMessage(
             long chatId, MessageType messageType, Object message, long replyToId,
-            Pair<String, Integer> additionalData)
+            ImmutablePair<String, Integer> additionalData)
     {
-        CompletableFuture<Pair<MessageSenderState, Long>> result = new CompletableFuture<>();
+        CompletableFuture<ImmutablePair<MessageSenderState, Long>> result =
+                new CompletableFuture<>();
 
         TdApi.InputMessageContent content;
         switch(messageType)
@@ -487,14 +488,14 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     log.error("Got message type: {} but type of message is {}", messageType,
                             message.getClass().getCanonicalName());
-                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                    result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 String text = (String)message;
                 if(text.isEmpty())
                 {
                     log.error("Got empty text to send as message!");
-                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                    result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 content = new TdApi.InputMessageText(new TdApi.FormattedText(text, null), true,
@@ -505,15 +506,15 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     log.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
-                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                    result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 Integer audioFileId = (Integer)message;
                 TdApi.FormattedText audioCaption =
-                        additionalData.getValue0() != null ?
-                        new TdApi.FormattedText(additionalData.getValue0(), null) :
+                        additionalData.getLeft() != null ?
+                        new TdApi.FormattedText(additionalData.getLeft(), null) :
                         null;
-                int audioDuration = additionalData.getValue1();
+                int audioDuration = additionalData.getRight();
                 // TODO: send album cover thumbnail
                 content = new TdApi.InputMessageAudio(new TdApi.InputFileId(audioFileId), null,
                         audioDuration, null, null, audioCaption);
@@ -523,21 +524,21 @@ public class TelegramTDLibConnector implements AutoCloseable
                 {
                     log.error("Got message type: {} but type of message is not an Integer: {}",
                             messageType, message.getClass().getCanonicalName());
-                    result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                    result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                     return result;
                 }
                 Integer videoFileId = (Integer)message;
                 TdApi.FormattedText videoCaption =
-                        additionalData.getValue0() != null ?
-                        new TdApi.FormattedText(additionalData.getValue0(), null) :
+                        additionalData.getLeft() != null ?
+                        new TdApi.FormattedText(additionalData.getLeft(), null) :
                         null;
-                int videoDuration = additionalData.getValue1();
+                int videoDuration = additionalData.getRight();
                 content = new TdApi.InputMessageVideo(new TdApi.InputFileId(videoFileId), null,
                         new int[]{}, videoDuration, 0, 0, true, videoCaption, 0);
                 break;
             default:
                 log.error("Got unknown message type: {}", messageType);
-                result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                 return result;
         }
 
@@ -546,7 +547,7 @@ public class TelegramTDLibConnector implements AutoCloseable
             {
                 log.error("Got unknown answer in message handler: {}", answer);
                 log.error("Constructor: {}", answer.getConstructor());
-                result.complete(Pair.with(MessageSenderState.FAIL, 0L));
+                result.complete(ImmutablePair.of(MessageSenderState.FAIL, 0L));
                 return;
             }
 
@@ -557,7 +558,7 @@ public class TelegramTDLibConnector implements AutoCloseable
                 case TdApi.MessageSendingStatePending.CONSTRUCTOR:
                     log.debug("Message sent pending");
                     sentMessageIds.put(sendingMessage.id, new CompletableFuture<>());
-                    result.complete(Pair.with(MessageSenderState.OK, sendingMessage.id));
+                    result.complete(ImmutablePair.of(MessageSenderState.OK, sendingMessage.id));
                     break;
                 case TdApi.MessageSendingStateFailed.CONSTRUCTOR:
                     TdApi.MessageSendingStateFailed fail = (TdApi.MessageSendingStateFailed)state;
@@ -572,16 +573,17 @@ public class TelegramTDLibConnector implements AutoCloseable
                             {
                                 log.error("Failed to wait {} seconds before resending message",
                                         fail.retryAfter);
-                                return Pair.with(MessageSenderState.FAIL, sendingMessage.id);
+                                return ImmutablePair.of(MessageSenderState.FAIL, sendingMessage.id);
                             }
-                            return Pair.with(MessageSenderState.RETRY, sendingMessage.id);
+                            return ImmutablePair.of(MessageSenderState.RETRY, sendingMessage.id);
                         });
                     }
                     else
                     {
                         log.error("Failed to send message! Error code: {}. Error message: {}.",
                                 fail.errorCode, fail.errorMessage);
-                        result.complete(Pair.with(MessageSenderState.FAIL, sendingMessage.id));
+                        result.complete(ImmutablePair.of(
+                                MessageSenderState.FAIL, sendingMessage.id));
                     }
                     break;
                 default:
