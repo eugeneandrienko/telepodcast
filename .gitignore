@@ -1,19 +1,6 @@
 .idea
-.project
-.settings/
-app/.classpath
-app/.factorypath
-app/.project
-app/.settings/
+*.iml
 app/target/
-telegram/.classpath
-telegram/.factorypath
-telegram/.project
-telegram/.settings/
 telegram/target/
-youtubedl/.classpath
-youtubedl/.factorypath
-youtubedl/.project
-youtubedl/.settings/
 youtubedl/target/
 
