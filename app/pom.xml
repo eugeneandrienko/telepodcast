@@ -52,7 +52,6 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!-- TODO: rename JAR from app to telepodcast -->
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>dependencies/</classpathPrefix>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
