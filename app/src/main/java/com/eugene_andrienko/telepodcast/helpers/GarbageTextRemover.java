@@ -1,6 +1,5 @@
 package com.eugene_andrienko.telepodcast.helpers;
 
-import com.vdurmont.emoji.EmojiParser;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,7 +105,10 @@ public class GarbageTextRemover
      */
     static boolean containsEmojis(String string)
     {
-        return !EmojiParser.extractEmojis(string).isEmpty();
+        String regex = ".*[^\\p{L}\\p{N}\\p{P}\\p{Z}].*";
+        Pattern pattern = Pattern.compile(regex, Pattern.UNICODE_CHARACTER_CLASS);
+        Matcher matcher = pattern.matcher(string);
+        return matcher.matches();
     }
 
     /**
