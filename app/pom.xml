@@ -63,13 +63,14 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <mainClass>com.eugene_andrienko.telepodcast.TelePodcast</mainClass>
-                            <!-- TODO: -->
-                            <!-- <manifestEntries> -->
-                            <!--     <Implementation-Title>Telepodcast</Implementation-Title> -->
-                            <!--     <Implementation-Version>${telepodcast.version}</Implementation-Version> -->
-                            <!-- </manifestEntries> -->
                         </manifest>
+                        <manifestEntries>
+                            <url>${project.url}</url>
+                            <Implementation-Title>Telepodcast</Implementation-Title>
+                            <Implementation-Version>${telepodcast.version}</Implementation-Version>
+                        </manifestEntries>
                     </archive>
+                    <finalName>telepodcast-${project.parent.version}</finalName>
                 </configuration>
             </plugin>
 
@@ -89,6 +90,7 @@
                                     </mainClass>
                                 </transformer>
                             </transformers>
+                            <finalName>telepodcast-${project.parent.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>
