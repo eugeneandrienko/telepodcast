@@ -6,8 +6,11 @@ import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Window;
 import java.io.IOException;
-import java.util.*;
-import org.slf4j.Logger;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import org.apache.logging.log4j.Logger;
 
 
 public class AbstractWindow

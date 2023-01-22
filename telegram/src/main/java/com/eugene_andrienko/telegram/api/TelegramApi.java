@@ -9,14 +9,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 
 /**
  * Synchronous API for Telegram. Based on the TDLib.
  */
-@Slf4j
+@Log4j2
 public class TelegramApi implements AutoCloseable
 {
     private final Telegram telegram;
@@ -30,7 +30,7 @@ public class TelegramApi implements AutoCloseable
      *
      * @param options Initialized {@code TelegramOptions} object.
      *
-     * @throws TelegramInitException Failed to initialize API.
+     * @throws TelegramInitException Fail initialize API.
      */
     public TelegramApi(TelegramOptions options) throws TelegramInitException
     {

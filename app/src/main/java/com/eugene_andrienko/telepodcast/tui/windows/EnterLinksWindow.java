@@ -8,11 +8,11 @@ import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import static com.eugene_andrienko.telepodcast.helpers.SimpleTextHelper.removeInvalidUrls;
 
 
-@Slf4j
+@Log4j2
 public class EnterLinksWindow
 {
     private final MultiWindowTextGUI tui;

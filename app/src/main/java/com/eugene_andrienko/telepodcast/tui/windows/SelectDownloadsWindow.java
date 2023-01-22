@@ -9,10 +9,10 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
-@Slf4j
+@Log4j2
 public class SelectDownloadsWindow extends AbstractWindow
 {
     private final MultiWindowTextGUI tui;

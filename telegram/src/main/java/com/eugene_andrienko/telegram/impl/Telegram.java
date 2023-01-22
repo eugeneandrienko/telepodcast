@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 
@@ -17,7 +17,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
  * Sends files and messages to "Saved messages" chat in Telegram.
  * Also hides complexity of TDLib inside itself.
  */
-@Slf4j
+@Log4j2
 public class Telegram implements AutoCloseable
 {
     private final TelegramTDLibConnector telegramConnector;

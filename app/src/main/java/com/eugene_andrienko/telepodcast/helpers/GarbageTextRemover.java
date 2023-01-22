@@ -5,13 +5,13 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
 /**
  * Removes garbage text from YouTube video description.
  */
-@Slf4j
+@Log4j2
 public class GarbageTextRemover
 {
     /**

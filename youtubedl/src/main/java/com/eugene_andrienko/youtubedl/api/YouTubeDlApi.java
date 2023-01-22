@@ -11,7 +11,7 @@ import java.io.IOException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
 // TODO: download comment with timecodes (if no in video description).
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * Library downloads data from YouTube asynchronously.
  */
-@Slf4j
+@Log4j2
 public class YouTubeDlApi implements AutoCloseable
 {
     private final IYoutubeDl youtubeDl;

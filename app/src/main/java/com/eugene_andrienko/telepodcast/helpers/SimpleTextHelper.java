@@ -3,10 +3,10 @@ package com.eugene_andrienko.telepodcast.helpers;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
-@Slf4j
+@Log4j2
 public class SimpleTextHelper
 {
     /**

@@ -25,7 +25,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.Cleanup;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.drinkless.tdlib.Client;
 import org.drinkless.tdlib.TdApi;
@@ -35,7 +35,7 @@ import org.drinkless.tdlib.TdApi;
  * Example class for TDLib usage from Java.
  */
 @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
-@Slf4j
+@Log4j2
 public class TelegramTDLibConnector implements AutoCloseable
 {
     private final int apiId;

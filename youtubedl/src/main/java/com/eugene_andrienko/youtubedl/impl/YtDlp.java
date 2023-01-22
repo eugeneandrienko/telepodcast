@@ -9,11 +9,11 @@ import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
 
 // TODO: recoding audio takes too much CPU power on my laptop
-@Slf4j
+@Log4j2
 public final class YtDlp extends AbstractYoutubeDl
 {
     private static final String YT_DLP = "yt-dlp";

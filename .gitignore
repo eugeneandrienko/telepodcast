@@ -3,4 +3,7 @@
 app/target/
 telegram/target/
 youtubedl/target/
-
+**/.classpath
+**/.factorypath
+**/.project
+**/.settings/

@@ -1,16 +1,14 @@
 package com.eugene_andrienko.telepodcast.gui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 
 
+@Log4j2
 public class GUI
 {
-    private final Logger logger = LoggerFactory.getLogger(GUI.class);
-
     public GUI()
     {
-        logger.error("Not implemented yet!");
+        log.error("Not implemented yet!");
         throw new UnsupportedOperationException("Not implemented yet!");
     }
 }

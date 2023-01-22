@@ -9,15 +9,19 @@ import com.eugene_andrienko.telegram.api.TelegramOptions;
 import com.eugene_andrienko.telegram.api.exceptions.TelegramInitException;
 import com.eugene_andrienko.telepodcast.cli.CLI;
 import com.eugene_andrienko.telepodcast.gui.GUI;
+import com.eugene_andrienko.telepodcast.logging.ConsoleConfigurationFactory;
+import com.eugene_andrienko.telepodcast.logging.ConsoleDebugConfigurationFactory;
+import com.eugene_andrienko.telepodcast.logging.DebugConfigurationFactory;
+import com.eugene_andrienko.telepodcast.logging.NoneConfigurationFactory;
 import com.eugene_andrienko.telepodcast.tui.TUI;
 import com.eugene_andrienko.telepodcast.tui.TUIException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Cleanup;
-import org.apache.log4j.PropertyConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.ConfigurationFactory;
 
 
 /**
@@ -82,7 +86,7 @@ public class TelePodcast
         }
 
         setupLogger();
-        log = LoggerFactory.getLogger(TelePodcast.class);
+        log = LogManager.getLogger(TelePodcast.class);
 
         if(authorize)
         {
@@ -157,26 +161,21 @@ public class TelePodcast
      */
     private void setupLogger()
     {
-        final String CONSOLE_PROPERTIES = "/log4j-console.properties";
-        final String CONSOLE_DEBUG_PROPERTIES = "/log4j-console-debug.properties";
-        final String DEBUG_PROPERTIES = "/log4j-debug.properties";
-        final String NOLOG_PROPERTIES = "/log4j-none.properties";
-
         if((launchGui || launchTui) && debug)
         {
-            PropertyConfigurator.configure(TelePodcast.class.getResource(DEBUG_PROPERTIES));
+            ConfigurationFactory.setConfigurationFactory(new DebugConfigurationFactory());
         }
         else if(launchGui || launchTui)
         {
-            PropertyConfigurator.configure(TelePodcast.class.getResource(NOLOG_PROPERTIES));
+            ConfigurationFactory.setConfigurationFactory(new NoneConfigurationFactory());
         }
         else if(debug)
         {
-            PropertyConfigurator.configure(TelePodcast.class.getResource(CONSOLE_DEBUG_PROPERTIES));
+            ConfigurationFactory.setConfigurationFactory(new ConsoleDebugConfigurationFactory());
         }
         else
         {
-            PropertyConfigurator.configure(TelePodcast.class.getResource(CONSOLE_PROPERTIES));
+            ConfigurationFactory.setConfigurationFactory(new ConsoleConfigurationFactory());
         }
     }
 
