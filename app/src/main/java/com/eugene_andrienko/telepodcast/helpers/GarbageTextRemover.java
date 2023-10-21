@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
+import net.fellbaum.jemoji.EmojiManager;
 
 
 /**
@@ -105,10 +106,7 @@ public class GarbageTextRemover
      */
     static boolean containsEmojis(String string)
     {
-        String regex = ".*[^\\p{L}\\p{N}\\p{P}\\p{Z}].*";
-        Pattern pattern = Pattern.compile(regex, Pattern.UNICODE_CHARACTER_CLASS);
-        Matcher matcher = pattern.matcher(string);
-        return matcher.matches();
+        return EmojiManager.containsEmoji(string);
     }
 
     /**
