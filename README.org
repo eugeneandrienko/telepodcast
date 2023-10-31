@@ -1,0 +1,36 @@
+Telepodcast — is an app to download video/audio via [[https://github.com/yt-dlp/yt-dlp][yt-dlp]] and upload it to
+Telegram, right in «Saved Messages».
+
+This can be useful to listen podcasts on the go.
+
+* How to use program
+
+1) Authorize in your own telegram account. Call =java -jar
+   telepodcast-1.0-SNAPSHOT.jar -a= or =java -jar telepodcast-1.0-SNAPSHOT.jar
+   --authorize=. After that [[https://github.com/tdlib/td][TDLib]] will ask you for phone number, confirmation
+   code and other credentials. All files necessary for login will be stored in
+   TDLib database (by default: =~/.tdlib=).
+2) Use program as usual — after step 1 it will not ask for credentials. Login
+   to Telegram will happen automatically.
+3) Provide URLs to video or audio and program will download it and decode it
+   to format, understandable by Telegram. After that files will be uploaded to
+   your «Saved Messages».
+
+* Program options
+** For GUI mode
+- =-g=, =--gui= :: Launch GUI.
+** For TUI mode
+- =-t=, =--tui= :: Launch TUI
+** For CLI mode
+- =--audio-urls= :: This URLs will be uploaded as audio to Telegram. Space
+  symbol is separator between URLs.
+- =--video-urls= ::  This URLs will be uploaded as video to Telegram. Same
+  separator.
+** Common options
+- =--tdlib-dir= :: Path to TDLib data directory. Default: =/home/drag0n/.tdlib=.
+- =--tdlib-log= :: Path to TDLib log file. Default: =./tdlib.log=.
+- =--downloader-threads= :: Count of threads for downloading video from
+  YouTube. Default: =3=.
+- =-d=, =--debug= :: Run application in debug mode
+- =-a=, =--authorize= :: Authorize in Telegram via API ID and hash (in console).
+- =-h=, =--help= :: Show help message
