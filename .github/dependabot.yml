@@ -9,16 +9,20 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    assignees:
+      - "eugeneandrienko"
+    open-pull-requests-limit: 0
   - package-ecosystem: "maven"
     directory: "/app"
     schedule:
       interval: "weekly"
+    assignees:
+      - "eugeneandrienko"
+    open-pull-requests-limit: 0
   - package-ecosystem: "maven"
     directory: "/telegram"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "maven"
-    directory: "/youtubedl"
-    schedule:
-      interval: "weekly"
-     
+    assignees:
+      - "eugeneandrienko"
+    open-pull-requests-limit: 0
